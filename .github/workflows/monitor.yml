@@ -9,6 +9,13 @@ concurrency:
   group: energy-monitor
   cancel-in-progress: true
 
+
+
+# ⭐ 关键：授予写入权限
+permissions:
+  contents: write        # 允许推送代码到仓库
+
+
 jobs:
   monitor:
     runs-on: ubuntu-latest
