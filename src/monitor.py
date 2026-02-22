@@ -11,7 +11,7 @@ import time
 import random
 import requests
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 
 # ========== 路径配置 ==========
@@ -272,7 +272,7 @@ def clean_ai_summary(text):
 
 def generate_reports(report_data):
     """生成 Markdown 和 HTML 报告"""
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
     
     # ⭐ 关键修改：确保 docs 文件夹存在
     os.makedirs(REPORTS_DIR, exist_ok=True)
