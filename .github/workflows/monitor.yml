@@ -1,0 +1,70 @@
+name: 🌍 能源新闻自动监控
+
+on:
+  # 定时触发：每天北京时间 8:45 运行一次
+  schedule:
+    - cron: '45 0 * * *'   # UTC 0:45 = 北京时间 8:45
+  
+  # 手动触发（方便测试）
+  workflow_dispatch:
+
+# 限制并发，避免重复运行
+concurrency:
+  group: energy-monitor
+  cancel-in-progress: true
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 步骤 1: 检出代码
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      
+      # 步骤 2: 设置 Python 环境
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      # 步骤 3: 安装依赖
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # 步骤 4: 配置 Git 用户
+      - name: ⚙️ Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      # 步骤 5: 运行监控脚本
+      - name: 🚀 Run monitor
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          JINA_KEY: ${{ secrets.JINA_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python src/monitor.py
+      
+      # 步骤 6: 提交生成的报告
+      - name: 📤 Commit and push reports
+        run: |
+          git add *.md *.html history.txt || true
+          git commit -m "📊 Auto-generated report $(date +%Y-%m-%d %H:%M)" || true
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || true
+      
+      # 步骤 7: 上传报告作为 Artifact
+      - name: 📦 Upload reports as artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: energy-reports-${{ github.run_number }}
+          path: |
+            *.md
+            *.html
+          retention-days: 30

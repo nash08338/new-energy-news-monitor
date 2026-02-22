@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+
+# 敏感信息
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# 历史记录（可选，如需保留则删除此行）
+history.txt
+
+# 报告文件（可选，如需保留则删除此行）
+Energy_Report_*.md
+Energy_Report_*.html
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
