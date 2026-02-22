@@ -23,42 +23,57 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       
-      # 步骤 2: 设置 Python 环境
+      # 步骤 2: 调试 - 检查 history.txt（运行前）
+      - name: 🔍 Debug: Check history.txt before run
+        run: |
+          echo "=== 运行前检查 ==="
+          ls -la history.txt || echo "ℹ️ history.txt 不存在（首次运行正常）"
+          wc -l history.txt 2>/dev/null || echo "0 行"
+      
+      # 步骤 3: 设置 Python 环境
       - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
       
-      # 步骤 3: 安装依赖
+      # 步骤 4: 安装依赖
       - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      # 步骤 4: 配置 Git 用户
+      # 步骤 5: 配置 Git 用户
       - name: ⚙️ Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
-      # 步骤 5: 运行监控脚本
+      # 步骤 6: 运行监控脚本
       - name: 🚀 Run monitor
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           JINA_KEY: ${{ secrets.JINA_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python src/monitor.py
       
-      # 步骤 6: 提交生成的报告
+      # 步骤 7: 调试 - 检查 history.txt（运行后）
+      - name: 🔍 Debug: Check history.txt after run
+        run: |
+          echo "=== 运行后检查 ==="
+          ls -la history.txt || echo "❌ history.txt 未生成"
+          wc -l history.txt 2>/dev/null || echo "0 行"
+          head -20 history.txt 2>/dev/null || echo "无内容"
+      
+      # 步骤 8: 提交生成的报告
       - name: 📤 Commit and push reports
         run: |
           git add *.md *.html history.txt || true
-          git commit -m "📊 Auto-generated report $(date +%Y-%m-%d %H:%M)" || true
+          git commit -m "📊 Auto-generated report $(date -u +%Y-%m-%d)" || true
           git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || true
       
-      # 步骤 7: 上传报告作为 Artifact
+      # 步骤 9: 上传报告作为 Artifact
       - name: 📦 Upload reports as artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -67,4 +82,5 @@ jobs:
           path: |
             *.md
             *.html
+            history.txt
           retention-days: 30

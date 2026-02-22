@@ -15,11 +15,11 @@ env/
 *.pem
 
 # 历史记录（可选，如需保留则删除此行）
-history.txt
+#history.txt
 
 # 报告文件（可选，如需保留则删除此行）
-Energy_Report_*.md
-Energy_Report_*.html
+#Energy_Report_*.md
+#Energy_Report_*.html
 
 # IDE
 .vscode/
