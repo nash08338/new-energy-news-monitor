@@ -14,6 +14,11 @@ import json
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
+# ========== 路径配置 ==========
+# 获取仓库根目录（脚本所在目录的父目录）
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HISTORY_FILE = os.path.join(BASE_DIR, "history.txt")
+
 # ========== 安全配置区 ==========
 # 从环境变量读取 API Key（GitHub Actions 会自动注入）
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY', '')
@@ -29,18 +34,38 @@ SOURCES = [
     {"name": "Power Technology", "url": "https://www.power-technology.com/news/", "type": "path_filter"},
     {"name": "Energy Storage News", "url": "https://www.energy-storage.news/news/", "type": "feature_filter"}
 ]
-HISTORY_FILE = "history.txt"
+
 
 # ========== 辅助函数 ==========
 def check_history(link):
+    """检查链接是否已存在于历史记录中"""
     if not os.path.exists(HISTORY_FILE):
         return False
-    with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-        return link in f.read()
+    try:
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            content = f.read()
+            # 精确匹配整行
+            return link + "\n" in content or link in content.splitlines()
+    except Exception as e:
+        print(f"   ⚠️ 检查历史记录失败：{e}")
+        return False
+
 
 def save_history(link):
-    with open(HISTORY_FILE, "a", encoding="utf-8") as f:
-        f.write(link + "\n")
+    """保存链接到历史记录"""
+    try:
+        # 先检查是否已存在，避免重复写入
+        if check_history(link):
+            print(f"   ⚠️ 链接已存在，跳过保存：{link[:50]}...")
+            return
+        
+        with open(HISTORY_FILE, "a", encoding="utf-8") as f:
+            f.write(link + "\n")
+            f.flush()  # 立即写入磁盘
+        print(f"   💾 已保存：{link[:50]}...")
+    except Exception as e:
+        print(f"   ❌ 保存失败：{e}")
+
 
 def get_ai_summary(link):
     """获取 AI 摘要"""
@@ -93,6 +118,7 @@ def get_ai_summary(link):
             time.sleep(2)
             
     return "AI 总结出错：多次尝试后依然无法获取内容。"
+
 
 def normalize_date(date_str):
     """将各种日期格式标准化为 YYYY-MM-DD"""
@@ -154,6 +180,7 @@ def normalize_date(date_str):
     except:
         return "未知"
 
+
 def get_news_publish_date_jina(url):
     """Jina AI 方式提取时间"""
     try:
@@ -176,6 +203,7 @@ def get_news_publish_date_jina(url):
         return "未知", False
     except:
         return "未知", False
+
 
 def get_news_publish_date_bs4(url):
     """BeautifulSoup 方式提取时间"""
@@ -211,6 +239,7 @@ def get_news_publish_date_bs4(url):
     except:
         return "未知", False
 
+
 def get_news_publish_date(url):
     """双重备份时间提取"""
     date_jina, success = get_news_publish_date_jina(url)
@@ -222,6 +251,7 @@ def get_news_publish_date(url):
         return date_bs4
     
     return "未知"
+
 
 def clean_ai_summary(text):
     """清理 AI 摘要中的套话"""
@@ -236,6 +266,7 @@ def clean_ai_summary(text):
         text = text.replace(phrase, "")
     return text.strip()
 
+
 def generate_reports(report_data):
     """生成 Markdown 和 HTML 报告"""
     today = datetime.now().strftime("%Y-%m-%d")
@@ -244,7 +275,7 @@ def generate_reports(report_data):
     
     # Markdown 报告
     with open(md_filename, "w", encoding="utf-8") as f:
-        f.write(f"# 🌍 全球能源内参 ({today})\n\n{report_data}")
+        f.write(f"# 🌍 全球能源新闻 ({today})\n\n{report_data}")
     
     # HTML 报告
     body_html = report_data.replace('### ', '<div class="news-item"><h3>')
@@ -277,8 +308,21 @@ def generate_reports(report_data):
     
     print(f"✅ 报告已生成：{md_filename}, {html_filename}")
 
+
 def monitor_all_sources():
-    """监控所有新闻源，仅处理最近7天内的新闻"""
+    """监控所有新闻源，仅处理最近 7 天内的新闻"""
+    # === 调试输出 ===
+    print(f"📍 当前工作目录：{os.getcwd()}")
+    print(f"📍 history.txt 完整路径：{os.path.abspath(HISTORY_FILE)}")
+    print(f"📍 history.txt 是否存在：{os.path.exists(HISTORY_FILE)}")
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            print(f"📍 当前历史记录数：{len(lines)} 条")
+    else:
+        print("📍 history.txt 不存在，将创建新文件")
+    # ===============
+    
     full_report = ""
     bad_keywords = ['newsletter', 'feed', 'contact', 'about', 'events', 'advertise', 'privacy', 'terms', 'subscribe', 'img', 'image']
     bad_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.pdf', '.webp', '.avif']
@@ -318,15 +362,20 @@ def monitor_all_sources():
                         if link_lower.count('-') >= 4:
                             is_news = True
 
-                # 跳过非新闻或已处理过的
-                if not is_news or check_history(link_original):
+                # 跳过非新闻
+                if not is_news:
+                    continue
+                
+                # 跳过已处理过的链接
+                if check_history(link_original):
+                    print(f"⏭️  跳过（已处理）：{title}")
                     continue
 
                 print(f"✅ 捕获情报：{title}")
                 publish_date_str = get_news_publish_date(link_original)
                 print(f"   📅 发布时间：{publish_date_str}")
 
-                # === 新增：时间筛选逻辑 ===
+                # === 时间筛选逻辑 ===
                 skip_due_to_date = False
                 if publish_date_str == "未知":
                     print("   ⏭️  跳过：无法确定发布时间")
@@ -336,16 +385,17 @@ def monitor_all_sources():
                         # 尝试解析为 datetime
                         pub_dt = datetime.strptime(publish_date_str, "%Y-%m-%d")
                         if pub_dt.date() < one_week_ago.date():
-                            print(f"   ⏭️  跳过：发布时间早于 {one_week_ago.strftime('%Y-%m-%d')}（超过7天）")
+                            print(f"   ⏭️  跳过：发布时间早于 {one_week_ago.strftime('%Y-%m-%d')}（超过 7 天）")
                             skip_due_to_date = True
                         else:
-                            print("   ✅ 时间符合要求（7天内）")
+                            print("   ✅ 时间符合要求（7 天内）")
                     except Exception as e:
                         print(f"   ⏭️  跳过：日期解析失败 - {e}")
                         skip_due_to_date = True
 
                 if skip_due_to_date:
-                    save_history(link_original)  # 可选：避免重复检查旧新闻
+                    # 即使跳过也保存记录，避免重复检查旧新闻
+                    save_history(link_original)
                     continue
 
                 # === 仅当时间合格时，才获取 AI 摘要 ===
@@ -357,19 +407,21 @@ def monitor_all_sources():
                 full_report += f"**来源**: {source['name']} | [查看原文]({link_original})\n\n"
                 full_report += f"📝 中文摘要:\n{summary}\n\n---\n\n"
                 
+                # === 关键：保存到历史记录 ===
                 save_history(link_original)
                 found_count += 1
                 time.sleep(random.uniform(3, 8))
 
             if found_count == 0:
-                print("✨ 未发现新内容（或无7天内新闻）。")
+                print("✨ 未发现新内容（或无 7 天内新闻）。")
         except Exception as e:
             print(f"❌ 出错：{e}")
 
     if full_report:
         generate_reports(full_report)
     else:
-        print("📭 本次无新报告生成（无7天内有效新闻）")
+        print("📭 本次无新报告生成（无 7 天内有效新闻）")
+
 
 if __name__ == "__main__":
     print("=" * 50)
