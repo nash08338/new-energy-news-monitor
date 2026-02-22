@@ -74,7 +74,7 @@ def get_ai_summary(link):
             data = {
                 "model": "deepseek-chat",
                 "messages": [
-                    {"role": "system", "content": "你是一位专业资深的能源分析师，请用中文总结这篇新闻。要求：分为'核心内容"和'商业机会"两个部分。"},
+                    {"role": "system", "content": "你是一位专业资深的能源分析师，请用中文总结这篇新闻。要求：分为'核心内容'和'商业机会'两个部分。"},
                     {"role": "user", "content": full_text}
                 ],
                 "temperature": 0.3,
