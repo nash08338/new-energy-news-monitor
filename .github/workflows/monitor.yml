@@ -60,6 +60,9 @@ jobs:
           # 移动 HTML 和 MD 报告到 docs (如果存在)
           mv *.html docs/ 2>/dev/null || true
           mv *.md docs/ 2>/dev/null || true
+
+          # ✅ 新增：移动 token_usage.json（关键！）
+          mv token_usage.json docs/ 2>/dev/null || true
           
           # 如果有 history.txt 也需要移动 (如果您的 index 依赖它，否则可忽略)
           # mv history.txt docs/ 2>/dev/null || true
@@ -71,14 +74,19 @@ jobs:
       # 步骤 7: 提交生成的报告 (修改路径为 docs/)
       - name: 📤 Commit and push reports
         run: |
-          # 只添加 docs 文件夹下的变更
-          git add docs/*.md docs/*.html || true
-          # 如果 history.txt 在根目录且需要更新，也加上
-          git add history.txt || true 
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           
+          # 先拉取，避免冲突
+          git pull origin main || true
+          
+          # ⭐ 新增：添加 token_usage.json
+          git add docs/*.md docs/*.html docs/token_usage.json history.txt || true
           git commit -m "📊 Auto-generated report $(date -u +%Y-%m-%d)" || true
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || true
-      
+
+
+
       # 步骤 8: 上传报告作为 Artifact
       - name: 📦 Upload reports as artifacts
         uses: actions/upload-artifact@v4
@@ -88,5 +96,6 @@ jobs:
           path: |
             docs/*.md
             docs/*.html
+            docs/token_usage.json   # 👈 添加这一行
             history.txt
           retention-days: 30
