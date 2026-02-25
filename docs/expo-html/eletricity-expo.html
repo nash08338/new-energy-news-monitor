@@ -37,9 +37,8 @@
                 const selectedMonth = document.getElementById('monthSelect').value;
                 const selectedCont = document.getElementById('continentSelect').value;
 
-                let monthPrefix = selectedMonth === 'all' ? '全球' : monthMap[selectedMonth];
-                let contSuffix = selectedCont === 'all' ? (selectedMonth === 'all' ? '' : '全境') : selectedCont;
-                document.getElementById('dynamicTitle').innerText = `${monthPrefix}${contSuffix}电力展会分布动态`;
+            let locationText = (selectedCont === 'all') ? (selectedMonth === 'all' ? '全球' : monthMap[selectedMonth] + '全境') : selectedCont;
+            document.getElementById('dynamicTitle').innerText = `${locationText}电力展会分布动态`;
 
                 const filtered = rawData.filter(d => {
                     return (selectedMonth === 'all' || d.month === selectedMonth) &&
