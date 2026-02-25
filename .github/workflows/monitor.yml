@@ -2,7 +2,7 @@ name:  能源新闻自动监控
 
 on:
   schedule:
-    - cron: '45 0 * * *'   # UTC 0:45 = 北京时间 8:45
+    - cron: '45 1 * * *'   # UTC 0:45 = 北京时间 9:45
   workflow_dispatch:
 
 concurrency:
@@ -99,3 +99,4 @@ jobs:
             docs/token_usage.json   # 👈 添加这一行
             history.txt
           retention-days: 30
+## keep alive
