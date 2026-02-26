@@ -31,8 +31,8 @@
     "jina_requests": 6,
     "jina_tokens": 5250,
     "deepseek_requests": 6,
-    "deepseek_input_tokens": 6005,
-    "deepseek_output_tokens": 1876,
-    "deepseek_total_tokens": 7881
+    "deepseek_input_tokens": 6052,
+    "deepseek_output_tokens": 1603,
+    "deepseek_total_tokens": 7655
   }
 ]
