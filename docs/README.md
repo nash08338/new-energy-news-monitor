@@ -8,12 +8,12 @@
 - ✅ AI 生成中文摘要
 - ✅ 提取新闻发布时间
 - ✅ 生成 Markdown 和 HTML 报告
-- ✅ 定时自动运行（每天北京时间 8：45）
+- ✅ 手动运行
 
 ## 部署
 
 1. 在 GitHub Secrets 中配置 API Key
-2. Actions 会自动运行
+2. Actions 手动运行
 
 ## 报告查看
 
