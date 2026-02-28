@@ -5,11 +5,22 @@
     <title>Nash - 全球能源展会分布</title>
     <script src="https://cdn.staticfile.org/plotly.js/2.24.1/plotly-basic.min.js"></script>
     <script>
+        // 1. 双保险加载逻辑
         if (typeof Plotly === 'undefined') {
             var script = document.createElement('script');
             script.src = 'plotly.min.js';
             document.getElementsByTagName('head')[0].appendChild(script);
         }
+
+        // 2. 新增：移动端访问温馨提示 (放在这里)
+        window.addEventListener('load', function() {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                const statsEl = document.getElementById('stats');
+                if (statsEl) {
+                    statsEl.innerHTML += '<span style="color:#ff4d4f; margin-left:15px; font-size:14px;">⚠️ 建议使用电脑浏览器以获得最佳交互体验</span>';
+                }
+            }
+        });
     </script>
     <style>
         /* 这里保留你之前的 CSS 样式... */
