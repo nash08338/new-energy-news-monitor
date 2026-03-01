@@ -3,6 +3,7 @@
 """
 能源新闻监控脚本 - GitHub Actions 安全版本
 API Key 从环境变量读取，不硬编码
+修改说明：已移除 HTML 生成功能，仅生成 Markdown 报告
 """
 
 import os
@@ -22,10 +23,9 @@ HISTORY_FILE = os.path.join(BASE_DIR, "history.txt")
 # 报告输出目录
 REPORTS_DIR = os.path.join(BASE_DIR, "docs")
 
-TOKEN_USAGE_FILE = os.path.join(REPORTS_DIR, "token_usage.json")  # ⭐ 新增
+TOKEN_USAGE_FILE = os.path.join(REPORTS_DIR, "token_usage.json")
 
 # ========== Token 监控配置 ==========
-# ⭐ 新增：Token 使用统计
 token_stats = {
     "date": datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d"),
     "jina_requests": 0,
@@ -36,7 +36,6 @@ token_stats = {
     "deepseek_total_tokens": 0,
 }
 
-# ⭐ 新增：加载历史 Token 使用记录
 def load_token_history():
     """加载历史 Token 使用记录"""
     if os.path.exists(TOKEN_USAGE_FILE):
@@ -47,17 +46,14 @@ def load_token_history():
             return []
     return []
 
-# ⭐ 新增：保存 Token 使用记录
 def save_token_usage():
     """保存今日 Token 使用统计"""
     history = load_token_history()
     
-    # 查找是否已有今日记录
     today = token_stats["date"]
     found = False
     for record in history:
         if record.get("date") == today:
-            # 更新今日记录
             record.update(token_stats)
             found = True
             break
@@ -65,28 +61,23 @@ def save_token_usage():
     if not found:
         history.append(token_stats.copy())
     
-    # 只保留最近 30 天记录
     history = history[-30:]
     
-    # 保存
     os.makedirs(REPORTS_DIR, exist_ok=True)
     with open(TOKEN_USAGE_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
     
     print(f"💰 Token 使用记录已保存：{TOKEN_USAGE_FILE}")
 
-# ⭐ 新增：估算 Jina AI Token 数（按字符数估算）
 def estimate_jina_tokens(text):
     """估算 Jina AI 的 Token 数（1 Token ≈ 4 字符）"""
     return len(text) // 4
 
 
 # ========== 安全配置区 ==========
-# 从环境变量读取 API Key（GitHub Actions 会自动注入）
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY', '')
 JINA_KEY = os.getenv('JINA_KEY', '')
 
-# 验证密钥
 if not DEEPSEEK_API_KEY:
     print("⚠️ 警告：DEEPSEEK_API_KEY 未配置，AI 摘要将跳过")
 if not JINA_KEY:
@@ -106,7 +97,6 @@ def check_history(link):
     try:
         with open(HISTORY_FILE, "r", encoding="utf-8") as f:
             content = f.read()
-            # 精确匹配整行
             return link + "\n" in content or link in content.splitlines()
     except Exception as e:
         print(f"   ⚠️ 检查历史记录失败：{e}")
@@ -116,14 +106,13 @@ def check_history(link):
 def save_history(link):
     """保存链接到历史记录"""
     try:
-        # 先检查是否已存在，避免重复写入
         if check_history(link):
             print(f"   ⚠️ 链接已存在，跳过保存：{link[:50]}...")
             return
         
         with open(HISTORY_FILE, "a", encoding="utf-8") as f:
             f.write(link + "\n")
-            f.flush()  # 立即写入磁盘
+            f.flush()
         print(f"   💾 已保存：{link[:50]}...")
     except Exception as e:
         print(f"   ❌ 保存失败：{e}")
@@ -137,7 +126,6 @@ def get_ai_summary(link):
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            # 使用 Jina AI 读取文章内容
             headers = {"X-Return-Format": "markdown"}
             if JINA_KEY:
                 headers["Authorization"] = f"Bearer {JINA_KEY}"
@@ -148,14 +136,12 @@ def get_ai_summary(link):
             full_text = ""
             if response.status_code == 200:
                 full_text = response.text[:3500]
-                # ⭐ 新增：统计 Jina Token
                 token_stats["jina_requests"] += 1
                 token_stats["jina_tokens"] += estimate_jina_tokens(full_text)
             
             if not full_text:
                 continue
 
-            # 调用 DeepSeek API
             url = "https://api.deepseek.com/chat/completions"
             headers_ds = {
                 "Content-Type": "application/json",
@@ -176,7 +162,6 @@ def get_ai_summary(link):
             data=json.dumps(data), 
             timeout=30)
             
-            # ⭐ 统计 DeepSeek Token
             result = response.json()
             usage = result.get('usage', {})
             token_stats["deepseek_requests"] += 1
@@ -346,17 +331,14 @@ def clean_ai_summary(text):
 
 
 def generate_reports(report_data):
-    """生成 Markdown 和 HTML 报告"""
+    """仅生成 Markdown 报告 (HTML 生成已移除)"""
     today = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
     
-    # ⭐ 关键修改：确保 docs 文件夹存在
     os.makedirs(REPORTS_DIR, exist_ok=True)
     
-    # 关键修改：文件路径改为 docs/ 文件夹
     md_filename = os.path.join(REPORTS_DIR, f"Energy_Report_{today}.md")
-    html_filename = os.path.join(REPORTS_DIR, f"Energy_Report_{today}.html")
 
-    # ⭐ 新增：在报告中添加 Token 使用统计
+    # Token 使用统计 (Markdown 格式)
     token_summary = f"""
 ## 💰 API Token 使用统计
 
@@ -372,62 +354,16 @@ def generate_reports(report_data):
     with open(md_filename, "w", encoding="utf-8") as f:
         f.write(f"# 🌍 全球能源新闻 ({today})\n\n{token_summary}{report_data}")
     
-    # HTML 报告
-    body_html = report_data.replace('### ', '<div class="news-item"><h3>')
-    body_html = body_html.replace('\n', '<br>')
+    # ⭐ HTML 生成代码已在此处完全移除
     
-    # ⭐ 新增：Token 统计 HTML
-    token_html = f"""
-    <div class="token-stats">
-        <h2>💰 API Token 使用统计</h2>
-        <table>
-            <tr><th>API</th><th>请求次数</th><th>Token 用量</th></tr>
-            <tr><td>Jina AI</td><td>{token_stats['jina_requests']}</td><td>~{token_stats['jina_tokens']} tokens</td></tr>
-            <tr><td>DeepSeek</td><td>{token_stats['deepseek_requests']}</td><td>{token_stats['deepseek_total_tokens']} tokens</td></tr>
-            <tr><td><strong>合计</strong></td><td><strong>{token_stats['jina_requests'] + token_stats['deepseek_requests']}</strong></td><td><strong>~{token_stats['jina_tokens'] + token_stats['deepseek_total_tokens']}</strong></td></tr>
-        </table>
-    </div>
-    """
-    
-    html_template = f"""<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全球能源新闻 ({today})</title>
-<style>
-    * {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #333; line-height: 1.6; box-sizing: border-box; }}
-    body {{ background: #fff; padding: 60px 20px; max-width: 800px; margin: 0 auto; }}
-    h1 {{ text-align: center; color: #1a202c; margin-bottom: 60px; font-size: 2rem; }}
-    .news-item {{ margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #e2e8f0; }}
-    h3 {{ color: #2b6cb0; font-size: 1.3rem; margin-top: 0; }}
-    .publish-date {{ font-size: 0.85rem; color: #718096; font-style: italic; }}
-    a {{ color: #3182ce; text-decoration: none; }}
-    .token-stats {{ background: #f7fafc; padding: 20px; border-radius: 10px; margin-bottom: 40px; }}
-    .token-stats table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
-    .token-stats th, .token-stats td {{ padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }}
-    .token-stats th {{ background: #edf2f7; }}
-</style>
-</head>
-<body>
-    <h1>🌍 全球能源新闻 ({today})</h1>
-    {token_html}
-    <div class="main-content">{body_html}</div>
-</body>
-</html>"""
-    
-    with open(html_filename, "w", encoding="utf-8") as f:
-        f.write(html_template)
-    
-    # ⭐ 保存 Token 使用记录
+    # 保存 Token 使用记录
     save_token_usage()
 
-    print(f"✅ 报告已生成：{md_filename}, {html_filename}")
+    print(f"✅ 报告已生成：{md_filename}")
 
 
 def monitor_all_sources():
     """监控所有新闻源，仅处理最近 7 天内的新闻"""
-    # === 调试输出 ===
     print(f"📍 当前工作目录：{os.getcwd()}")
     print(f"📍 history.txt 完整路径：{os.path.abspath(HISTORY_FILE)}")
     print(f"📍 history.txt 是否存在：{os.path.exists(HISTORY_FILE)}")
@@ -437,13 +373,11 @@ def monitor_all_sources():
             print(f"📍 当前历史记录数：{len(lines)} 条")
     else:
         print("📍 history.txt 不存在，将创建新文件")
-    # ===============
     
     full_report = ""
     bad_keywords = ['newsletter', 'feed', 'contact', 'about', 'events', 'advertise', 'privacy', 'terms', 'subscribe', 'img', 'image']
     bad_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.pdf', '.webp', '.avif']
 
-    # 计算一周前的日期（用于比较）
     one_week_ago = datetime.now() - timedelta(days=7)
 
     for source in SOURCES:
@@ -459,7 +393,7 @@ def monitor_all_sources():
             found_count = 0
             for title, link in all_links:
                 if found_count >= 3:
-                    break  # 提前退出内层循环
+                    break
                 
                 title = title.strip()
                 link_original = re.split(r'[\s"]', link)[0]
@@ -478,11 +412,9 @@ def monitor_all_sources():
                         if link_lower.count('-') >= 4:
                             is_news = True
 
-                # 跳过非新闻
                 if not is_news:
                     continue
                 
-                # 跳过已处理过的链接
                 if check_history(link_original):
                     print(f"️  跳过（已处理）：{title}")
                     continue
@@ -491,14 +423,12 @@ def monitor_all_sources():
                 publish_date_str = get_news_publish_date(link_original)
                 print(f"   📅 发布时间：{publish_date_str}")
 
-                # === 时间筛选逻辑 ===
                 skip_due_to_date = False
                 if publish_date_str == "未知":
                     print("   ⏭️  跳过：无法确定发布时间")
                     skip_due_to_date = True
                 else:
                     try:
-                        # 尝试解析为 datetime
                         pub_dt = datetime.strptime(publish_date_str, "%Y-%m-%d")
                         if pub_dt.date() < one_week_ago.date():
                             print(f"   ⏭️  跳过：发布时间早于 {one_week_ago.strftime('%Y-%m-%d')}（超过 7 天）")
@@ -510,11 +440,9 @@ def monitor_all_sources():
                         skip_due_to_date = True
 
                 if skip_due_to_date:
-                    # 即使跳过也保存记录，避免重复检查旧新闻
                     save_history(link_original)
                     continue
 
-                # === 仅当时间合格时，才获取 AI 摘要 ===
                 summary = get_ai_summary(link_original)
                 summary = clean_ai_summary(summary)
                 
@@ -523,7 +451,6 @@ def monitor_all_sources():
                 full_report += f"**来源**: {source['name']} | [查看原文]({link_original})\n\n"
                 full_report += f"📝 中文摘要:\n{summary}\n\n---\n\n"
                 
-                # === 关键：保存到历史记录 ===
                 save_history(link_original)
                 found_count += 1
                 time.sleep(random.uniform(3, 8))
@@ -537,7 +464,6 @@ def monitor_all_sources():
         generate_reports(full_report)
     else:
         print("📭 本次无新报告生成（无 7 天内有效新闻）")
-        # 即使无报告，也保存 Token 记录（可能为 0）
         save_token_usage()
 
 
