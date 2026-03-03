@@ -70,5 +70,14 @@
     "deepseek_input_tokens": 5982,
     "deepseek_output_tokens": 1970,
     "deepseek_total_tokens": 7952
+  },
+  {
+    "date": "2026-03-03",
+    "jina_requests": 5,
+    "jina_tokens": 4375,
+    "deepseek_requests": 5,
+    "deepseek_input_tokens": 5048,
+    "deepseek_output_tokens": 1661,
+    "deepseek_total_tokens": 6709
   }
 ]
