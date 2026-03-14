@@ -1,0 +1,37 @@
+name: 测试ESI Africa访问
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: 安装依赖
+        run: |
+          pip install playwright requests
+          playwright install chromium
+
+      - name: 测试访问
+        run: |
+          python - <<'EOF'
+          from playwright.sync_api import sync_playwright
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              context = browser.new_context(
+                  user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
+                  locale="en-US",
+              )
+              page = context.new_page()
+              page.goto("https://www.esi-africa.com/news/", timeout=30000)
+              page.wait_for_timeout(3000)
+              html = page.content()
+              browser.close()
+
+          print(f"状态：{'成功' if 'esi-africa' in html else '失败'}")
+          print(f"内容长度：{len(html)}")
+          print(html[:300])
+          EOF
