@@ -42,6 +42,11 @@ SOURCES = [
         "rss":     "https://www.electrive.com/category/energy-infrastructure/feed/",
         "history": "electrive_history.txt",
     },
+    {
+        "name":    "PowerTechnology",
+        "rss":     "https://www.power-technology.com/news/feed/",
+        "history": "powertechnology_history.txt",
+    },
 ]
 
 CSV_FILE = "docs/news_output.csv"    # 输出到 docs/ 目录，与原报告并列
