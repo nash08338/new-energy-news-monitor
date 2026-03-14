@@ -71,12 +71,11 @@ def get_region(title):
 #  单个来源抓取
 # ══════════════════════════════════════
 def fetch_source(source, seven_days_ago):
-    name     = source["name"]
-    rss_url  = source["rss"]
+    name         = source["name"]
+    rss_url      = source["rss"]
     history_file = source["history"]
-
-    seen_urls = load_history(history_file)
-    new_data  = []
+    seen_urls    = load_history(history_file)
+    new_data     = []
 
     print(f"\n{'='*50}")
     print(f"📡 来源：{name}")
@@ -86,6 +85,7 @@ def fetch_source(source, seven_days_ago):
         paged_url = f"{rss_url}?paged={page}" if page > 1 else rss_url
         print(f"  🔍 第 {page} 页：{paged_url}")
 
+        # ✅ 重试机制
         feed = None
         for attempt in range(3):
             feed = feedparser.parse(paged_url)
@@ -98,38 +98,33 @@ def fetch_source(source, seven_days_ago):
             print("  🏁 重试3次仍为空，已到达最后一页。")
             break
 
-        #
+        # ✅ 缩进正确，与 for page 同级
+        hit_old = False
+        for entry in feed.entries:
+            link     = entry.link
+            pub_date = datetime.fromtimestamp(time.mktime(entry.published_parsed))
 
-            hit_old = False
-            for entry in feed.entries:
-                link     = entry.link
-                pub_date = datetime.fromtimestamp(time.mktime(entry.published_parsed))
-
-                if pub_date >= seven_days_ago:
-                    if link not in seen_urls:
-                        region = get_region(entry.title)
-                        new_data.append([
-                            name,                          # 来源
-                            region,
-                            entry.title,
-                            pub_date.strftime('%Y-%m-%d'),
-                            link
-                        ])
-                        seen_urls.add(link)
-                        save_history(history_file, link)
-                else:
-                    print(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
-                    hit_old = True
-                    break
-
-            if hit_old:
+            if pub_date >= seven_days_ago:
+                if link not in seen_urls:
+                    region = get_region(entry.title)
+                    new_data.append([
+                        name,
+                        region,
+                        entry.title,
+                        pub_date.strftime('%Y-%m-%d'),
+                        link
+                    ])
+                    seen_urls.add(link)
+                    save_history(history_file, link)
+            else:
+                print(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
+                hit_old = True
                 break
 
-            time.sleep(random.uniform(1.5, 3.0))
-
-        except Exception as e:
-            print(f"  ⚠️ 出错：{e}")
+        if hit_old:
             break
+
+        time.sleep(random.uniform(1.5, 3.0))
 
     print(f"  ✅ {name} 本次新增：{len(new_data)} 条")
     return new_data
