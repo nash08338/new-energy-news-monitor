@@ -150,7 +150,7 @@ def main():
         all_new_data.extend(data)
 
     if all_new_data:
-        all_new_data.sort(key=lambda x: (x[1], x[3]))  # 按区域+日期排序
+        all_new_data.sort(key=lambda x: x[3], reverse=True)  # 按日期降序  # 按区域+日期排序
 
         file_exists = os.path.isfile(CSV_FILE)
         with open(CSV_FILE, "a", newline="", encoding="utf-8-sig") as f:
