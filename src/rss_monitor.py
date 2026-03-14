@@ -86,11 +86,19 @@ def fetch_source(source, seven_days_ago):
         paged_url = f"{rss_url}?paged={page}" if page > 1 else rss_url
         print(f"  🔍 第 {page} 页：{paged_url}")
 
-        try:
+        feed = None
+        for attempt in range(3):
             feed = feedparser.parse(paged_url)
-            if not feed.entries:
-                print("  🏁 已到达最后一页。")
+            if feed.entries:
                 break
+            print(f"  ⚠️ 第 {attempt+1} 次返回空，等待后重试...")
+            time.sleep(random.uniform(3.0, 6.0))
+
+        if not feed or not feed.entries:
+            print("  🏁 重试3次仍为空，已到达最后一页。")
+            break
+
+        #
 
             hit_old = False
             for entry in feed.entries:
