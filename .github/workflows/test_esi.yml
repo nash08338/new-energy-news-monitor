@@ -18,20 +18,42 @@ jobs:
         run: |
           python - <<'EOF'
           from playwright.sync_api import sync_playwright
+          import time
 
           with sync_playwright() as p:
-              browser = p.chromium.launch(headless=True)
-              context = browser.new_context(
-                  user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
-                  locale="en-US",
+              browser = p.chromium.launch(
+                  headless=True,
+                  args=[
+                      "--disable-blink-features=AutomationControlled",
+                      "--no-sandbox",
+                  ]
               )
+              context = browser.new_context(
+                  user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+                  locale="en-US",
+                  viewport={"width": 1280, "height": 800},
+                  java_script_enabled=True,
+                  accept_downloads=False,
+              )
+              context.add_init_script("""
+                  Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+                  Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3]});
+                  Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']});
+              """)
               page = context.new_page()
-              page.goto("https://www.esi-africa.com/news/", timeout=30000)
-              page.wait_for_timeout(3000)
-              html = page.content()
-              browser.close()
+              page.goto("https://www.esi-africa.com/news/", timeout=60000)
 
-          print(f"状态：{'成功' if 'esi-africa' in html else '失败'}")
-          print(f"内容长度：{len(html)}")
-          print(html[:300])
+              for i in range(6):
+                  time.sleep(5)
+                  html = page.content()
+                  title = page.title()
+                  print(f"第{i+1}次检查，标题：{title}，长度：{len(html)}")
+                  if "Just a moment" not in html:
+                      print("✅ Cloudflare验证通过！")
+                      break
+              else:
+                  print("❌ 30秒内未通过验证")
+
+              print(html[:500])
+              browser.close()
           EOF
