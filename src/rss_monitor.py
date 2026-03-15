@@ -178,7 +178,10 @@ def fetch_source(source, seven_days_ago, seen_urls):
         for entry in feed.entries:
             link = entry.link
             try:
-                pub_date = datetime.fromtimestamp(time.mktime(entry.published_parsed))
+                pub_date = datetime.fromtimestamp(
+                    time.mktime(entry.published_parsed),
+                    tz=ZoneInfo("Asia/Shanghai")
+                )
             except Exception:
                 continue
 
@@ -557,7 +560,7 @@ def generate_images():
 # ══════════════════════════════════════
 def main():
     seven_days_ago = now_cst() - timedelta(days=DAYS_BACK)
-    seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0)
+    seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0, tzinfo=ZoneInfo("Asia/Shanghai"))
 
     print(f"[{now_cst().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控（北京时间）")
     print(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
