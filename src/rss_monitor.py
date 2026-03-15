@@ -41,17 +41,22 @@ REGION_MAP = {
 #  配置区
 # ══════════════════════════════════════
 DAYS_BACK   = 7
-DAILY_DIR   = "docs/daily"
-MASTER_FILE = "docs/news_master.csv"
-IMAGE_DIR   = "docs/images"
+
+# history 文件存放在 src/ 同级
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))  # src/ 目录
+ROOT_DIR    = os.path.dirname(BASE_DIR)                   # 项目根目录
+
+DAILY_DIR   = os.path.join(ROOT_DIR, "docs", "daily")
+MASTER_FILE = os.path.join(ROOT_DIR, "docs", "news_master.csv")
+IMAGE_DIR   = os.path.join(ROOT_DIR, "docs", "images")
 HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
 
 SOURCES = [
-    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                   "history": "solar_history.txt"},
-    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/", "history": "electrive_history.txt"},
-    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/",                    "history": "powertechnology_history.txt"},
-    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/",            "history": "energy_storage_history.txt"},
-    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/",                         "history": "pv_magazine_history.txt"},
+    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                   "history": os.path.join(BASE_DIR, "solar_history.txt")},
+    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/", "history": os.path.join(BASE_DIR, "electrive_history.txt")},
+    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/",                    "history": os.path.join(BASE_DIR, "powertechnology_history.txt")},
+    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/",            "history": os.path.join(BASE_DIR, "energy_storage_history.txt")},
+    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/",                         "history": os.path.join(BASE_DIR, "pv_magazine_history.txt")},
 ]
 
 # GitHub Actions 通过环境变量读取，本地测试时直接赋值
