@@ -47,6 +47,16 @@ SOURCES = [
         "rss":     "https://www.power-technology.com/news/feed/",
         "history": "powertechnology_history.txt",
     },
+    {
+        "name": "EnergyStorageNews",
+        "rss": "https://www.energy-storage.news/category/news/feed/",
+        "history": "energy_storage_history.txt",
+    },
+    {
+        "name": "PVMagazine",
+        "rss": "https://www.pv-magazine.com/news/feed/",
+        "history": "pv_magazine_history.txt",
+    },
 ]
 
 CSV_FILE = "docs/news_output.csv"    # 输出到 docs/ 目录，与原报告并列
