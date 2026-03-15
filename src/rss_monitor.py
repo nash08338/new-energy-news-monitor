@@ -38,28 +38,27 @@ REGION_MAP = {
 }
 
 # ══════════════════════════════════════
-#  配置区
+#  配置区（先定义路径，再使用）
 # ══════════════════════════════════════
-DAYS_BACK   = 7
+DAYS_BACK = 7
 
-# history 文件存放在 src/ 同级
 BASE_DIR    = os.path.dirname(os.path.abspath(__file__))  # src/ 目录
 ROOT_DIR    = os.path.dirname(BASE_DIR)                   # 项目根目录
 
 DAILY_DIR   = os.path.join(ROOT_DIR, "docs", "daily")
 MASTER_FILE = os.path.join(ROOT_DIR, "docs", "news_master.csv")
+USED_FILE   = os.path.join(ROOT_DIR, "docs", "used_news.csv")
 IMAGE_DIR   = os.path.join(ROOT_DIR, "docs", "images")
 HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
 
 SOURCES = [
-    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                   "history": os.path.join(BASE_DIR, "solar_history.txt")},
-    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/", "history": os.path.join(BASE_DIR, "electrive_history.txt")},
-    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/",                    "history": os.path.join(BASE_DIR, "powertechnology_history.txt")},
-    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/",            "history": os.path.join(BASE_DIR, "energy_storage_history.txt")},
-    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/",                         "history": os.path.join(BASE_DIR, "pv_magazine_history.txt")},
+    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/"},
+    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/"},
+    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/"},
+    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/"},
+    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/"},
 ]
 
-# GitHub Actions 通过环境变量读取，本地测试时直接赋值
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
 client = OpenAI(
@@ -69,18 +68,8 @@ client = OpenAI(
 )
 
 # ══════════════════════════════════════
-#  核心抓取函数（不改动）
+#  工具函数
 # ══════════════════════════════════════
-def load_history(filepath):
-    if os.path.exists(filepath):
-        with open(filepath, "r", encoding="utf-8") as f:
-            return set(line.strip() for line in f)
-    return set()
-
-def save_history(filepath, url):
-    with open(filepath, "a", encoding="utf-8") as f:
-        f.write(url + "\n")
-
 def get_region(title):
     matched = []
     for region, keywords in REGION_MAP.items():
@@ -90,10 +79,71 @@ def get_region(title):
         return "全球/其他"
     return matched[0] if len(matched) == 1 else "跨区域"
 
-def fetch_source(source, seven_days_ago):
-    name, rss_url, history_file = source["name"], source["rss"], source["history"]
-    seen_urls = load_history(history_file)
-    new_data  = []
+def load_used_links():
+    """读取已经用过的新闻链接"""
+    used = set()
+    if os.path.exists(USED_FILE):
+        with open(USED_FILE, "r", encoding="utf-8-sig") as f:
+            reader = csv.reader(f)
+            next(reader, None)
+            for r in reader:
+                if r:
+                    used.add(r[0])
+    return used
+
+def save_used_links(links):
+    """把本次用过的链接追加写入 used_news.csv"""
+    file_exists = os.path.exists(USED_FILE)
+    with open(USED_FILE, "a", newline="", encoding="utf-8-sig") as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(["详情链接", "使用日期"])
+        for link in links:
+            writer.writerow([link, datetime.now().strftime("%Y-%m-%d")])
+
+def load_unused_news():
+    """从总表读取未使用过的新闻"""
+    if not os.path.exists(MASTER_FILE):
+        print("  ⚠️ 总表不存在，跳过")
+        return []
+
+    used_links = load_used_links()
+    unused = []
+    with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
+        reader = csv.reader(f)
+        next(reader, None)
+        for r in reader:
+            if len(r) >= 5 and r[4] not in used_links:
+                unused.append(r)
+
+    print(f"  📰 未使用新闻：{len(unused)} 条")
+    if len(unused) < 8:
+        print(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
+    return unused
+
+def match_used_links(unused_news, data):
+    """用返回的中文标题反查原始新闻链接，比序号更可靠"""
+    selected_titles = []
+    for sec in data.get("news_sections", []):
+        selected_titles.extend(sec.get("titles", []))
+
+    used_links = []
+    for title in selected_titles:
+        keywords = [w for w in title[:20].split() if len(w) > 1]
+        for row in unused_news:
+            original = row[2].lower()
+            if any(kw.lower() in original for kw in keywords):
+                if row[4] not in used_links:
+                    used_links.append(row[4])
+                break
+    return used_links
+
+# ══════════════════════════════════════
+#  核心抓取函数（seen_urls 从总表传入）
+# ══════════════════════════════════════
+def fetch_source(source, seven_days_ago, seen_urls):
+    name, rss_url = source["name"], source["rss"]
+    new_data = []
 
     print(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
@@ -108,7 +158,8 @@ def fetch_source(source, seven_days_ago):
                 agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
             )
             if hasattr(feed, 'status') and feed.status in (301, 302) and feed.get("href"):
-                feed = feedparser.parse(feed.href,
+                feed = feedparser.parse(
+                    feed.href,
                     agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
                 )
             if feed.entries:
@@ -135,7 +186,6 @@ def fetch_source(source, seven_days_ago):
                         entry.title, pub_date.strftime('%Y-%m-%d'), link
                     ])
                     seen_urls.add(link)
-                    save_history(history_file, link)
             else:
                 print(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
                 hit_old = True
@@ -149,7 +199,7 @@ def fetch_source(source, seven_days_ago):
     return new_data
 
 # ══════════════════════════════════════
-#  CSV 处理函数（不改动）
+#  CSV 处理函数
 # ══════════════════════════════════════
 def split_by_date(all_new_data):
     os.makedirs(DAILY_DIR, exist_ok=True)
@@ -237,12 +287,19 @@ def merge_to_master():
     print(f"📋 总表已更新，新增 {len(new_rows)} 条，共 {len(all_rows)} 条")
 
 # ══════════════════════════════════════
-#  DeepSeek 调用
+#  DeepSeek 调用（含重试 + 字段校验）
 # ══════════════════════════════════════
-def call_deepseek(all_new_data):
-    print("\n🤖 调用 DeepSeek 生成行业内参...")
+def call_deepseek(unused_news):
+    if not unused_news:
+        print("  ⚠️ 没有未使用的新闻，跳过生成图片")
+        return None, []
+
+    print(f"\n🤖 调用 DeepSeek，从 {len(unused_news)} 条未使用新闻中筛选...")
     today_str = datetime.now().strftime("%Y年%m月%d日")
-    news_text = "\n".join(f"[{r[1]}] {r[2]} ({r[3]})" for r in all_new_data)
+    news_text = "\n".join(
+        f"{i+1}. [{r[1]}] {r[2]} ({r[3]})"
+        for i, r in enumerate(unused_news)
+    )
 
     prompt = f"""
 # Role
@@ -254,9 +311,9 @@ def call_deepseek(all_new_data):
 # Requirements
 1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
 2. 彻底剔除【风能、氢能、生物质能、核能】
-3. 精选 8-10 条，若实际不够，则按实际数量精选，按区域归类
+3. 精选 8-10 条，若实际不够则按实际数量精选，按区域归类
 4. 术语专业准确（工商业储能、并网政策、户用光伏等）
-5. 每个区域给出一条出海机遇或准入门槛的专业点评(中性)
+5. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
 
 # Output
 只返回 JSON 本身，不要任何多余文字或 markdown：
@@ -276,20 +333,48 @@ def call_deepseek(all_new_data):
 {news_text}
 """
 
-    resp = client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3
-    )
-    raw = resp.choices[0].message.content.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    return json.loads(raw.strip())
+    for attempt in range(3):
+        try:
+            resp = client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3
+            )
+            raw = resp.choices[0].message.content.strip()
+
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            raw = raw.strip()
+
+            data = json.loads(raw)
+
+            assert "news_sections" in data, "缺少 news_sections"
+            assert "daily_focus"   in data, "缺少 daily_focus"
+            assert len(data["news_sections"]) > 0, "news_sections 为空"
+
+            # 用标题反查链接，不依赖序号
+            used_links = match_used_links(unused_news, data)
+            print(f"  ✅ 第{attempt+1}次调用成功，匹配到 {len(used_links)} 条已用链接")
+            return data, used_links
+
+        except json.JSONDecodeError as e:
+            print(f"  ⚠️ 第{attempt+1}次 JSON 解析失败：{e}")
+        except AssertionError as e:
+            print(f"  ⚠️ 第{attempt+1}次字段校验失败：{e}")
+        except Exception as e:
+            print(f"  ⚠️ 第{attempt+1}次调用异常：{e}")
+
+        if attempt < 2:
+            print("  🔄 等待重试...")
+            time.sleep(5)
+
+    print("  ❌ DeepSeek 连续3次失败，跳过图片生成")
+    return None, []
 
 # ══════════════════════════════════════
-#  HTML 模板（与本地版完全相同）
+#  HTML 模板
 # ══════════════════════════════════════
 def render_overview_html(data):
     sections_html = ""
@@ -343,8 +428,8 @@ def render_overview_html(data):
   <div class="body">{sections_html}</div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.12);font-family:Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">created by Nash</div>
+              color:rgba(0,0,0,0.12);font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+              letter-spacing:0.5px;user-select:none;">created by 香港汇展 Nash</div>
 </div></body></html>"""
 
 def render_region_html(sec, date_str, daily_focus):
@@ -396,12 +481,12 @@ def render_region_html(sec, date_str, daily_focus):
   </div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.12);font-family:Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">created by Nash</div>
+              color:rgba(0,0,0,0.12);font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+              letter-spacing:0.5px;user-select:none;">created by 香港汇展 Nash</div>
 </div></body></html>"""
 
 # ══════════════════════════════════════
-#  截图函数（Linux 版，适配 GitHub Actions）
+#  截图函数
 # ══════════════════════════════════════
 def html_to_image(html_content, output_path):
     result = {"error": None}
@@ -433,23 +518,35 @@ def html_to_image(html_content, output_path):
 # ══════════════════════════════════════
 #  生成图片入口
 # ══════════════════════════════════════
-def generate_images(all_new_data):
+def generate_images():
     os.makedirs(IMAGE_DIR, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
 
-    data = call_deepseek(all_new_data)
+    unused_news = load_unused_news()
+    data, used_links = call_deepseek(unused_news)
 
+    if not data:
+        print("⚠️ 无可用新闻，跳过图片生成。")
+        return
+
+    # 总图
     html_to_image(
         render_overview_html(data),
         os.path.join(IMAGE_DIR, f"overview_{date_str}.png")
     )
 
+    # 各区域子图
     for sec in data["news_sections"]:
         slug = sec["region"].replace("/", "_").replace(" ", "_")
         html_to_image(
             render_region_html(sec, data["date"], data["daily_focus"]),
             os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
         )
+
+    # 保存已用链接
+    if used_links:
+        save_used_links(used_links)
+        print(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
 
     print(f"\n📁 图片已保存至 {IMAGE_DIR}/")
 
@@ -463,18 +560,35 @@ def main():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控")
     print(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
 
+    # 第一步：从总表加载已有链接，用于去重
+    seen_urls = set()
+    if os.path.exists(MASTER_FILE):
+        with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
+            reader = csv.reader(f)
+            next(reader, None)
+            for r in reader:
+                if len(r) >= 5:
+                    seen_urls.add(r[4])
+    print(f"📋 总表已有记录：{len(seen_urls)} 条，用于去重")
+
+    # 第二步：抓取新闻
     all_new_data = []
     for source in SOURCES:
-        all_new_data.extend(fetch_source(source, seven_days_ago))
+        all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
 
+    # 第三步：存入子文件和总表
     if all_new_data:
         all_new_data.sort(key=lambda x: x[3], reverse=True)
         split_by_date(all_new_data)
         merge_to_master()
-        generate_images(all_new_data)
-        print(f"\n🎉 完成！本次共处理 {len(all_new_data)} 条资讯。")
+        print(f"  🎉 本次新增 {len(all_new_data)} 条新闻入库")
     else:
-        print("\n☕ 暂无新资讯更新。")
+        print("☕ 本次无新增新闻。")
+
+    # 第四步：从总表未使用新闻生成图片
+    generate_images()
+
+    print(f"\n✅ 全部完成！")
 
 if __name__ == "__main__":
     main()
