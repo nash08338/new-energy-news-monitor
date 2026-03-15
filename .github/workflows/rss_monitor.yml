@@ -24,6 +24,7 @@ jobs:
       - name: Run script
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TZ: Asia/Shanghai
         run: python src/rss_monitor.py
 
       - name: Commit and push
