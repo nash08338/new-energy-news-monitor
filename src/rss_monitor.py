@@ -12,10 +12,17 @@ import random
 import glob
 import json
 import threading
+from zoneinfo import ZoneInfo
 from collections import defaultdict
 from datetime import datetime, timedelta
 from openai import OpenAI
 from playwright.sync_api import sync_playwright
+
+# ══════════════════════════════════════
+#  时区
+# ══════════════════════════════════════
+def now_cst():
+    return datetime.now(ZoneInfo("Asia/Shanghai"))
 
 # ══════════════════════════════════════
 #  区域映射库
@@ -38,11 +45,11 @@ REGION_MAP = {
 }
 
 # ══════════════════════════════════════
-#  配置区（先定义路径，再使用）
+#  配置区
 # ══════════════════════════════════════
 DAYS_BACK = 7
 
-BASE_DIR    = os.path.dirname(os.path.abspath(__file__))  # src/ 目录
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))  # src/rss_monitor.py 所在目录
 ROOT_DIR    = os.path.dirname(BASE_DIR)                   # 项目根目录
 
 DAILY_DIR   = os.path.join(ROOT_DIR, "docs", "daily")
@@ -80,7 +87,6 @@ def get_region(title):
     return matched[0] if len(matched) == 1 else "跨区域"
 
 def load_used_links():
-    """读取已经用过的新闻链接"""
     used = set()
     if os.path.exists(USED_FILE):
         with open(USED_FILE, "r", encoding="utf-8-sig") as f:
@@ -92,17 +98,15 @@ def load_used_links():
     return used
 
 def save_used_links(links):
-    """把本次用过的链接追加写入 used_news.csv"""
     file_exists = os.path.exists(USED_FILE)
     with open(USED_FILE, "a", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(["详情链接", "使用日期"])
         for link in links:
-            writer.writerow([link, datetime.now().strftime("%Y-%m-%d")])
+            writer.writerow([link, now_cst().strftime("%Y-%m-%d")])
 
 def load_unused_news():
-    """从总表读取未使用过的新闻"""
     if not os.path.exists(MASTER_FILE):
         print("  ⚠️ 总表不存在，跳过")
         return []
@@ -122,7 +126,6 @@ def load_unused_news():
     return unused
 
 def match_used_links(unused_news, data):
-    """用返回的中文标题反查原始新闻链接，比序号更可靠"""
     selected_titles = []
     for sec in data.get("news_sections", []):
         selected_titles.extend(sec.get("titles", []))
@@ -139,7 +142,7 @@ def match_used_links(unused_news, data):
     return used_links
 
 # ══════════════════════════════════════
-#  核心抓取函数（seen_urls 从总表传入）
+#  核心抓取函数
 # ══════════════════════════════════════
 def fetch_source(source, seven_days_ago, seen_urls):
     name, rss_url = source["name"], source["rss"]
@@ -295,7 +298,7 @@ def call_deepseek(unused_news):
         return None, []
 
     print(f"\n🤖 调用 DeepSeek，从 {len(unused_news)} 条未使用新闻中筛选...")
-    today_str = datetime.now().strftime("%Y年%m月%d日")
+    today_str = now_cst().strftime("%Y年%m月%d日")
     news_text = "\n".join(
         f"{i+1}. [{r[1]}] {r[2]} ({r[3]})"
         for i, r in enumerate(unused_news)
@@ -349,12 +352,10 @@ def call_deepseek(unused_news):
             raw = raw.strip()
 
             data = json.loads(raw)
-
             assert "news_sections" in data, "缺少 news_sections"
             assert "daily_focus"   in data, "缺少 daily_focus"
             assert len(data["news_sections"]) > 0, "news_sections 为空"
 
-            # 用标题反查链接，不依赖序号
             used_links = match_used_links(unused_news, data)
             print(f"  ✅ 第{attempt+1}次调用成功，匹配到 {len(used_links)} 条已用链接")
             return data, used_links
@@ -428,8 +429,9 @@ def render_overview_html(data):
   <div class="body">{sections_html}</div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.12);font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">created by 香港汇展 Nash</div>
+              color:rgba(0,0,0,0.12);
+              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
 </div></body></html>"""
 
 def render_region_html(sec, date_str, daily_focus):
@@ -481,8 +483,9 @@ def render_region_html(sec, date_str, daily_focus):
   </div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.12);font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">created by 香港汇展 Nash</div>
+              color:rgba(0,0,0,0.12);
+              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash </div>
 </div></body></html>"""
 
 # ══════════════════════════════════════
@@ -520,7 +523,7 @@ def html_to_image(html_content, output_path):
 # ══════════════════════════════════════
 def generate_images():
     os.makedirs(IMAGE_DIR, exist_ok=True)
-    date_str = datetime.now().strftime("%Y-%m-%d")
+    date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
     data, used_links = call_deepseek(unused_news)
@@ -543,7 +546,6 @@ def generate_images():
             os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
         )
 
-    # 保存已用链接
     if used_links:
         save_used_links(used_links)
         print(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
@@ -554,13 +556,13 @@ def generate_images():
 #  主程序
 # ══════════════════════════════════════
 def main():
-    seven_days_ago = datetime.now() - timedelta(days=DAYS_BACK)
+    seven_days_ago = now_cst() - timedelta(days=DAYS_BACK)
     seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0)
 
-    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控")
+    print(f"[{now_cst().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控（北京时间）")
     print(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
 
-    # 第一步：从总表加载已有链接，用于去重
+    # 第一步：从总表加载已有链接用于去重
     seen_urls = set()
     if os.path.exists(MASTER_FILE):
         with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
