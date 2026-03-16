@@ -78,9 +78,9 @@ SOURCES = [
     {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                          "paged": True},
     {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                  "paged": False},
     {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
+    {"name": "EnergyMonitor", "rss": "https://www.energymonitor.ai/feed/", "paged": True},
     {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
     {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
-    {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en", "paged": False},
 ]
 
 # 动态生成 footer 来源字符串
