@@ -189,17 +189,21 @@ def fetch_source(source, seven_days_ago, seen_urls):
 
         feed = None
         for attempt in range(3):
-            feed = feedparser.parse(
-                paged_url,
-                agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
-            )
-            if hasattr(feed, 'status') and feed.status in (301, 302) and feed.get("href"):
+            try:
                 feed = feedparser.parse(
-                    feed.href,
+                    paged_url,
                     agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
                 )
-            if feed.entries:
-                break
+                if hasattr(feed, 'status') and feed.status in (301, 302) and feed.get("href"):
+                    feed = feedparser.parse(
+                        feed.href,
+                        agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+                    )
+                if feed.entries:
+                    break
+            except Exception as e:
+                print(f"  ⚠️ 第 {attempt+1} 次请求异常：{e}")
+                feed = None
             print(f"  ⚠️ 第 {attempt+1} 次返回空，等待后重试...")
             time.sleep(random.uniform(3.0, 6.0))
 
@@ -487,13 +491,14 @@ def call_deepseek(unused_news):
             if used_links:
                 cross_validate_regions(unused_news, data)
             return data, used_links
-
+        
         except json.JSONDecodeError as e:
             print(f"  ⚠️ 第{attempt+1}次 JSON 解析失败：{e}")
+            print(f"  原始返回内容：{raw[:200]}")   # ← 加这行
         except AssertionError as e:
             print(f"  ⚠️ 第{attempt+1}次字段校验失败：{e}")
         except Exception as e:
-            print(f"  ⚠️ 第{attempt+1}次调用异常：{e}")
+            print(f"  ⚠️ 第{attempt+1}次调用异常：{type(e).__name__}: {e}")  # ← 加类型
 
         if attempt < 2:
             print("  🔄 等待重试...")
@@ -795,6 +800,8 @@ def generate_images():
     date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
+    print(f"DEBUG: unused_news 数量 = {len(unused_news)}"
+    
     data, used_links = call_deepseek(unused_news)
 
     if not data:
