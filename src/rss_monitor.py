@@ -37,12 +37,15 @@ REGION_MAP = {
     "南欧":       ["Southern Europe", "Spain", "Italy", "Greece", "Portugal", "Turkey"],
     "北欧":       ["Northern Europe", "Nordic", "Sweden", "Norway", "Denmark", "Finland"],
     "东欧":       ["Eastern Europe", "Poland", "Hungary", "Romania", "Ukraine", "Czech"],
-    "西非":       ["West Africa", "Nigeria", "Ghana", "Senegal", "Ivory Coast"],
-    "东非":       ["East Africa", "Kenya", "Ethiopia", "Tanzania", "Uganda"],
-    "非洲南部":   ["Southern Africa", "South Africa", "Namibia", "Zambia", "Zimbabwe"],
     "拉丁美洲":   ["Latin America", "LATAM", "Brazil", "Mexico", "Chile", "Argentina", "Colombia"],
     "北美":       ["North America", "USA", "United States", "Canada"],
-    "大洋洲":     ["Oceania", "Australia", "New Zealand", "Fiji"]
+    "大洋洲":     ["Oceania", "Australia", "New Zealand", "Fiji"],
+    "西非":       ["West Africa", "Nigeria", "Ghana", "Senegal", "Ivory Coast",
+               "Mali", "Burkina", "Guinea", "Sierra Leone", "Liberia", "Togo", "Benin"],
+    "东非":       ["East Africa", "Kenya", "Ethiopia", "Tanzania", "Uganda",
+                   "Rwanda", "Burundi", "Somalia", "Eritrea", "Djibouti", "Mozambique", "Madagascar"],
+    "非洲南部":   ["Southern Africa", "South Africa", "Namibia", "Zambia", "Zimbabwe",
+                   "Botswana", "Lesotho", "Eswatini", "Malawi", "Angola"],
 }
 
 # ══════════════════════════════════════
@@ -62,11 +65,22 @@ XHS_DIR     = os.path.join(ROOT_DIR, "docs", "images", "xhs")
 HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
 
 SOURCES = [
+    # 原有5个
     {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/"},
     {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/"},
     {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/"},
     {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/"},
     {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/"},
+
+    # 新增（支持 ?paged=N 分页）
+    {"name": "PVTech",            "rss": "https://www.pv-tech.org/feed/"},
+    {"name": "EnergyCapitalPow",  "rss": "https://energycapitalpower.com/feed/"},
+    {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/"},
+    {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/"},
+
+    # 新增（单页，不支持分页）
+    {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/"},
+    {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa"},
 ]
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
@@ -533,7 +547,7 @@ def render_overview_html(data):
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
+              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
 </div></body></html>"""
 
 def render_overview_xhs_html(data):
@@ -590,7 +604,7 @@ def render_overview_xhs_html(data):
   <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
+              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
 </div></body></html>"""
 
 def render_region_html(sec, date_str):
@@ -640,7 +654,7 @@ def render_region_html(sec, date_str):
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
+              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
 </div></body></html>"""
 
 def render_region_xhs_html(sec, date_str):
@@ -690,7 +704,7 @@ def render_region_xhs_html(sec, date_str):
   <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
+              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
 </div></body></html>"""
 
 # ══════════════════════════════════════
