@@ -4,6 +4,8 @@ import asyncio
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
+import zipfile
+import concurrent.futures
 import feedparser
 import os
 import csv
@@ -802,44 +804,46 @@ def html_to_image_xhs(html_content, output_path):
 #  生成图片入口
 # ══════════════════════════════════════
 def generate_images():
+
+
     os.makedirs(IMAGE_DIR, exist_ok=True)
     os.makedirs(XHS_DIR, exist_ok=True)
     date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
     print(f"DEBUG: unused_news 数量 = {len(unused_news)}")
-    
+
     data, used_links = call_deepseek(unused_news)
 
     if not data:
         print("⚠️ 无可用新闻，跳过图片生成。")
         return
 
-    # 构建所有截图任务
+    # ── 构建截图任务 ──
     tasks = [
         (render_overview_html(data),
          os.path.join(IMAGE_DIR, f"overview_{date_str}.png"),
          False),
-
         (render_overview_xhs_html(data),
          os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png"),
          True),
     ]
 
-    for sec in data["news_sections"]:
-        slug = safe_slug(sec["region"])
-        tasks.append((
-            render_region_html(sec, data["date"]),
-            os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png"),
-            False
-        ))
-        tasks.append((
-            render_region_xhs_html(sec, data["date"]),
-            os.path.join(XHS_DIR, f"region_{slug}_xhs_{date_str}.png"),
-            True
-        ))
+    region_images     = []   # 普通版区域图路径
+    xhs_region_images = []   # 小红书版区域图路径
 
-    # 并发截图（最多4个同时跑，避免内存压力）
+    for sec in data["news_sections"]:
+        slug       = safe_slug(sec["region"])
+        region_img = os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
+        region_xhs = os.path.join(XHS_DIR,   f"region_{slug}_xhs_{date_str}.png")
+
+        tasks.append((render_region_html(sec, data["date"]),     region_img, False))
+        tasks.append((render_region_xhs_html(sec, data["date"]), region_xhs, True))
+
+        region_images.append(region_img)
+        xhs_region_images.append(region_xhs)
+
+    # ── 并发截图 ──
     def take_shot(task):
         html_content, output_path, is_xhs = task
         if is_xhs:
@@ -847,7 +851,6 @@ def generate_images():
         else:
             html_to_image(html_content, output_path)
 
-    import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
         futures = [executor.submit(take_shot, t) for t in tasks]
         for f in concurrent.futures.as_completed(futures):
@@ -856,12 +859,37 @@ def generate_images():
             except Exception as e:
                 print(f"  ⚠️ 截图失败：{e}")
 
+    # ── 标记已用新闻 ──
     if used_links:
         save_used_links(used_links)
         print(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
 
-    print(f"\n📁 普通图片：{IMAGE_DIR}/")
-    print(f"📱 小红书图片：{XHS_DIR}/")
+    # ── 打包普通版区域图 ──
+    zip_region = os.path.join(IMAGE_DIR, f"regions_{date_str}.zip")
+    with zipfile.ZipFile(zip_region, "w", zipfile.ZIP_DEFLATED) as zf:
+        for img_path in region_images:
+            if os.path.exists(img_path):
+                zf.write(img_path, os.path.basename(img_path))
+    print(f"  📦 普通版区域图已打包：{zip_region}（共 {len(region_images)} 张）")
+
+    # ── 打包小红书版区域图 ──
+    zip_xhs = os.path.join(XHS_DIR, f"regions_xhs_{date_str}.zip")
+    with zipfile.ZipFile(zip_xhs, "w", zipfile.ZIP_DEFLATED) as zf:
+        for img_path in xhs_region_images:
+            if os.path.exists(img_path):
+                zf.write(img_path, os.path.basename(img_path))
+    print(f"  📦 小红书版区域图已打包：{zip_xhs}（共 {len(xhs_region_images)} 张）")
+
+    # ── 删除散装区域图，只保留总图和压缩包 ──
+    for img_path in region_images + xhs_region_images:
+        if os.path.exists(img_path):
+            os.remove(img_path)
+    print("  🗑️  散装区域图已清理")
+
+    print(f"\n📁 普通版总图：{os.path.join(IMAGE_DIR, f'overview_{date_str}.png')}")
+    print(f"📦 普通版区域包：{zip_region}")
+    print(f"📁 小红书版总图：{os.path.join(XHS_DIR, f'overview_xhs_{date_str}.png')}")
+    print(f"📦 小红书版区域包：{zip_xhs}")
 
 # ══════════════════════════════════════
 #  主程序
