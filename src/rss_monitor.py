@@ -65,23 +65,22 @@ XHS_DIR     = os.path.join(ROOT_DIR, "docs", "images", "xhs")
 HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
 
 SOURCES = [
-    # 原有5个
-    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/"},
-    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/"},
-    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/"},
-    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/"},
-    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/"},
-
-    # 新增（支持 ?paged=N 分页）
-    {"name": "PVTech",            "rss": "https://www.pv-tech.org/feed/"},
-    {"name": "EnergyCapitalPow",  "rss": "https://energycapitalpower.com/feed/"},
-    {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/"},
-    {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/"},
-
-    # 新增（单页，不支持分页）
-    {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/"},
-    {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa"},
+    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                   "paged": True},
+    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/", "paged": True},
+    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/",                    "paged": True},
+    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/",            "paged": True},
+    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/",                         "paged": True},
+    {"name": "PVTech",            "rss": "https://www.pv-tech.org/feed/",                                  "paged": True},
+    {"name": "EnergyCapitalPow",  "rss": "https://energycapitalpower.com/feed/",                           "paged": True},
+    {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                              "paged": True},
+    {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                          "paged": True},
+    {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                  "paged": False},
+    {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
 ]
+
+# 动态生成 footer 来源字符串
+FOOTER_LINE1 = " · ".join(s["name"] for s in SOURCES[:6])   # 前6个一行
+FOOTER_LINE2 = " · ".join(s["name"] for s in SOURCES[6:])   # 后5个一行
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 if not DEEPSEEK_API_KEY:
@@ -129,7 +128,7 @@ def save_used_links(links):
         for link in links:
             writer.writerow([link, now_cst().strftime("%Y-%m-%d")])
 
-def load_unused_news():
+def load_unused_news(max_count=150):   # ← 新增 max_count 参数
     if not os.path.exists(MASTER_FILE):
         print("  ⚠️ 总表不存在，跳过")
         return []
@@ -143,11 +142,19 @@ def load_unused_news():
             if len(r) >= 5 and r[4] not in used_links:
                 unused.append(r)
 
-    print(f"  📰 未使用新闻：{len(unused)} 条")
+    total = len(unused)
+
+    # 总表已按日期降序，直接取前 max_count 条（最新的）
+    if total > max_count:
+        unused = unused[:max_count]
+        print(f"  📰 未使用新闻：{total} 条，取最新 {max_count} 条传给 DeepSeek")
+    else:
+        print(f"  📰 未使用新闻：{total} 条")
+
     if len(unused) < 8:
         print(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
-    return unused
 
+    return unused
 def match_used_links_by_title(unused_news, data):
     """标题反查兜底：中文标题关键词匹配原始英文标题"""
     selected_titles = []
@@ -175,6 +182,8 @@ def fetch_source(source, seven_days_ago, seen_urls):
     print(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
     for page in range(1, 100):
+        if page > 1 and not supports_paged:
+            break
         paged_url = f"{rss_url}?paged={page}" if page > 1 else rss_url
         print(f"  🔍 第 {page} 页：{paged_url}")
 
@@ -284,7 +293,7 @@ def split_by_date(all_new_data):
     grouped = defaultdict(list)
     for row in all_new_data:
         grouped[row[3]].append(row)
-
+    written_files = [] 
     for date_str, rows in grouped.items():
         daily_file = os.path.join(DAILY_DIR, f"news_{date_str}.csv")
         existing_links = set()
@@ -306,11 +315,14 @@ def split_by_date(all_new_data):
             if not file_exists:
                 writer.writerow(HEADER)
             writer.writerows(new_rows)
+            
+        written_files.append(daily_file)   # ← 记录
         print(f"  📅 {date_str}：新增 {len(new_rows)} 条 → {daily_file}")
-
-def merge_to_master():
-    all_files = sorted(glob.glob(os.path.join(DAILY_DIR, "news_*.csv")))
-    if not all_files:
+        
+    return written_files   # ← 返回
+    
+def merge_to_master(daily_files):   # ← 接收参数
+    if not daily_files:
         return
 
     existing_links = set()
@@ -323,7 +335,7 @@ def merge_to_master():
                     existing_links.add(r[4])
 
     new_rows = []
-    for f in all_files:
+    for f in daily_files:   # ← 只扫本次文件
         try:
             with open(f, "r", encoding="utf-8-sig") as fh:
                 reader = csv.reader(fh)
@@ -543,11 +555,11 @@ def render_overview_html(data):
     <div class="focus-box"><p>{data['daily_focus']}</p></div>
   </div>
   <div class="body">{sections_html}</div>
-  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
-  <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.40);
-              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
+  <div class="footer">
+    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
+    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+  </div>
 </div></body></html>"""
 
 def render_overview_xhs_html(data):
@@ -588,7 +600,7 @@ def render_overview_xhs_html(data):
               border-left:4px solid #38bdf8; line-height:1.7; }}
   .news-list {{ padding-left:24px; }}
   .news-list li {{ font-size:19px; color:#334155; line-height:1.9; margin-bottom:4px; }}
-  .footer {{ text-align:center; padding:20px; font-size:16px;
+  .footer {{ text-align:center; padding:20px; font-size:13px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
 </style></head><body>
 <div class="card">
@@ -600,11 +612,11 @@ def render_overview_xhs_html(data):
     <div class="focus-box"><p>{data['daily_focus']}</p></div>
   </div>
   <div class="body">{sections_html}</div>
-  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
-  <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
-              color:rgba(0,0,0,0.40);
-              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
+  <div class="footer">
+    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
+    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+  </div>
 </div></body></html>"""
 
 def render_region_html(sec, date_str):
@@ -650,11 +662,11 @@ def render_region_html(sec, date_str):
     <div class="news-title">本期精选资讯</div>
     <ul class="news-list">{titles_html}</ul>
   </div>
-  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
-  <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.40);
-              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
+  <div class="footer">
+    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
+    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+  </div>
 </div></body></html>"""
 
 def render_region_xhs_html(sec, date_str):
@@ -685,8 +697,9 @@ def render_region_xhs_html(sec, date_str):
   .news-title {{ font-size:20px; color:#64748b; margin-bottom:16px; font-weight:500; }}
   .news-list {{ padding-left:28px; }}
   .news-list li {{ font-size:21px; color:#1e293b; line-height:2.0; margin-bottom:8px; }}
-  .footer {{ text-align:center; padding:20px; font-size:16px;
+  .footer {{ text-align:center; padding:20px; font-size:13px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+
 </style></head><body>
 <div class="card">
   <div class="header">
@@ -700,11 +713,11 @@ def render_region_xhs_html(sec, date_str):
     <div class="news-title">本期精选资讯</div>
     <ul class="news-list">{titles_html}</ul>
   </div>
-  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
-  <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
-              color:rgba(0,0,0,0.40);
-              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by  Nash</div>
+  <div class="footer">
+    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
+    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+  </div>
 </div></body></html>"""
 
 # ══════════════════════════════════════
@@ -788,31 +801,46 @@ def generate_images():
         print("⚠️ 无可用新闻，跳过图片生成。")
         return
 
-    # 普通版总图
-    html_to_image(
-        render_overview_html(data),
-        os.path.join(IMAGE_DIR, f"overview_{date_str}.png")
-    )
+    # 构建所有截图任务
+    tasks = [
+        (render_overview_html(data),
+         os.path.join(IMAGE_DIR, f"overview_{date_str}.png"),
+         False),
 
-    # 小红书版总图
-    html_to_image_xhs(
-        render_overview_xhs_html(data),
-        os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png")
-    )
+        (render_overview_xhs_html(data),
+         os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png"),
+         True),
+    ]
 
-    # 各区域子图（普通版 + 小红书版）
     for sec in data["news_sections"]:
         slug = safe_slug(sec["region"])
-
-        html_to_image(
+        tasks.append((
             render_region_html(sec, data["date"]),
-            os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
-        )
-
-        html_to_image_xhs(
+            os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png"),
+            False
+        ))
+        tasks.append((
             render_region_xhs_html(sec, data["date"]),
-            os.path.join(XHS_DIR, f"region_{slug}_xhs_{date_str}.png")
-        )
+            os.path.join(XHS_DIR, f"region_{slug}_xhs_{date_str}.png"),
+            True
+        ))
+
+    # 并发截图（最多4个同时跑，避免内存压力）
+    def take_shot(task):
+        html_content, output_path, is_xhs = task
+        if is_xhs:
+            html_to_image_xhs(html_content, output_path)
+        else:
+            html_to_image(html_content, output_path)
+
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(take_shot, t) for t in tasks]
+        for f in concurrent.futures.as_completed(futures):
+            try:
+                f.result()
+            except Exception as e:
+                print(f"  ⚠️ 截图失败：{e}")
 
     if used_links:
         save_used_links(used_links)
@@ -847,8 +875,8 @@ def main():
 
     if all_new_data:
         all_new_data.sort(key=lambda x: x[3], reverse=True)
-        split_by_date(all_new_data)
-        merge_to_master()
+        written_files = split_by_date(all_new_data)   # ← 接收返回值
+        merge_to_master(written_files)                 # ← 传入
         print(f"  🎉 本次新增 {len(all_new_data)} 条新闻入库")
     else:
         print("☕ 本次无新增新闻。")
