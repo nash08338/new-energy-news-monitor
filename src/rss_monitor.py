@@ -11,6 +11,7 @@ import time
 import random
 import glob
 import json
+import re
 import threading
 from zoneinfo import ZoneInfo
 from collections import defaultdict
@@ -49,13 +50,14 @@ REGION_MAP = {
 # ══════════════════════════════════════
 DAYS_BACK = 7
 
-BASE_DIR    = os.path.dirname(os.path.abspath(__file__))  # src/rss_monitor.py 所在目录
-ROOT_DIR    = os.path.dirname(BASE_DIR)                   # 项目根目录
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR    = os.path.dirname(BASE_DIR)
 
 DAILY_DIR   = os.path.join(ROOT_DIR, "docs", "daily")
 MASTER_FILE = os.path.join(ROOT_DIR, "docs", "news_master.csv")
 USED_FILE   = os.path.join(ROOT_DIR, "docs", "used_news.csv")
 IMAGE_DIR   = os.path.join(ROOT_DIR, "docs", "images")
+XHS_DIR     = os.path.join(ROOT_DIR, "docs", "images", "xhs")
 HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
 
 SOURCES = [
@@ -67,6 +69,8 @@ SOURCES = [
 ]
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+if not DEEPSEEK_API_KEY:
+    raise ValueError("DEEPSEEK_API_KEY 未设置，请检查 GitHub Secrets")
 
 client = OpenAI(
     api_key=DEEPSEEK_API_KEY,
@@ -85,6 +89,10 @@ def get_region(title):
     if not matched:
         return "全球/其他"
     return matched[0] if len(matched) == 1 else "跨区域"
+
+def safe_slug(region):
+    """区域名转文件名安全字符串，过滤所有特殊字符"""
+    return re.sub(r'[\\/:*?"<>|]', '_', region).replace(" ", "_")
 
 def load_used_links():
     used = set()
@@ -125,7 +133,8 @@ def load_unused_news():
         print(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
     return unused
 
-def match_used_links(unused_news, data):
+def match_used_links_by_title(unused_news, data):
+    """标题反查兜底：中文标题关键词匹配原始英文标题"""
     selected_titles = []
     for sec in data.get("news_sections", []):
         selected_titles.extend(sec.get("titles", []))
@@ -293,7 +302,7 @@ def merge_to_master():
     print(f"📋 总表已更新，新增 {len(new_rows)} 条，共 {len(all_rows)} 条")
 
 # ══════════════════════════════════════
-#  DeepSeek 调用（含重试 + 字段校验）
+#  DeepSeek 调用（编号优先 + 标题反查兜底）
 # ══════════════════════════════════════
 def call_deepseek(unused_news):
     if not unused_news:
@@ -320,6 +329,7 @@ def call_deepseek(unused_news):
 3. 精选 8-10 条，若实际不够则按实际数量精选，按区域归类
 4. 术语专业准确（工商业储能、并网政策、户用光伏等）
 5. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
+6. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号，此字段为必填
 
 # Output
 只返回 JSON 本身，不要任何多余文字或 markdown：
@@ -332,7 +342,8 @@ def call_deepseek(unused_news):
       "market_insight": "该区域光储充市场研判",
       "titles": ["标题1", "标题2"]
     }}
-  ]
+  ],
+  "used_indices": [1, 3, 5, 8, 12]
 }}
 
 # 新闻列表
@@ -355,12 +366,31 @@ def call_deepseek(unused_news):
             raw = raw.strip()
 
             data = json.loads(raw)
-            assert "news_sections" in data, "缺少 news_sections"
+            assert "news_sections" in data and len(data["news_sections"]) > 0, "缺少 news_sections"
             assert "daily_focus"   in data, "缺少 daily_focus"
-            assert len(data["news_sections"]) > 0, "news_sections 为空"
 
-            used_links = match_used_links(unused_news, data)
-            print(f"  ✅ 第{attempt+1}次调用成功，匹配到 {len(used_links)} 条已用链接")
+            # 方式一：编号直接取链接（精准）
+            used_links = []
+            indices = data.get("used_indices", [])
+            if indices:
+                for idx in indices:
+                    pos = idx - 1
+                    if 0 <= pos < len(unused_news):
+                        link = unused_news[pos][4]
+                        if link not in used_links:
+                            used_links.append(link)
+                print(f"  ✅ 第{attempt+1}次调用成功，编号匹配：标记 {len(used_links)} 条")
+
+            # 方式二：编号为空或数量明显不足，启用标题反查兜底
+            total_titles = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
+            if not used_links or len(used_links) < total_titles // 2:
+                print("  ⚠️ 编号匹配不足，启用标题反查兜底...")
+                fallback_links = match_used_links_by_title(unused_news, data)
+                for link in fallback_links:
+                    if link not in used_links:
+                        used_links.append(link)
+                print(f"  ✅ 兜底后共标记 {len(used_links)} 条")
+
             return data, used_links
 
         except json.JSONDecodeError as e:
@@ -432,7 +462,64 @@ def render_overview_html(data):
   <div class="body">{sections_html}</div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.12);
+              color:rgba(0,0,0,0.40);
+              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
+</div></body></html>"""
+
+def render_overview_xhs_html(data):
+    sections_html = ""
+    for sec in data["news_sections"]:
+        titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+        sections_html += f"""
+        <div class="section">
+          <div class="region-header">
+            <span class="region-tag">{sec['region']}</span>
+          </div>
+          <div class="insight">💡 {sec['market_insight']}</div>
+          <ul class="news-list">{titles_html}</ul>
+        </div>"""
+
+    return f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+  * {{ box-sizing:border-box; margin:0; padding:0; }}
+  body {{ font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+          background:#F0F4F8; width:1242px; padding:48px; }}
+  .card {{ background:white; border-radius:24px; overflow:hidden;
+           box-shadow:0 4px 24px rgba(0,0,0,0.08); position:relative; }}
+  .header {{ background:linear-gradient(135deg,#1a1a2e,#0f3460); padding:40px 48px; }}
+  .header-top {{ display:flex; justify-content:space-between;
+                 align-items:center; margin-bottom:20px; }}
+  .header h1 {{ color:white; font-size:32px; font-weight:600; }}
+  .date {{ color:#94a3b8; font-size:20px; }}
+  .focus-box {{ background:rgba(255,255,255,0.07); border-radius:14px;
+                padding:20px 24px; border-left:4px solid #38bdf8; }}
+  .focus-box p {{ color:#e2e8f0; font-size:20px; line-height:1.8; }}
+  .body {{ padding:32px 48px; }}
+  .section {{ border-bottom:1px solid #f1f5f9; padding:24px 0; }}
+  .section:last-child {{ border-bottom:none; }}
+  .region-tag {{ background:#0f3460; color:white; font-size:18px;
+                 padding:5px 18px; border-radius:30px; font-weight:500; }}
+  .insight {{ font-size:18px; color:#0369a1; background:#f0f9ff;
+              border-radius:10px; padding:14px 18px; margin:12px 0 16px;
+              border-left:4px solid #38bdf8; line-height:1.7; }}
+  .news-list {{ padding-left:24px; }}
+  .news-list li {{ font-size:19px; color:#334155; line-height:1.9; margin-bottom:4px; }}
+  .footer {{ text-align:center; padding:20px; font-size:16px;
+             color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+</style></head><body>
+<div class="card">
+  <div class="header">
+    <div class="header-top">
+      <h1>⚡ 光储电桩通 · 全球情报</h1>
+      <span class="date">{data['date']}</span>
+    </div>
+    <div class="focus-box"><p>{data['daily_focus']}</p></div>
+  </div>
+  <div class="body">{sections_html}</div>
+  <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
+  <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
+              color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
               letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
 </div></body></html>"""
@@ -486,13 +573,67 @@ def render_region_html(sec, date_str, daily_focus):
   </div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
-              color:rgba(0,0,0,0.12);
+              color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
-              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash </div>
+              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
+</div></body></html>"""
+
+def render_region_xhs_html(sec, date_str, daily_focus):
+    color_map = {
+        "北非及中东":"#b45309","南亚":"#15803d","东南亚":"#0e7490",
+        "东亚":"#1d4ed8","西欧":"#6d28d9","南欧":"#be185d",
+        "北欧":"#0369a1","东欧":"#4d7c0f","北美":"#7c2d12",
+        "拉丁美洲":"#065f46","大洋洲":"#1e40af",
+    }
+    accent      = color_map.get(sec["region"], "#0f3460")
+    titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+
+    return f"""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+  * {{ box-sizing:border-box; margin:0; padding:0; }}
+  body {{ font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+          background:#F0F4F8; width:1242px; padding:48px; }}
+  .card {{ background:white; border-radius:24px; overflow:hidden;
+           box-shadow:0 4px 24px rgba(0,0,0,0.08); position:relative; }}
+  .header {{ background:{accent}; padding:40px 48px;
+             display:flex; justify-content:space-between; align-items:flex-start; }}
+  .header-left h1 {{ color:white; font-size:30px; font-weight:600; }}
+  .header-right   {{ color:rgba(255,255,255,0.6); font-size:20px; }}
+  .body {{ padding:36px 48px; }}
+  .insight {{ font-size:20px; color:{accent}; background:#f8fafc;
+              border-radius:12px; padding:20px 24px; margin-bottom:28px;
+              border-left:6px solid {accent}; line-height:1.8; }}
+  .news-title {{ font-size:20px; color:#64748b; margin-bottom:16px; font-weight:500; }}
+  .news-list {{ padding-left:28px; }}
+  .news-list li {{ font-size:21px; color:#1e293b; line-height:2.0; margin-bottom:8px; }}
+  .focus-box {{ margin-top:28px; background:#f8fafc; border-radius:12px;
+                padding:20px 24px; border-top:1px solid #e2e8f0; }}
+  .focus-box p {{ font-size:18px; color:#64748b; line-height:1.7; }}
+  .footer {{ text-align:center; padding:20px; font-size:16px;
+             color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+</style></head><body>
+<div class="card">
+  <div class="header">
+    <div class="header-left">
+      <h1>⚡ {sec['region']} · 光储电桩市场动态</h1>
+    </div>
+    <div class="header-right">{date_str}</div>
+  </div>
+  <div class="body">
+    <div class="insight">💡 市场研判：{sec['market_insight']}</div>
+    <div class="news-title">本期精选资讯</div>
+    <ul class="news-list">{titles_html}</ul>
+    <div class="focus-box"><p>📌 今日关注：{daily_focus}</p></div>
+  </div>
+  <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
+  <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
+              color:rgba(0,0,0,0.40);
+              font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
+              letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
 </div></body></html>"""
 
 # ══════════════════════════════════════
-#  截图函数
+#  截图函数（普通版，2x 高清）
 # ══════════════════════════════════════
 def html_to_image(html_content, output_path):
     result = {"error": None}
@@ -503,7 +644,10 @@ def html_to_image(html_content, output_path):
                 browser = p.chromium.launch(
                     args=["--no-sandbox", "--disable-dev-shm-usage"]
                 )
-                page = browser.new_page(viewport={"width": 876, "height": 1200})
+                page = browser.new_page(
+                    viewport={"width": 876, "height": 1200},
+                    device_scale_factor=2
+                )
                 page.set_content(html_content, wait_until="networkidle")
                 height = page.evaluate("document.querySelector('.card').scrollHeight + 56")
                 page.set_viewport_size({"width": 876, "height": int(height)})
@@ -522,10 +666,44 @@ def html_to_image(html_content, output_path):
     print(f"  🖼️  已生成：{output_path}")
 
 # ══════════════════════════════════════
+#  截图函数（小红书版，2x 高清竖图）
+# ══════════════════════════════════════
+def html_to_image_xhs(html_content, output_path):
+    result = {"error": None}
+
+    def run():
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(
+                    args=["--no-sandbox", "--disable-dev-shm-usage"]
+                )
+                page = browser.new_page(
+                    viewport={"width": 1242, "height": 1660},
+                    device_scale_factor=2
+                )
+                page.set_content(html_content, wait_until="networkidle")
+                height = page.evaluate("document.querySelector('.card').scrollHeight + 96")
+                page.set_viewport_size({"width": 1242, "height": int(height)})
+                page.locator(".card").screenshot(path=output_path)
+                browser.close()
+        except Exception as e:
+            result["error"] = e
+
+    t = threading.Thread(target=run)
+    t.start()
+    t.join()
+
+    if result["error"]:
+        raise result["error"]
+
+    print(f"  📱 已生成（小红书）：{output_path}")
+
+# ══════════════════════════════════════
 #  生成图片入口
 # ══════════════════════════════════════
 def generate_images():
     os.makedirs(IMAGE_DIR, exist_ok=True)
+    os.makedirs(XHS_DIR, exist_ok=True)
     date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
@@ -535,37 +713,49 @@ def generate_images():
         print("⚠️ 无可用新闻，跳过图片生成。")
         return
 
-    # 总图
+    # 普通版总图
     html_to_image(
         render_overview_html(data),
         os.path.join(IMAGE_DIR, f"overview_{date_str}.png")
     )
 
-    # 各区域子图
+    # 小红书版总图
+    html_to_image_xhs(
+        render_overview_xhs_html(data),
+        os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png")
+    )
+
+    # 各区域子图（普通版 + 小红书版）
     for sec in data["news_sections"]:
-        slug = sec["region"].replace("/", "_").replace(" ", "_")
+        slug = safe_slug(sec["region"])
+
         html_to_image(
             render_region_html(sec, data["date"], data["daily_focus"]),
             os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
+        )
+
+        html_to_image_xhs(
+            render_region_xhs_html(sec, data["date"], data["daily_focus"]),
+            os.path.join(XHS_DIR, f"region_{slug}_xhs_{date_str}.png")
         )
 
     if used_links:
         save_used_links(used_links)
         print(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
 
-    print(f"\n📁 图片已保存至 {IMAGE_DIR}/")
+    print(f"\n📁 普通图片：{IMAGE_DIR}/")
+    print(f"📱 小红书图片：{XHS_DIR}/")
 
 # ══════════════════════════════════════
 #  主程序
 # ══════════════════════════════════════
 def main():
     seven_days_ago = now_cst() - timedelta(days=DAYS_BACK)
-    seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0, tzinfo=ZoneInfo("Asia/Shanghai"))
+    seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0)  # 修复：不重复设置 tzinfo
 
     print(f"[{now_cst().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控（北京时间）")
     print(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
 
-    # 第一步：从总表加载已有链接用于去重
     seen_urls = set()
     if os.path.exists(MASTER_FILE):
         with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
@@ -576,12 +766,10 @@ def main():
                     seen_urls.add(r[4])
     print(f"📋 总表已有记录：{len(seen_urls)} 条，用于去重")
 
-    # 第二步：抓取新闻
     all_new_data = []
     for source in SOURCES:
         all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
 
-    # 第三步：存入子文件和总表
     if all_new_data:
         all_new_data.sort(key=lambda x: x[3], reverse=True)
         split_by_date(all_new_data)
@@ -590,7 +778,6 @@ def main():
     else:
         print("☕ 本次无新增新闻。")
 
-    # 第四步：从总表未使用新闻生成图片
     generate_images()
 
     print(f"\n✅ 全部完成！")
