@@ -330,7 +330,7 @@ def call_deepseek(unused_news):
 4. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
 5. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
 6. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号，此字段为必填
-
+7. 同一条新闻只能出现在一个区域，严禁在不同区域重复出现同一内容
 # Output
 只返回 JSON 本身，不要任何多余文字或 markdown：
 {{
@@ -368,6 +368,23 @@ def call_deepseek(unused_news):
             data = json.loads(raw)
             assert "news_sections" in data and len(data["news_sections"]) > 0, "缺少 news_sections"
             assert "daily_focus"   in data, "缺少 daily_focus"
+            # ── 新增：跨区域标题去重 ──
+            seen_titles = set()
+            for sec in data["news_sections"]:
+                unique_titles = []
+                for title in sec.get("titles", []):
+                    # 用前15个字符做去重 key，避免轻微措辞差异导致漏判
+                    key = title[:15].strip()
+                    if key not in seen_titles:
+                        seen_titles.add(key)
+                        unique_titles.append(title)
+                sec["titles"] = unique_titles
+            
+                # 去掉去重后 titles 为空的区域
+                data["news_sections"] = [
+                    sec for sec in data["news_sections"]
+                    if sec.get("titles")
+                ]
 
             # 方式一：编号直接取链接（精准）
             used_links = []
@@ -524,7 +541,7 @@ def render_overview_xhs_html(data):
               letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
 </div></body></html>"""
 
-def render_region_html(sec, date_str, daily_focus):
+def render_region_html(sec, date_str):
     color_map = {
         "北非及中东":"#b45309","南亚":"#15803d","东南亚":"#0e7490",
         "东亚":"#1d4ed8","西欧":"#6d28d9","南欧":"#be185d",
@@ -552,9 +569,6 @@ def render_region_html(sec, date_str, daily_focus):
   .news-title {{ font-size:13px; color:#64748b; margin-bottom:10px; font-weight:500; }}
   .news-list {{ padding-left:18px; }}
   .news-list li {{ font-size:14px; color:#1e293b; line-height:1.9; margin-bottom:4px; }}
-  .focus-box {{ margin-top:20px; background:#f8fafc; border-radius:8px;
-                padding:12px 16px; border-top:1px solid #e2e8f0; }}
-  .focus-box p {{ font-size:12px; color:#64748b; line-height:1.6; }}
   .footer {{ text-align:center; padding:12px; font-size:11px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
 </style></head><body>
@@ -569,7 +583,6 @@ def render_region_html(sec, date_str, daily_focus):
     <div class="insight">💡 市场研判：{sec['market_insight']}</div>
     <div class="news-title">本期精选资讯</div>
     <ul class="news-list">{titles_html}</ul>
-    <div class="focus-box"><p>📌 今日关注：{daily_focus}</p></div>
   </div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
@@ -578,7 +591,7 @@ def render_region_html(sec, date_str, daily_focus):
               letter-spacing:0.5px;user-select:none;">Created by 香港汇展 Nash</div>
 </div></body></html>"""
 
-def render_region_xhs_html(sec, date_str, daily_focus):
+def render_region_xhs_html(sec, date_str):
     color_map = {
         "北非及中东":"#b45309","南亚":"#15803d","东南亚":"#0e7490",
         "东亚":"#1d4ed8","西欧":"#6d28d9","南欧":"#be185d",
@@ -606,8 +619,6 @@ def render_region_xhs_html(sec, date_str, daily_focus):
   .news-title {{ font-size:20px; color:#64748b; margin-bottom:16px; font-weight:500; }}
   .news-list {{ padding-left:28px; }}
   .news-list li {{ font-size:21px; color:#1e293b; line-height:2.0; margin-bottom:8px; }}
-  .focus-box {{ margin-top:28px; background:#f8fafc; border-radius:12px;
-                padding:20px 24px; border-top:1px solid #e2e8f0; }}
   .focus-box p {{ font-size:18px; color:#64748b; line-height:1.7; }}
   .footer {{ text-align:center; padding:20px; font-size:16px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
@@ -623,7 +634,6 @@ def render_region_xhs_html(sec, date_str, daily_focus):
     <div class="insight">💡 市场研判：{sec['market_insight']}</div>
     <div class="news-title">本期精选资讯</div>
     <ul class="news-list">{titles_html}</ul>
-    <div class="focus-box"><p>📌 今日关注：{daily_focus}</p></div>
   </div>
   <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
@@ -730,12 +740,12 @@ def generate_images():
         slug = safe_slug(sec["region"])
 
         html_to_image(
-            render_region_html(sec, data["date"], data["daily_focus"]),
+            render_region_html(sec, data["date"]),
             os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
         )
 
         html_to_image_xhs(
-            render_region_xhs_html(sec, data["date"], data["daily_focus"]),
+            render_region_xhs_html(sec, data["date"]),
             os.path.join(XHS_DIR, f"region_{slug}_xhs_{date_str}.png")
         )
 
