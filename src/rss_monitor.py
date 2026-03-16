@@ -57,6 +57,7 @@ DAILY_DIR   = os.path.join(ROOT_DIR, "docs", "daily")
 MASTER_FILE = os.path.join(ROOT_DIR, "docs", "news_master.csv")
 USED_FILE   = os.path.join(ROOT_DIR, "docs", "used_news.csv")
 IMAGE_DIR   = os.path.join(ROOT_DIR, "docs", "images")
+CONFLICT_FILE = os.path.join(ROOT_DIR, "docs", "region_conflicts.csv")
 XHS_DIR     = os.path.join(ROOT_DIR, "docs", "images", "xhs")
 HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
 
@@ -213,6 +214,54 @@ def fetch_source(source, seven_days_ago, seen_urls):
     print(f"  ✅ {name} 本次新增：{len(new_data)} 条")
     return new_data
 
+
+def cross_validate_regions(unused_news, data):
+    """
+    交叉验证：对比 get_region 预判 vs DeepSeek 归类的区域
+    若 ref_region 有明确判断但完全不在 DeepSeek 任何区域里，记录为冲突
+    """
+    conflicts  = []
+    index_map  = {i + 1: row for i, row in enumerate(unused_news)}
+    used_indices = data.get("used_indices", [])
+
+    # 收集本次 DeepSeek 所有出现的区域
+    all_ds_regions = {sec.get("region", "") for sec in data.get("news_sections", [])}
+
+    for idx in used_indices:
+        if idx not in index_map:
+            continue
+        original_row   = index_map[idx]
+        ref_region     = original_row[1]
+        original_title = original_row[2]
+
+        # 全球/其他 和 跨区域 本来就不确定，跳过
+        if ref_region in ("全球/其他", "跨区域"):
+            continue
+
+        # ref_region 有明确判断，但完全不在 DeepSeek 的任何区域里
+        if ref_region not in all_ds_regions:
+            conflicts.append({
+                "index":          idx,
+                "original_title": original_title,
+                "ref_region":     ref_region,
+                "ds_region":      "未归入任何区域",
+                "date":           original_row[3],
+            })
+
+    if conflicts:
+        file_exists = os.path.exists(CONFLICT_FILE)
+        with open(CONFLICT_FILE, "a", newline="", encoding="utf-8-sig") as f:
+            writer = csv.DictWriter(f, fieldnames=[
+                "index", "original_title", "ref_region", "ds_region", "date"
+            ])
+            if not file_exists:
+                writer.writeheader()
+            writer.writerows(conflicts)
+        print(f"  ⚠️  区域不一致：{len(conflicts)} 条 → {CONFLICT_FILE}")
+    else:
+        print("  ✅ 区域交叉验证通过，无冲突")
+
+    return conflicts
 # ══════════════════════════════════════
 #  CSV 处理函数
 # ══════════════════════════════════════
@@ -312,10 +361,9 @@ def call_deepseek(unused_news):
     print(f"\n🤖 调用 DeepSeek，从 {len(unused_news)} 条未使用新闻中筛选...")
     today_str = now_cst().strftime("%Y年%m月%d日")
     news_text = "\n".join(
-        f"{i+1}. [{r[1]}] {r[2]} ({r[3]})"
+        f"{i+1}. [ref_region:{r[1]}] {r[2]} ({r[3]})"
         for i, r in enumerate(unused_news)
     )
-
     prompt = f"""
 # Role
 你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网领域。
@@ -326,7 +374,9 @@ def call_deepseek(unused_news):
 # Requirements
 1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
 2. 彻底剔除【风能、氢能、生物质能、核能】
-3. 精选 8-10 条，若实际不够则按实际数量精选，按区域归类
+3. 精选 8-10 条，若实际不够则按实际数量精选，按区域归类，
+    ref_region 是系统预判的参考区域，你需要根据新闻语义自行判断，
+    判断依据是新闻涉及的目标市场，而非公司国籍，可以覆盖 ref_region。
 4. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
 5. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
 6. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号，此字段为必填
@@ -380,11 +430,11 @@ def call_deepseek(unused_news):
                         unique_titles.append(title)
                 sec["titles"] = unique_titles
             
-                # 去掉去重后 titles 为空的区域
-                data["news_sections"] = [
-                    sec for sec in data["news_sections"]
-                    if sec.get("titles")
-                ]
+            # 去掉去重后 titles 为空的区域
+            data["news_sections"] = [
+                sec for sec in data["news_sections"]
+                if sec.get("titles")
+            ]
 
             # 方式一：编号直接取链接（精准）
             used_links = []
@@ -400,14 +450,16 @@ def call_deepseek(unused_news):
 
             # 方式二：编号为空或数量明显不足，启用标题反查兜底
             total_titles = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
-            if not used_links or len(used_links) < total_titles // 2:
+            if not used_links or len(used_links) < max(1, total_titles // 2):
                 print("  ⚠️ 编号匹配不足，启用标题反查兜底...")
                 fallback_links = match_used_links_by_title(unused_news, data)
                 for link in fallback_links:
                     if link not in used_links:
                         used_links.append(link)
                 print(f"  ✅ 兜底后共标记 {len(used_links)} 条")
-
+            # 交叉验证区域（不影响任何返回值和流程）
+            if used_links:
+                cross_validate_regions(unused_news, data)
             return data, used_links
 
         except json.JSONDecodeError as e:
@@ -619,7 +671,6 @@ def render_region_xhs_html(sec, date_str):
   .news-title {{ font-size:20px; color:#64748b; margin-bottom:16px; font-weight:500; }}
   .news-list {{ padding-left:28px; }}
   .news-list li {{ font-size:21px; color:#1e293b; line-height:2.0; margin-bottom:8px; }}
-  .focus-box p {{ font-size:18px; color:#64748b; line-height:1.7; }}
   .footer {{ text-align:center; padding:20px; font-size:16px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
 </style></head><body>
