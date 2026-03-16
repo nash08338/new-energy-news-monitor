@@ -76,11 +76,14 @@ SOURCES = [
     {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                          "paged": True},
     {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                  "paged": False},
     {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
+    {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
+    {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
+    {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en", "paged": False},
 ]
 
 # 动态生成 footer 来源字符串
-FOOTER_LINE1 = " · ".join(s["name"] for s in SOURCES[:6])   # 前6个一行
-FOOTER_LINE2 = " · ".join(s["name"] for s in SOURCES[6:])   # 后5个一行
+FOOTER_LINE1 = " · ".join(s["name"] for s in SOURCES[:7])   # 前7个一行
+FOOTER_LINE2 = " · ".join(s["name"] for s in SOURCES[7:])   # 后7个一行
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 if not DEEPSEEK_API_KEY:
@@ -177,6 +180,7 @@ def match_used_links_by_title(unused_news, data):
 # ══════════════════════════════════════
 def fetch_source(source, seven_days_ago, seen_urls):
     name, rss_url = source["name"], source["rss"]
+    supports_paged = source.get("paged", True)
     new_data = []
 
     print(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
@@ -630,6 +634,9 @@ def render_region_html(sec, date_str):
         "东亚":"#1d4ed8","西欧":"#6d28d9","南欧":"#be185d",
         "北欧":"#0369a1","东欧":"#4d7c0f","北美":"#7c2d12",
         "拉丁美洲":"#065f46","大洋洲":"#1e40af",
+        "西非":    "#92400e",
+        "东非":    "#065f46",
+        "非洲南部":"#1e3a5f",
     }
     accent      = color_map.get(sec["region"], "#0f3460")
     titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
@@ -800,7 +807,7 @@ def generate_images():
     date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
-    print(f"DEBUG: unused_news 数量 = {len(unused_news)}"
+    print(f"DEBUG: unused_news 数量 = {len(unused_news)}")
     
     data, used_links = call_deepseek(unused_news)
 
