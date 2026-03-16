@@ -563,7 +563,7 @@ def render_overview_html(data):
   <div class="footer">
     <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
     <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
@@ -620,7 +620,7 @@ def render_overview_xhs_html(data):
   <div class="footer">
     <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
     <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
@@ -670,7 +670,7 @@ def render_region_html(sec, date_str):
   <div class="footer">
     <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
     <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
@@ -721,7 +721,7 @@ def render_region_xhs_html(sec, date_str):
   <div class="footer">
     <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
     <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by Nash</span>
+                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
