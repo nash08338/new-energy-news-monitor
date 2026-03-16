@@ -477,7 +477,7 @@ def render_overview_html(data):
     <div class="focus-box"><p>{data['daily_focus']}</p></div>
   </div>
   <div class="body">{sections_html}</div>
-  <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
+  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
@@ -534,7 +534,7 @@ def render_overview_xhs_html(data):
     <div class="focus-box"><p>{data['daily_focus']}</p></div>
   </div>
   <div class="body">{sections_html}</div>
-  <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
+  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
@@ -584,7 +584,7 @@ def render_region_html(sec, date_str):
     <div class="news-title">本期精选资讯</div>
     <ul class="news-list">{titles_html}</ul>
   </div>
-  <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
+  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:18px;right:22px;font-size:11px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
@@ -635,7 +635,7 @@ def render_region_xhs_html(sec, date_str):
     <div class="news-title">本期精选资讯</div>
     <ul class="news-list">{titles_html}</ul>
   </div>
-  <div class="footer">SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
+  <div class="footer">Data Sources: SolarQuarter · PV Magazine · Energy Storage News · Power Technology · Electrive</div>
   <div style="position:absolute;bottom:24px;right:36px;font-size:16px;
               color:rgba(0,0,0,0.40);
               font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
