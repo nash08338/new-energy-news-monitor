@@ -11,33 +11,48 @@ import os
 import csv
 import time
 import random
-import glob
+# 移除未使用的 glob 导入
+# import glob
 import json
 import re
 import threading
-from zoneinfo import ZoneInfo
 from collections import defaultdict
 from datetime import datetime, timedelta
 from openai import OpenAI
-from playwright.sync_api import sync_playwright
 
-# ══════════════════════════════════════
-#  时区
-# ══════════════════════════════════════
+# ---------- 时区处理（增强健壮性）----------
+try:
+    from zoneinfo import ZoneInfo
+    USE_ZONEINFO = True
+except ImportError:
+    # Python < 3.9 或 zoneinfo 不可用，回退到 pytz（需安装）
+    try:
+        import pytz
+        USE_ZONEINFO = False
+    except ImportError:
+        # 若 pytz 也未安装，使用最简单的 UTC+8 固定偏移（上海无夏令时，可用）
+        USE_ZONEINFO = None
+
 def now_cst():
-    return datetime.now(ZoneInfo("Asia/Shanghai"))
+    """返回上海时间，兼容 zoneinfo/pytz/固定偏移"""
+    if USE_ZONEINFO is True:
+        return datetime.now(ZoneInfo("Asia/Shanghai"))
+    elif USE_ZONEINFO is False:
+        tz = pytz.timezone("Asia/Shanghai")
+        return datetime.now(tz)
+    else:
+        # 极端回退：直接 UTC+8（不考虑夏令时，上海无夏令时所以没问题）
+        return datetime.utcnow() + timedelta(hours=8)
 
 # ══════════════════════════════════════
-#  区域映射库
+#  区域映射库（完整）
 # ══════════════════════════════════════
 REGION_MAP = {
     "北非及中东": [
         "Middle East", "MENA",
-        # 中东
         "Saudi", "Saudi Arabia", "UAE", "United Arab Emirates", "Dubai", "Abu Dhabi",
         "Oman", "Qatar", "Kuwait", "Bahrain", "Yemen", "Iraq", "Jordan", "Lebanon",
         "Syria", "Israel", "Palestine", "Iran",
-        # 北非
         "Egypt", "Morocco", "Algeria", "Tunisia", "Libya",
     ],
     "南亚": [
@@ -132,47 +147,64 @@ REGION_MAP = {
 # ══════════════════════════════════════
 DAYS_BACK = 7
 
-BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR    = os.path.dirname(BASE_DIR)
+BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR      = os.path.dirname(BASE_DIR)
 
-DAILY_DIR   = os.path.join(ROOT_DIR, "docs", "daily")
-MASTER_FILE = os.path.join(ROOT_DIR, "docs", "news_master.csv")
-USED_FILE   = os.path.join(ROOT_DIR, "docs", "used_news.csv")
-IMAGE_DIR   = os.path.join(ROOT_DIR, "docs", "images")
+DAILY_DIR     = os.path.join(ROOT_DIR, "docs", "daily")
+MASTER_FILE   = os.path.join(ROOT_DIR, "docs", "news_master.csv")
+USED_FILE     = os.path.join(ROOT_DIR, "docs", "used_news.csv")
+IMAGE_DIR     = os.path.join(ROOT_DIR, "docs", "images")
 CONFLICT_FILE = os.path.join(ROOT_DIR, "docs", "region_conflicts.csv")
-XHS_DIR     = os.path.join(ROOT_DIR, "docs", "images", "xhs")
-HEADER = ['来源', '所属区域', '文章标题', '发布日期', '详情链接', '抓取日期']
+XHS_DIR       = os.path.join(ROOT_DIR, "docs", "images", "xhs")
+ESI_JSON_FILE = os.path.join(ROOT_DIR, "docs", "esi_africa_raw.json")
+HEADER        = ['来源', '所属区域', '文章标题', '发布日期', '详情链接', '抓取日期']
 
 SOURCES = [
-    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                   "paged": True},
-    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/", "paged": True},
-    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/",                    "paged": True},
-    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/",            "paged": True},
-    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/",                         "paged": True},
-    {"name": "PVTech",            "rss": "https://www.pv-tech.org/feed/",                                  "paged": True},
-    {"name": "EnergyCapitalPow",  "rss": "https://energycapitalpower.com/feed/",                           "paged": True},
-    {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                              "paged": True},
-    {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                          "paged": True},
-    {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                  "paged": False},
+    {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                        "paged": True},
+    {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/",      "paged": True},
+    {"name": "PowerTechnology",   "rss": "https://www.power-technology.com/news/feed/",                         "paged": True},
+    {"name": "EnergyStorageNews", "rss": "https://www.energy-storage.news/category/news/feed/",                 "paged": True},
+    {"name": "PVMagazine",        "rss": "https://www.pv-magazine.com/news/feed/",                              "paged": True},
+    {"name": "PVTech",            "rss": "https://www.pv-tech.org/feed/",                                       "paged": True},
+    {"name": "EnergyCapitalPow",  "rss": "https://energycapitalpower.com/feed/",                                "paged": True},
+    {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                                   "paged": True},
+    {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
+    {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
     {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
-    {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en", "paged": False},
-    {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
-    {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
+    {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
+    {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
+    {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False},
 ]
 
-# 动态生成 footer 来源字符串
-FOOTER_LINE1 = " · ".join(s["name"] for s in SOURCES[:7])   # 前7个一行
-FOOTER_LINE2 = " · ".join(s["name"] for s in SOURCES[7:])   # 后7个一行
+# 动态 footer（仅 FOOTER_SHORT 被使用，FOOTER_LINE1 和 FOOTER_LINE2 原代码中未使用，故移除）
+FOOTER_SHORT = "SolarQuarter · PVMagazine · PVTech · EnergyStorageNews · RenewEconomy · MercomIndia · ESI_Africa · 及其他"
 
+# ESI Africa 关键词白名单
+ESI_KEYWORDS = [
+    "solar", "storage", "battery", "photovoltaic", "pv",
+    "charging", "grid", "renewable", "energy transition",
+    "microgrid", "power", "electricity", "bess",
+]
+
+# ---------- DeepSeek API 初始化（增加环境变量缺失时的容错）----------
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 if not DEEPSEEK_API_KEY:
-    raise ValueError("DEEPSEEK_API_KEY 未设置，请检查 GitHub Secrets")
+    print("⚠️ 警告：DEEPSEEK_API_KEY 未设置，后续 DeepSeek 调用将跳过，图片生成功能不可用。")
+    client = None
+else:
+    client = OpenAI(
+        api_key=DEEPSEEK_API_KEY,
+        base_url="https://api.deepseek.com",
+        timeout=60.0
+    )
 
-client = OpenAI(
-    api_key=DEEPSEEK_API_KEY,
-    base_url="https://api.deepseek.com",
-    timeout=60.0
-)
+# ---------- Playwright 动态导入与检测 ----------
+PLAYWRIGHT_AVAILABLE = False
+try:
+    from playwright.sync_api import sync_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    print("⚠️ 警告：Playwright 未安装，截图功能将不可用。请运行 'pip install playwright' 并执行 'playwright install'")
 
 # ══════════════════════════════════════
 #  工具函数
@@ -187,7 +219,6 @@ def get_region(title):
     return matched[0] if len(matched) == 1 else "跨区域"
 
 def safe_slug(region):
-    """区域名转文件名安全字符串，过滤所有特殊字符"""
     return re.sub(r'[\\/:*?"<>|]', '_', region).replace(" ", "_")
 
 def load_used_links():
@@ -202,7 +233,6 @@ def load_used_links():
     return used
 
 def save_used_links(links):
-    # 先读取已有链接
     existing = set()
     if os.path.exists(USED_FILE):
         with open(USED_FILE, "r", encoding="utf-8-sig") as f:
@@ -212,7 +242,6 @@ def save_used_links(links):
                 if r:
                     existing.add(r[0])
 
-    # 只写入不存在的链接
     new_links = [l for l in links if l not in existing]
     if not new_links:
         print("  ℹ️ 无新链接需要写入 used_news")
@@ -228,14 +257,14 @@ def save_used_links(links):
 
     print(f"  ✅ 写入 {len(new_links)} 条到 used_news（跳过 {len(links)-len(new_links)} 条重复）")
 
-def load_unused_news(max_count=150):   # ← 新增 max_count 参数
+def load_unused_news(max_count=150):
     if not os.path.exists(MASTER_FILE):
         print("  ⚠️ 总表不存在，跳过")
         return []
 
     used_links = load_used_links()
     unused = []
-    with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
+    with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
         reader = csv.reader(f)
         next(reader, None)
         for r in reader:
@@ -243,8 +272,6 @@ def load_unused_news(max_count=150):   # ← 新增 max_count 参数
                 unused.append(r)
 
     total = len(unused)
-
-    # 总表已按日期降序，直接取前 max_count 条（最新的）
     if total > max_count:
         unused = unused[:max_count]
         print(f"  📰 未使用新闻：{total} 条，取最新 {max_count} 条传给 DeepSeek")
@@ -253,10 +280,9 @@ def load_unused_news(max_count=150):   # ← 新增 max_count 参数
 
     if len(unused) < 8:
         print(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
-
     return unused
+
 def match_used_links_by_title(unused_news, data):
-    """标题反查兜底：中文标题关键词匹配原始英文标题"""
     selected_titles = []
     for sec in data.get("news_sections", []):
         selected_titles.extend(sec.get("titles", []))
@@ -273,6 +299,58 @@ def match_used_links_by_title(unused_news, data):
     return used_links
 
 # ══════════════════════════════════════
+#  ESI Africa JSON 解析
+# ══════════════════════════════════════
+def parse_esi_africa_json(seen_urls):
+    if not os.path.exists(ESI_JSON_FILE):
+        print("  ℹ️ ESI Africa JSON 不存在，跳过")
+        return []
+
+    try:
+        with open(ESI_JSON_FILE, "r", encoding="utf-8") as f:
+            posts = json.load(f)
+    except Exception as e:
+        print(f"  ⚠️ ESI Africa JSON 解析失败：{e}")
+        return []
+
+    new_data  = []
+    today_str = now_cst().strftime('%Y-%m-%d')
+    skipped   = 0
+
+    for post in posts:
+        title    = post.get("title", {}).get("rendered", "").strip()
+        link     = post.get("link", "").strip()
+        date_raw = post.get("date", "")
+        classes  = " ".join(post.get("class_list", []))
+
+        try:
+            date_str = datetime.fromisoformat(date_raw).strftime("%Y-%m-%d")
+        except Exception:
+            continue
+
+        if not title or not link or not date_str:
+            continue
+
+        combined = (title + " " + classes).lower()
+        if not any(kw in combined for kw in ESI_KEYWORDS):
+            skipped += 1
+            continue
+
+        if link not in seen_urls:
+            new_data.append([
+                "ESI_Africa",
+                get_region(title),
+                title,
+                date_str,
+                link,
+                today_str,
+            ])
+            seen_urls.add(link)
+
+    print(f"  ✅ ESI Africa 注入：{len(new_data)} 条（过滤掉 {skipped} 条无关内容）")
+    return new_data
+
+# ══════════════════════════════════════
 #  核心抓取函数
 # ══════════════════════════════════════
 def fetch_source(source, seven_days_ago, seen_urls):
@@ -280,7 +358,7 @@ def fetch_source(source, seven_days_ago, seen_urls):
     rss_url        = source["rss"]
     supports_paged = source.get("paged", True)
     new_data       = []
-    today_str      = now_cst().strftime('%Y-%m-%d')   # ← 抓取日期
+    today_str      = now_cst().strftime('%Y-%m-%d')
 
     print(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
@@ -336,7 +414,7 @@ def fetch_source(source, seven_days_ago, seen_urls):
                         entry.title,
                         pub_date.strftime('%Y-%m-%d'),
                         link,
-                        today_str,              # ← 抓取日期（第6列）
+                        today_str,
                     ])
                     seen_urls.add(link)
             else:
@@ -351,16 +429,13 @@ def fetch_source(source, seven_days_ago, seen_urls):
     print(f"  ✅ {name} 本次新增：{len(new_data)} 条")
     return new_data
 
+# ══════════════════════════════════════
+#  交叉验证
+# ══════════════════════════════════════
 def cross_validate_regions(unused_news, data):
-    """
-    交叉验证：对比 get_region 预判 vs DeepSeek 归类的区域
-    若 ref_region 有明确判断但完全不在 DeepSeek 任何区域里，记录为冲突
-    """
-    conflicts  = []
-    index_map  = {i + 1: row for i, row in enumerate(unused_news)}
+    conflicts    = []
+    index_map    = {i + 1: row for i, row in enumerate(unused_news)}
     used_indices = data.get("used_indices", [])
-
-    # 收集本次 DeepSeek 所有出现的区域
     all_ds_regions = {sec.get("region", "") for sec in data.get("news_sections", [])}
 
     for idx in used_indices:
@@ -370,11 +445,9 @@ def cross_validate_regions(unused_news, data):
         ref_region     = original_row[1]
         original_title = original_row[2]
 
-        # 全球/其他 和 跨区域 本来就不确定，跳过
         if ref_region in ("全球/其他", "跨区域"):
             continue
 
-        # ref_region 有明确判断，但完全不在 DeepSeek 的任何区域里
         if ref_region not in all_ds_regions:
             conflicts.append({
                 "index":          idx,
@@ -398,6 +471,7 @@ def cross_validate_regions(unused_news, data):
         print("  ✅ 区域交叉验证通过，无冲突")
 
     return conflicts
+
 # ══════════════════════════════════════
 #  CSV 处理函数
 # ══════════════════════════════════════
@@ -406,12 +480,13 @@ def split_by_date(all_new_data):
     grouped = defaultdict(list)
     for row in all_new_data:
         grouped[row[3]].append(row)
-    written_files = [] 
+
+    written_files = []
     for date_str, rows in grouped.items():
         daily_file = os.path.join(DAILY_DIR, f"news_{date_str}.csv")
         existing_links = set()
         if os.path.isfile(daily_file):
-            with open(daily_file, "r", encoding="utf-8-sig") as f:
+            with open(daily_file, "r", encoding="utf-8-sig", errors="replace") as f:
                 reader = csv.reader(f)
                 next(reader, None)
                 for r in reader:
@@ -428,19 +503,19 @@ def split_by_date(all_new_data):
             if not file_exists:
                 writer.writerow(HEADER)
             writer.writerows(new_rows)
-            
-        written_files.append(daily_file)   # ← 记录
+
+        written_files.append(daily_file)
         print(f"  📅 {date_str}：新增 {len(new_rows)} 条 → {daily_file}")
-        
-    return written_files   # ← 返回
-    
-def merge_to_master(daily_files):   # ← 接收参数
+
+    return written_files
+
+def merge_to_master(daily_files):
     if not daily_files:
         return
 
     existing_links = set()
     if os.path.exists(MASTER_FILE):
-        with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
+        with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
             reader = csv.reader(f)
             next(reader, None)
             for r in reader:
@@ -448,9 +523,9 @@ def merge_to_master(daily_files):   # ← 接收参数
                     existing_links.add(r[4])
 
     new_rows = []
-    for f in daily_files:   # ← 只扫本次文件
+    for filepath in daily_files:
         try:
-            with open(f, "r", encoding="utf-8-sig") as fh:
+            with open(filepath, "r", encoding="utf-8-sig", errors="replace") as fh:
                 reader = csv.reader(fh)
                 next(reader, None)
                 for r in reader:
@@ -458,7 +533,7 @@ def merge_to_master(daily_files):   # ← 接收参数
                         new_rows.append(r)
                         existing_links.add(r[4])
         except Exception as e:
-            print(f"  ⚠️ 读取 {f} 失败：{e}")
+            print(f"  ⚠️ 读取 {filepath} 失败：{e}")
 
     if not new_rows:
         print("📋 总表无新增内容。")
@@ -472,7 +547,7 @@ def merge_to_master(daily_files):   # ← 接收参数
         writer.writerows(new_rows)
 
     all_rows = []
-    with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
+    with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
         reader = csv.reader(f)
         next(reader, None)
         seen = set()
@@ -490,9 +565,13 @@ def merge_to_master(daily_files):   # ← 接收参数
     print(f"📋 总表已更新，新增 {len(new_rows)} 条，共 {len(all_rows)} 条")
 
 # ══════════════════════════════════════
-#  DeepSeek 调用（编号优先 + 标题反查兜底）
+#  DeepSeek 调用（增强版）
 # ══════════════════════════════════════
 def call_deepseek(unused_news):
+    if not client:
+        print("  ⚠️ DeepSeek 客户端未初始化，跳过筛选")
+        return None, []
+
     if not unused_news:
         print("  ⚠️ 没有未使用的新闻，跳过生成图片")
         return None, []
@@ -503,6 +582,7 @@ def call_deepseek(unused_news):
         f"{i+1}. [ref_region:{r[1]}] {r[2]} ({r[3]})"
         for i, r in enumerate(unused_news)
     )
+
     prompt = f"""
 # Role
 你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网领域。
@@ -513,13 +593,16 @@ def call_deepseek(unused_news):
 # Requirements
 1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
 2. 彻底剔除【风能、氢能、生物质能、核能】
-3. 精选 8-10 条，若实际不够则按实际数量精选，按区域归类，
-    ref_region 是系统预判的参考区域，你需要根据新闻语义自行判断，
-    判断依据是新闻涉及的目标市场，而非公司国籍，可以覆盖 ref_region。
+3. 按区域归类，每个区域精选 4-5 条，总条数不限，
+   有多少相关区域就出多少区域，
+   ref_region 是系统预判的参考区域，你需要根据新闻语义自行判断，
+   判断依据是新闻涉及的目标市场，而非公司国籍，可以覆盖 ref_region。
+   若某区域相关新闻不足4条，则按实际数量精选，不强制凑数。
 4. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
 5. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
 6. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号，此字段为必填
 7. 同一条新闻只能出现在一个区域，严禁在不同区域重复出现同一内容
+
 # Output
 只返回 JSON 本身，不要任何多余文字或 markdown：
 {{
@@ -539,12 +622,14 @@ def call_deepseek(unused_news):
 {news_text}
 """
 
-    for attempt in range(3):
+    max_retries = 3
+    for attempt in range(max_retries):
         try:
             resp = client.chat.completions.create(
                 model="deepseek-chat",
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.3
+                temperature=0.3,
+                timeout=30  # 增加超时控制
             )
             raw = resp.choices[0].message.content.strip()
 
@@ -557,25 +642,23 @@ def call_deepseek(unused_news):
             data = json.loads(raw)
             assert "news_sections" in data and len(data["news_sections"]) > 0, "缺少 news_sections"
             assert "daily_focus"   in data, "缺少 daily_focus"
-            # ── 新增：跨区域标题去重 ──
+
+            # 去重标题
             seen_titles = set()
             for sec in data["news_sections"]:
                 unique_titles = []
                 for title in sec.get("titles", []):
-                    # 用前15个字符做去重 key，避免轻微措辞差异导致漏判
                     key = title[:15].strip()
                     if key not in seen_titles:
                         seen_titles.add(key)
                         unique_titles.append(title)
                 sec["titles"] = unique_titles
-            
-            # 去掉去重后 titles 为空的区域
+
             data["news_sections"] = [
                 sec for sec in data["news_sections"]
                 if sec.get("titles")
             ]
 
-            # 方式一：编号直接取链接（精准）
             used_links = []
             indices = data.get("used_indices", [])
             if indices:
@@ -587,7 +670,6 @@ def call_deepseek(unused_news):
                             used_links.append(link)
                 print(f"  ✅ 第{attempt+1}次调用成功，编号匹配：标记 {len(used_links)} 条")
 
-            # 方式二：编号为空或数量明显不足，启用标题反查兜底
             total_titles = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
             if not used_links or len(used_links) < max(1, total_titles // 2):
                 print("  ⚠️ 编号匹配不足，启用标题反查兜底...")
@@ -596,28 +678,31 @@ def call_deepseek(unused_news):
                     if link not in used_links:
                         used_links.append(link)
                 print(f"  ✅ 兜底后共标记 {len(used_links)} 条")
-            # 交叉验证区域（不影响任何返回值和流程）
+
             if used_links:
                 cross_validate_regions(unused_news, data)
             return data, used_links
-        
+
         except json.JSONDecodeError as e:
             print(f"  ⚠️ 第{attempt+1}次 JSON 解析失败：{e}")
-            print(f"  原始返回内容：{raw[:200]}")   # ← 加这行
+            if attempt < max_retries - 1:
+                print(f"  原始返回内容：{raw[:200]}")
         except AssertionError as e:
             print(f"  ⚠️ 第{attempt+1}次字段校验失败：{e}")
         except Exception as e:
-            print(f"  ⚠️ 第{attempt+1}次调用异常：{type(e).__name__}: {e}")  # ← 加类型
+            print(f"  ⚠️ 第{attempt+1}次调用异常：{type(e).__name__}: {e}")
 
-        if attempt < 2:
-            print("  🔄 等待重试...")
-            time.sleep(5)
+        if attempt < max_retries - 1:
+            # 指数退避 + 随机抖动
+            sleep_time = (2 ** attempt) + random.uniform(0, 1)
+            print(f"  🔄 等待 {sleep_time:.1f} 秒后重试...")
+            time.sleep(sleep_time)
 
     print("  ❌ DeepSeek 连续3次失败，跳过图片生成")
     return None, []
 
 # ══════════════════════════════════════
-#  HTML 模板
+#  HTML 模板函数
 # ══════════════════════════════════════
 def render_overview_html(data):
     sections_html = ""
@@ -638,26 +723,26 @@ def render_overview_html(data):
   body {{ font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
           background:#F0F4F8; width:820px; padding:28px; }}
   .card {{ background:white; border-radius:16px; overflow:hidden;
-           box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative; }}
+           box-shadow:0 2px 12px rgba(0,0,0,0.08); }}
   .header {{ background:linear-gradient(135deg,#1a1a2e,#0f3460); padding:24px 28px; }}
   .header-top {{ display:flex; justify-content:space-between;
                  align-items:center; margin-bottom:12px; }}
-  .header h1 {{ color:white; font-size:20px; font-weight:600; }}
-  .date {{ color:#94a3b8; font-size:13px; }}
+  .header h1 {{ color:white; font-size:24px; font-weight:600; }}
+  .date {{ color:#94a3b8; font-size:15px; }}
   .focus-box {{ background:rgba(255,255,255,0.07); border-radius:10px;
                 padding:14px 16px; border-left:3px solid #38bdf8; }}
-  .focus-box p {{ color:#e2e8f0; font-size:13px; line-height:1.7; }}
+  .focus-box p {{ color:#e2e8f0; font-size:15px; line-height:1.8; }}
   .body {{ padding:20px 28px; }}
   .section {{ border-bottom:1px solid #f1f5f9; padding:16px 0; }}
   .section:last-child {{ border-bottom:none; }}
-  .region-tag {{ background:#0f3460; color:white; font-size:12px;
-                 padding:3px 12px; border-radius:20px; font-weight:500; }}
-  .insight {{ font-size:12px; color:#0369a1; background:#f0f9ff;
-              border-radius:6px; padding:8px 12px; margin:8px 0 10px;
-              border-left:3px solid #38bdf8; line-height:1.6; }}
-  .news-list {{ padding-left:16px; }}
-  .news-list li {{ font-size:13px; color:#334155; line-height:1.8; }}
-  .footer {{ text-align:center; padding:14px; font-size:11px;
+  .region-tag {{ background:#0f3460; color:white; font-size:14px;
+                 padding:4px 14px; border-radius:20px; font-weight:500; }}
+  .insight {{ font-size:14px; color:#0369a1; background:#f0f9ff;
+              border-radius:6px; padding:10px 14px; margin:8px 0 10px;
+              border-left:3px solid #38bdf8; line-height:1.7; }}
+  .news-list {{ padding-left:18px; }}
+  .news-list li {{ font-size:15px; color:#334155; line-height:1.9; margin-bottom:2px; }}
+  .footer {{ overflow:hidden; padding:14px 16px; font-size:12px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
 </style></head><body>
 <div class="card">
@@ -670,8 +755,8 @@ def render_overview_html(data):
   </div>
   <div class="body">{sections_html}</div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
-    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+    <span style="float:left;">Data Sources: {FOOTER_SHORT}</span>
+    <span style="float:right;font-size:12px;color:rgba(0,0,0,0.40);
                  font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
@@ -695,7 +780,7 @@ def render_overview_xhs_html(data):
   body {{ font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
           background:#F0F4F8; width:1242px; padding:48px; }}
   .card {{ background:white; border-radius:24px; overflow:hidden;
-           box-shadow:0 4px 24px rgba(0,0,0,0.08); position:relative; }}
+           box-shadow:0 4px 24px rgba(0,0,0,0.08); }}
   .header {{ background:linear-gradient(135deg,#1a1a2e,#0f3460); padding:40px 48px; }}
   .header-top {{ display:flex; justify-content:space-between;
                  align-items:center; margin-bottom:20px; }}
@@ -714,7 +799,7 @@ def render_overview_xhs_html(data):
               border-left:4px solid #38bdf8; line-height:1.7; }}
   .news-list {{ padding-left:24px; }}
   .news-list li {{ font-size:19px; color:#334155; line-height:1.9; margin-bottom:4px; }}
-  .footer {{ text-align:center; padding:20px; font-size:13px;
+  .footer {{ overflow:hidden; padding:20px 24px; font-size:13px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
 </style></head><body>
 <div class="card">
@@ -727,24 +812,24 @@ def render_overview_xhs_html(data):
   </div>
   <div class="body">{sections_html}</div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
-    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+    <span style="float:left;">Data Sources: {FOOTER_SHORT}</span>
+    <span style="float:right;font-size:13px;color:rgba(0,0,0,0.40);
                  font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
-def render_region_html(sec, date_str):
+def render_region_html(sec, date_str, sources_used=""):
     color_map = {
         "北非及中东":"#b45309","南亚":"#15803d","东南亚":"#0e7490",
         "东亚":"#1d4ed8","西欧":"#6d28d9","南欧":"#be185d",
         "北欧":"#0369a1","东欧":"#4d7c0f","北美":"#7c2d12",
         "拉丁美洲":"#065f46","大洋洲":"#1e40af",
-        "西非":    "#92400e",
-        "东非":    "#065f46",
-        "非洲南部":"#1e3a5f",
+        "西非":"#92400e","东非":"#065f46","非洲南部":"#1e3a5f",
+        "中亚":"#7c3aed","俄罗斯及高加索":"#991b1b","中非及北非其他":"#854d0e",
     }
-    accent      = color_map.get(sec["region"], "#0f3460")
-    titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+    accent       = color_map.get(sec["region"], "#0f3460")
+    titles_html  = "".join(f"<li>{t}</li>" for t in sec["titles"])
+    footer_src   = sources_used if sources_used else FOOTER_SHORT
 
     return f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><style>
@@ -752,7 +837,7 @@ def render_region_html(sec, date_str):
   body {{ font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
           background:#F0F4F8; width:820px; padding:28px; }}
   .card {{ background:white; border-radius:16px; overflow:hidden;
-           box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative; }}
+           box-shadow:0 2px 12px rgba(0,0,0,0.08); }}
   .header {{ background:{accent}; padding:22px 28px;
              display:flex; justify-content:space-between; align-items:flex-start; }}
   .header-left h1 {{ color:white; font-size:19px; font-weight:600; }}
@@ -764,7 +849,7 @@ def render_region_html(sec, date_str):
   .news-title {{ font-size:13px; color:#64748b; margin-bottom:10px; font-weight:500; }}
   .news-list {{ padding-left:18px; }}
   .news-list li {{ font-size:14px; color:#1e293b; line-height:1.9; margin-bottom:4px; }}
-  .footer {{ text-align:center; padding:12px; font-size:11px;
+  .footer {{ overflow:hidden; padding:12px 16px; font-size:11px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
 </style></head><body>
 <div class="card">
@@ -780,21 +865,24 @@ def render_region_html(sec, date_str):
     <ul class="news-list">{titles_html}</ul>
   </div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
+    <span style="float:left;">Data Sources: {footer_src}</span>
     <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
                  font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
-def render_region_xhs_html(sec, date_str):
+def render_region_xhs_html(sec, date_str, sources_used=""):
     color_map = {
         "北非及中东":"#b45309","南亚":"#15803d","东南亚":"#0e7490",
         "东亚":"#1d4ed8","西欧":"#6d28d9","南欧":"#be185d",
         "北欧":"#0369a1","东欧":"#4d7c0f","北美":"#7c2d12",
         "拉丁美洲":"#065f46","大洋洲":"#1e40af",
+        "西非":"#92400e","东非":"#065f46","非洲南部":"#1e3a5f",
+        "中亚":"#7c3aed","俄罗斯及高加索":"#991b1b","中非及北非其他":"#854d0e",
     }
-    accent      = color_map.get(sec["region"], "#0f3460")
-    titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+    accent       = color_map.get(sec["region"], "#0f3460")
+    titles_html  = "".join(f"<li>{t}</li>" for t in sec["titles"])
+    footer_src   = sources_used if sources_used else FOOTER_SHORT
 
     return f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><style>
@@ -802,7 +890,7 @@ def render_region_xhs_html(sec, date_str):
   body {{ font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;
           background:#F0F4F8; width:1242px; padding:48px; }}
   .card {{ background:white; border-radius:24px; overflow:hidden;
-           box-shadow:0 4px 24px rgba(0,0,0,0.08); position:relative; }}
+           box-shadow:0 4px 24px rgba(0,0,0,0.08); }}
   .header {{ background:{accent}; padding:40px 48px;
              display:flex; justify-content:space-between; align-items:flex-start; }}
   .header-left h1 {{ color:white; font-size:30px; font-weight:600; }}
@@ -814,9 +902,8 @@ def render_region_xhs_html(sec, date_str):
   .news-title {{ font-size:20px; color:#64748b; margin-bottom:16px; font-weight:500; }}
   .news-list {{ padding-left:28px; }}
   .news-list li {{ font-size:21px; color:#1e293b; line-height:2.0; margin-bottom:8px; }}
-  .footer {{ text-align:center; padding:20px; font-size:13px;
+  .footer {{ overflow:hidden; padding:20px 24px; font-size:13px;
              color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
-
 </style></head><body>
 <div class="card">
   <div class="header">
@@ -831,16 +918,20 @@ def render_region_xhs_html(sec, date_str):
     <ul class="news-list">{titles_html}</ul>
   </div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {FOOTER_LINE1}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{FOOTER_LINE2}</span>
-    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
+    <span style="float:left;">Data Sources: {footer_src}</span>
+    <span style="float:right;font-size:13px;color:rgba(0,0,0,0.40);
                  font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
   </div>
 </div></body></html>"""
 
 # ══════════════════════════════════════
-#  截图函数（普通版，2x 高清）
+#  截图函数（GitHub Actions 版）
 # ══════════════════════════════════════
 def html_to_image(html_content, output_path):
+    if not PLAYWRIGHT_AVAILABLE:
+        print(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
+        return
+
     result = {"error": None}
 
     def run():
@@ -864,16 +955,16 @@ def html_to_image(html_content, output_path):
     t = threading.Thread(target=run)
     t.start()
     t.join()
-
     if result["error"]:
-        raise result["error"]
+        print(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
+    else:
+        print(f"  🖼️  已生成：{output_path}")
 
-    print(f"  🖼️  已生成：{output_path}")
-
-# ══════════════════════════════════════
-#  截图函数（小红书版，2x 高清竖图）
-# ══════════════════════════════════════
 def html_to_image_xhs(html_content, output_path):
+    if not PLAYWRIGHT_AVAILABLE:
+        print(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
+        return
+
     result = {"error": None}
 
     def run():
@@ -897,56 +988,54 @@ def html_to_image_xhs(html_content, output_path):
     t = threading.Thread(target=run)
     t.start()
     t.join()
-
     if result["error"]:
-        raise result["error"]
-
-    print(f"  📱 已生成（小红书）：{output_path}")
+        print(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
+    else:
+        print(f"  📱 已生成（小红书）：{output_path}")
 
 # ══════════════════════════════════════
-#  生成图片入口
+#  生成图片入口（内存优化：降低并发数）
 # ══════════════════════════════════════
 def generate_images():
-
-
     os.makedirs(IMAGE_DIR, exist_ok=True)
     os.makedirs(XHS_DIR, exist_ok=True)
     date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
-    print(f"DEBUG: unused_news 数量 = {len(unused_news)}")
-
     data, used_links = call_deepseek(unused_news)
 
     if not data:
         print("⚠️ 无可用新闻，跳过图片生成。")
         return
 
-    # ── 构建截图任务 ──
+    # 建立 index → 来源名映射
+    index_to_source = {i + 1: row[0] for i, row in enumerate(unused_news)}
+    used_indices    = data.get("used_indices", [])
+    all_sources_str = " · ".join(dict.fromkeys(
+        index_to_source[idx] for idx in used_indices if idx in index_to_source
+    ))
+
     tasks = [
         (render_overview_html(data),
-         os.path.join(IMAGE_DIR, f"overview_{date_str}.png"),
-         False),
+         os.path.join(IMAGE_DIR, f"overview_{date_str}.png"), False),
         (render_overview_xhs_html(data),
-         os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png"),
-         True),
+         os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png"), True),
     ]
 
-    region_images     = []   # 普通版区域图路径
-    xhs_region_images = []   # 小红书版区域图路径
+    region_images     = []
+    xhs_region_images = []
 
     for sec in data["news_sections"]:
         slug       = safe_slug(sec["region"])
         region_img = os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
         region_xhs = os.path.join(XHS_DIR,   f"region_{slug}_xhs_{date_str}.png")
 
-        tasks.append((render_region_html(sec, data["date"]),     region_img, False))
-        tasks.append((render_region_xhs_html(sec, data["date"]), region_xhs, True))
+        tasks.append((render_region_html(sec, data["date"], all_sources_str),     region_img, False))
+        tasks.append((render_region_xhs_html(sec, data["date"], all_sources_str), region_xhs, True))
 
         region_images.append(region_img)
         xhs_region_images.append(region_xhs)
 
-    # ── 并发截图 ──
     def take_shot(task):
         html_content, output_path, is_xhs = task
         if is_xhs:
@@ -954,20 +1043,20 @@ def generate_images():
         else:
             html_to_image(html_content, output_path)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    # 降低最大并发数到 2，减少内存压力
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         futures = [executor.submit(take_shot, t) for t in tasks]
         for f in concurrent.futures.as_completed(futures):
             try:
                 f.result()
             except Exception as e:
-                print(f"  ⚠️ 截图失败：{e}")
+                print(f"  ⚠️ 截图任务异常：{e}")
 
-    # ── 标记已用新闻 ──
     if used_links:
         save_used_links(used_links)
         print(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
 
-    # ── 打包普通版区域图 ──
+    # 打包区域图
     zip_region = os.path.join(IMAGE_DIR, f"regions_{date_str}.zip")
     with zipfile.ZipFile(zip_region, "w", zipfile.ZIP_DEFLATED) as zf:
         for img_path in region_images:
@@ -975,7 +1064,6 @@ def generate_images():
                 zf.write(img_path, os.path.basename(img_path))
     print(f"  📦 普通版区域图已打包：{zip_region}（共 {len(region_images)} 张）")
 
-    # ── 打包小红书版区域图 ──
     zip_xhs = os.path.join(XHS_DIR, f"regions_xhs_{date_str}.zip")
     with zipfile.ZipFile(zip_xhs, "w", zipfile.ZIP_DEFLATED) as zf:
         for img_path in xhs_region_images:
@@ -983,7 +1071,6 @@ def generate_images():
                 zf.write(img_path, os.path.basename(img_path))
     print(f"  📦 小红书版区域图已打包：{zip_xhs}（共 {len(xhs_region_images)} 张）")
 
-    # ── 删除散装区域图，只保留总图和压缩包 ──
     for img_path in region_images + xhs_region_images:
         if os.path.exists(img_path):
             os.remove(img_path)
@@ -999,14 +1086,14 @@ def generate_images():
 # ══════════════════════════════════════
 def main():
     seven_days_ago = now_cst() - timedelta(days=DAYS_BACK)
-    seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0)  # 修复：不重复设置 tzinfo
+    seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0)
 
     print(f"[{now_cst().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控（北京时间）")
     print(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
 
     seen_urls = set()
     if os.path.exists(MASTER_FILE):
-        with open(MASTER_FILE, "r", encoding="utf-8-sig") as f:
+        with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
             reader = csv.reader(f)
             next(reader, None)
             for r in reader:
@@ -1018,16 +1105,17 @@ def main():
     for source in SOURCES:
         all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
 
+    all_new_data.extend(parse_esi_africa_json(seen_urls))
+
     if all_new_data:
         all_new_data.sort(key=lambda x: x[3], reverse=True)
-        written_files = split_by_date(all_new_data)   # ← 接收返回值
-        merge_to_master(written_files)                 # ← 传入
+        written_files = split_by_date(all_new_data)
+        merge_to_master(written_files)
         print(f"  🎉 本次新增 {len(all_new_data)} 条新闻入库")
     else:
         print("☕ 本次无新增新闻。")
 
     generate_images()
-
     print(f"\n✅ 全部完成！")
 
 if __name__ == "__main__":
