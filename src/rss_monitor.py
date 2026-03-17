@@ -155,7 +155,7 @@ SOURCES = [
     {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                          "paged": True},
     {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                  "paged": False},
     {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
-    {"name": "EnergyMonitor", "rss": "https://www.energymonitor.ai/feed/", "paged": True},
+    {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en", "paged": False},
     {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
     {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
 ]
@@ -202,13 +202,31 @@ def load_used_links():
     return used
 
 def save_used_links(links):
+    # 先读取已有链接
+    existing = set()
+    if os.path.exists(USED_FILE):
+        with open(USED_FILE, "r", encoding="utf-8-sig") as f:
+            reader = csv.reader(f)
+            next(reader, None)
+            for r in reader:
+                if r:
+                    existing.add(r[0])
+
+    # 只写入不存在的链接
+    new_links = [l for l in links if l not in existing]
+    if not new_links:
+        print("  ℹ️ 无新链接需要写入 used_news")
+        return
+
     file_exists = os.path.exists(USED_FILE)
     with open(USED_FILE, "a", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(["详情链接", "使用日期"])
-        for link in links:
+        for link in new_links:
             writer.writerow([link, now_cst().strftime("%Y-%m-%d")])
+
+    print(f"  ✅ 写入 {len(new_links)} 条到 used_news（跳过 {len(links)-len(new_links)} 条重复）")
 
 def load_unused_news(max_count=150):   # ← 新增 max_count 参数
     if not os.path.exists(MASTER_FILE):
