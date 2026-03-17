@@ -141,7 +141,7 @@ USED_FILE   = os.path.join(ROOT_DIR, "docs", "used_news.csv")
 IMAGE_DIR   = os.path.join(ROOT_DIR, "docs", "images")
 CONFLICT_FILE = os.path.join(ROOT_DIR, "docs", "region_conflicts.csv")
 XHS_DIR     = os.path.join(ROOT_DIR, "docs", "images", "xhs")
-HEADER      = ['来源', '所属区域', '文章标题', '发布日期', '详情链接']
+HEADER = ['来源', '所属区域', '文章标题', '发布日期', '详情链接', '抓取日期']
 
 SOURCES = [
     {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                   "paged": True},
@@ -276,15 +276,18 @@ def match_used_links_by_title(unused_news, data):
 #  核心抓取函数
 # ══════════════════════════════════════
 def fetch_source(source, seven_days_ago, seen_urls):
-    name, rss_url = source["name"], source["rss"]
+    name           = source["name"]
+    rss_url        = source["rss"]
     supports_paged = source.get("paged", True)
-    new_data = []
+    new_data       = []
+    today_str      = now_cst().strftime('%Y-%m-%d')   # ← 抓取日期
 
     print(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
     for page in range(1, 100):
         if page > 1 and not supports_paged:
             break
+
         paged_url = f"{rss_url}?paged={page}" if page > 1 else rss_url
         print(f"  🔍 第 {page} 页：{paged_url}")
 
@@ -293,12 +296,14 @@ def fetch_source(source, seven_days_ago, seen_urls):
             try:
                 feed = feedparser.parse(
                     paged_url,
-                    agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+                    agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                          "AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
                 )
                 if hasattr(feed, 'status') and feed.status in (301, 302) and feed.get("href"):
                     feed = feedparser.parse(
                         feed.href,
-                        agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+                        agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                              "AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
                     )
                 if feed.entries:
                     break
@@ -326,8 +331,12 @@ def fetch_source(source, seven_days_ago, seen_urls):
             if pub_date >= seven_days_ago:
                 if link not in seen_urls:
                     new_data.append([
-                        name, get_region(entry.title),
-                        entry.title, pub_date.strftime('%Y-%m-%d'), link
+                        name,
+                        get_region(entry.title),
+                        entry.title,
+                        pub_date.strftime('%Y-%m-%d'),
+                        link,
+                        today_str,              # ← 抓取日期（第6列）
                     ])
                     seen_urls.add(link)
             else:
@@ -341,7 +350,6 @@ def fetch_source(source, seven_days_ago, seen_urls):
 
     print(f"  ✅ {name} 本次新增：{len(new_data)} 条")
     return new_data
-
 
 def cross_validate_regions(unused_news, data):
     """
