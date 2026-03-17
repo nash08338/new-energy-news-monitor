@@ -622,14 +622,15 @@ def call_deepseek(unused_news):
 {news_text}
 """
 
-    max_retries = 3
+    max_retries = 5  # 增加到5次重试
     for attempt in range(max_retries):
         try:
+            # 设置更合理的超时时间
             resp = client.chat.completions.create(
                 model="deepseek-chat",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
-                timeout=30  # 增加超时控制
+                timeout=45  # 增加到45秒
             )
             raw = resp.choices[0].message.content.strip()
 
@@ -641,7 +642,7 @@ def call_deepseek(unused_news):
 
             data = json.loads(raw)
             assert "news_sections" in data and len(data["news_sections"]) > 0, "缺少 news_sections"
-            assert "daily_focus"   in data, "缺少 daily_focus"
+            assert "daily_focus" in data, "缺少 daily_focus"
 
             # 去重标题
             seen_titles = set()
@@ -686,19 +687,22 @@ def call_deepseek(unused_news):
         except json.JSONDecodeError as e:
             print(f"  ⚠️ 第{attempt+1}次 JSON 解析失败：{e}")
             if attempt < max_retries - 1:
-                print(f"  原始返回内容：{raw[:200]}")
+                print(f"  原始返回内容：{raw[:200] if 'raw' in locals() else '无内容'}")
         except AssertionError as e:
             print(f"  ⚠️ 第{attempt+1}次字段校验失败：{e}")
         except Exception as e:
             print(f"  ⚠️ 第{attempt+1}次调用异常：{type(e).__name__}: {e}")
+            # 检查是否是429等需要特殊处理的错误
+            if "429" in str(e):
+                print("  ⚠️ 触发速率限制，延长等待时间")
 
         if attempt < max_retries - 1:
-            # 指数退避 + 随机抖动
-            sleep_time = (2 ** attempt) + random.uniform(0, 1)
+            # 指数退避 + 随机抖动 [1, 2, 4, 8, 16] + 随机0-2秒
+            sleep_time = (2 ** attempt) + random.uniform(0, 2)
             print(f"  🔄 等待 {sleep_time:.1f} 秒后重试...")
             time.sleep(sleep_time)
 
-    print("  ❌ DeepSeek 连续3次失败，跳过图片生成")
+    print("  ❌ DeepSeek 连续5次失败，跳过图片生成")
     return None, []
 
 # ══════════════════════════════════════
