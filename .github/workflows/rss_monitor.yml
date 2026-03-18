@@ -1,6 +1,6 @@
 name: RSS 新闻抓取
 
-# 触发方式（可根据需要启用或组合）
+# 触发方式（仅手动触发）
 on:
   workflow_dispatch:                # 手动触发（便于调试）
 
@@ -33,14 +33,30 @@ jobs:
         run: |
           playwright install chromium --with-deps   # 一步安装浏览器及其系统依赖
 
-      # 5. 运行主脚本
+      # 5. 创建必要的目录结构
+      - name: Create directory structure
+        run: |
+          mkdir -p docs/daily
+          mkdir -p docs/images/xhs
+
+      # 6. 检查 ESI Africa 文件是否存在
+      - name: Check ESI Africa file
+        run: |
+          if [ ! -f docs/esi_africa_raw.json ]; then
+            echo "⚠️ 警告: docs/esi_africa_raw.json 文件不存在"
+            echo "请上传 ESI Africa JSON 文件到 docs/esi_africa_raw.json"
+          else
+            echo "✅ ESI Africa 文件存在"
+          fi
+
+      # 7. 运行主脚本（多模块版本）
       - name: Run news script
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           TZ: Asia/Shanghai          # 设置时区，与脚本内时区处理保持一致（非必需）
-        run: python src/rss_monitor.py
+        run: python news_monitor/main.py    # 注意：根据您的多模块文件结构调整路径
 
-      # 6. 提交生成的文档（CSV、图片等）到仓库
+      # 8. 提交生成的文档（CSV、图片等）到仓库
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
