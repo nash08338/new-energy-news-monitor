@@ -11,26 +11,33 @@ import os
 import csv
 import time
 import random
-# 移除未使用的 glob 导入
-# import glob
 import json
 import re
 import threading
+import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
 from openai import OpenAI
+
+# ---------- 配置日志 ----------
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # ---------- 时区处理（增强健壮性）----------
 try:
     from zoneinfo import ZoneInfo
     USE_ZONEINFO = True
 except ImportError:
-    # Python < 3.9 或 zoneinfo 不可用，回退到 pytz（需安装）
     try:
         import pytz
         USE_ZONEINFO = False
     except ImportError:
-        # 若 pytz 也未安装，使用最简单的 UTC+8 固定偏移（上海无夏令时，可用）
         USE_ZONEINFO = None
 
 def now_cst():
@@ -41,8 +48,60 @@ def now_cst():
         tz = pytz.timezone("Asia/Shanghai")
         return datetime.now(tz)
     else:
-        # 极端回退：直接 UTC+8（不考虑夏令时，上海无夏令时所以没问题）
         return datetime.utcnow() + timedelta(hours=8)
+
+def parse_pub_date(entry):
+    """安全地解析发布日期"""
+    try:
+        if hasattr(entry, 'published_parsed') and entry.published_parsed:
+            timestamp = time.mktime(entry.published_parsed)
+            if USE_ZONEINFO is True:
+                return datetime.fromtimestamp(timestamp, tz=ZoneInfo("Asia/Shanghai"))
+            else:
+                return datetime.utcfromtimestamp(timestamp) + timedelta(hours=8)
+    except Exception as e:
+        logger.debug(f"日期解析失败：{e}")
+        return None
+    return None
+
+# ══════════════════════════════════════
+#  配置类
+# ══════════════════════════════════════
+class Config:
+    """集中管理所有配置"""
+    # 区域限制（按用户要求）
+    MAX_REGIONS = 8
+    MIN_REGIONS = 5
+    MAX_TITLES_PER_REGION = 5
+    MIN_TITLES_PER_REGION = 3
+    
+    # 时间范围
+    DAYS_BACK = 7
+    
+    # 路径配置
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    ROOT_DIR = os.path.dirname(BASE_DIR)
+    
+    DAILY_DIR = os.path.join(ROOT_DIR, "docs", "daily")
+    MASTER_FILE = os.path.join(ROOT_DIR, "docs", "news_master.csv")
+    USED_FILE = os.path.join(ROOT_DIR, "docs", "used_news.csv")
+    IMAGE_DIR = os.path.join(ROOT_DIR, "docs", "images")
+    CONFLICT_FILE = os.path.join(ROOT_DIR, "docs", "region_conflicts.csv")
+    XHS_DIR = os.path.join(ROOT_DIR, "docs", "images", "xhs")
+    ESI_JSON_FILE = os.path.join(ROOT_DIR, "docs", "esi_africa_raw.json")
+    
+    # CSV 头
+    HEADER = ['来源', '所属区域', '文章标题', '发布日期', '详情链接', '抓取日期']
+    
+    # DeepSeek 配置
+    DEEPSEEK_TIMEOUT = 45
+    DEEPSEEK_MAX_RETRIES = 5
+    DEEPSEEK_TEMPERATURE = 0.3
+    
+    @classmethod
+    def get_prompt_limits(cls):
+        """返回prompt中的限制描述"""
+        return f"{cls.MIN_REGIONS}-{cls.MAX_REGIONS}个核心区域，每个区域{cls.MIN_TITLES_PER_REGION}-{cls.MAX_TITLES_PER_REGION}条新闻"
 
 # ══════════════════════════════════════
 #  区域映射库（完整）
@@ -142,23 +201,6 @@ REGION_MAP = {
     ],
 }
 
-# ══════════════════════════════════════
-#  配置区
-# ══════════════════════════════════════
-DAYS_BACK = 7
-
-BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR      = os.path.dirname(BASE_DIR)
-
-DAILY_DIR     = os.path.join(ROOT_DIR, "docs", "daily")
-MASTER_FILE   = os.path.join(ROOT_DIR, "docs", "news_master.csv")
-USED_FILE     = os.path.join(ROOT_DIR, "docs", "used_news.csv")
-IMAGE_DIR     = os.path.join(ROOT_DIR, "docs", "images")
-CONFLICT_FILE = os.path.join(ROOT_DIR, "docs", "region_conflicts.csv")
-XHS_DIR       = os.path.join(ROOT_DIR, "docs", "images", "xhs")
-ESI_JSON_FILE = os.path.join(ROOT_DIR, "docs", "esi_africa_raw.json")
-HEADER        = ['来源', '所属区域', '文章标题', '发布日期', '详情链接', '抓取日期']
-
 SOURCES = [
     {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                        "paged": True},
     {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/",      "paged": True},
@@ -176,35 +218,33 @@ SOURCES = [
     {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False},
 ]
 
-# 动态 footer（仅 FOOTER_SHORT 被使用，FOOTER_LINE1 和 FOOTER_LINE2 原代码中未使用，故移除）
 FOOTER_SHORT = "SolarQuarter · PVMagazine · PVTech · EnergyStorageNews · RenewEconomy · MercomIndia · ESI_Africa · 及其他"
 
-# ESI Africa 关键词白名单
 ESI_KEYWORDS = [
     "solar", "storage", "battery", "photovoltaic", "pv",
     "charging", "grid", "renewable", "energy transition",
     "microgrid", "power", "electricity", "bess",
 ]
 
-# ---------- DeepSeek API 初始化（增加环境变量缺失时的容错）----------
+# ---------- DeepSeek API 初始化 ----------
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 if not DEEPSEEK_API_KEY:
-    print("⚠️ 警告：DEEPSEEK_API_KEY 未设置，后续 DeepSeek 调用将跳过，图片生成功能不可用。")
+    logger.warning("DEEPSEEK_API_KEY 未设置，后续 DeepSeek 调用将跳过，图片生成功能不可用。")
     client = None
 else:
     client = OpenAI(
         api_key=DEEPSEEK_API_KEY,
         base_url="https://api.deepseek.com",
-        timeout=60.0
+        timeout=Config.DEEPSEEK_TIMEOUT
     )
 
-# ---------- Playwright 动态导入与检测 ----------
+# ---------- Playwright 动态导入 ----------
 PLAYWRIGHT_AVAILABLE = False
 try:
     from playwright.sync_api import sync_playwright
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
-    print("⚠️ 警告：Playwright 未安装，截图功能将不可用。请运行 'pip install playwright' 并执行 'playwright install'")
+    logger.warning("Playwright 未安装，截图功能将不可用。请运行 'pip install playwright' 并执行 'playwright install'")
 
 # ══════════════════════════════════════
 #  工具函数
@@ -223,8 +263,8 @@ def safe_slug(region):
 
 def load_used_links():
     used = set()
-    if os.path.exists(USED_FILE):
-        with open(USED_FILE, "r", encoding="utf-8-sig") as f:
+    if os.path.exists(Config.USED_FILE):
+        with open(Config.USED_FILE, "r", encoding="utf-8-sig") as f:
             reader = csv.reader(f)
             next(reader, None)
             for r in reader:
@@ -234,8 +274,8 @@ def load_used_links():
 
 def save_used_links(links):
     existing = set()
-    if os.path.exists(USED_FILE):
-        with open(USED_FILE, "r", encoding="utf-8-sig") as f:
+    if os.path.exists(Config.USED_FILE):
+        with open(Config.USED_FILE, "r", encoding="utf-8-sig") as f:
             reader = csv.reader(f)
             next(reader, None)
             for r in reader:
@@ -244,27 +284,27 @@ def save_used_links(links):
 
     new_links = [l for l in links if l not in existing]
     if not new_links:
-        print("  ℹ️ 无新链接需要写入 used_news")
+        logger.info("  ℹ️ 无新链接需要写入 used_news")
         return
 
-    file_exists = os.path.exists(USED_FILE)
-    with open(USED_FILE, "a", newline="", encoding="utf-8-sig") as f:
+    file_exists = os.path.exists(Config.USED_FILE)
+    with open(Config.USED_FILE, "a", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(["详情链接", "使用日期"])
         for link in new_links:
             writer.writerow([link, now_cst().strftime("%Y-%m-%d")])
 
-    print(f"  ✅ 写入 {len(new_links)} 条到 used_news（跳过 {len(links)-len(new_links)} 条重复）")
+    logger.info(f"  ✅ 写入 {len(new_links)} 条到 used_news（跳过 {len(links)-len(new_links)} 条重复）")
 
 def load_unused_news(max_count=150):
-    if not os.path.exists(MASTER_FILE):
-        print("  ⚠️ 总表不存在，跳过")
+    if not os.path.exists(Config.MASTER_FILE):
+        logger.info("  ⚠️ 总表不存在，跳过")
         return []
 
     used_links = load_used_links()
     unused = []
-    with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
+    with open(Config.MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
         reader = csv.reader(f)
         next(reader, None)
         for r in reader:
@@ -274,43 +314,61 @@ def load_unused_news(max_count=150):
     total = len(unused)
     if total > max_count:
         unused = unused[:max_count]
-        print(f"  📰 未使用新闻：{total} 条，取最新 {max_count} 条传给 DeepSeek")
+        logger.info(f"  📰 未使用新闻：{total} 条，取最新 {max_count} 条传给 DeepSeek")
     else:
-        print(f"  📰 未使用新闻：{total} 条")
+        logger.info(f"  📰 未使用新闻：{total} 条")
 
     if len(unused) < 8:
-        print(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
+        logger.info(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
     return unused
 
 def match_used_links_by_title(unused_news, data):
+    """
+    改进的标题匹配函数
+    - 使用更长的关键词
+    - 要求匹配多个关键词
+    """
     selected_titles = []
     for sec in data.get("news_sections", []):
         selected_titles.extend(sec.get("titles", []))
 
     used_links = []
     for title in selected_titles:
-        keywords = [w for w in title[:20].split() if len(w) > 1]
-        for row in unused_news:
-            original = row[2].lower()
-            if any(kw.lower() in original for kw in keywords):
-                if row[4] not in used_links:
-                    used_links.append(row[4])
-                break
+        # 提取长关键词（长度>3）
+        keywords = [w for w in title.split() if len(w) > 3]
+        
+        if not keywords:
+            # 如果没有长关键词，使用标题的前20个字符
+            title_segment = title[:20].lower()
+            for row in unused_news:
+                if title_segment in row[2].lower():
+                    if row[4] not in used_links:
+                        used_links.append(row[4])
+                    break
+        else:
+            # 要求至少匹配2个关键词
+            for row in unused_news:
+                original = row[2].lower()
+                matches = sum(1 for kw in keywords if kw.lower() in original)
+                if matches >= 2:  # 至少匹配2个关键词
+                    if row[4] not in used_links:
+                        used_links.append(row[4])
+                    break
     return used_links
 
 # ══════════════════════════════════════
 #  ESI Africa JSON 解析
 # ══════════════════════════════════════
 def parse_esi_africa_json(seen_urls):
-    if not os.path.exists(ESI_JSON_FILE):
-        print("  ℹ️ ESI Africa JSON 不存在，跳过")
+    if not os.path.exists(Config.ESI_JSON_FILE):
+        logger.info("  ℹ️ ESI Africa JSON 不存在，跳过")
         return []
 
     try:
-        with open(ESI_JSON_FILE, "r", encoding="utf-8") as f:
+        with open(Config.ESI_JSON_FILE, "r", encoding="utf-8") as f:
             posts = json.load(f)
     except Exception as e:
-        print(f"  ⚠️ ESI Africa JSON 解析失败：{e}")
+        logger.error(f"  ⚠️ ESI Africa JSON 解析失败：{e}")
         return []
 
     new_data  = []
@@ -347,7 +405,7 @@ def parse_esi_africa_json(seen_urls):
             ])
             seen_urls.add(link)
 
-    print(f"  ✅ ESI Africa 注入：{len(new_data)} 条（过滤掉 {skipped} 条无关内容）")
+    logger.info(f"  ✅ ESI Africa 注入：{len(new_data)} 条（过滤掉 {skipped} 条无关内容）")
     return new_data
 
 # ══════════════════════════════════════
@@ -360,14 +418,14 @@ def fetch_source(source, seven_days_ago, seen_urls):
     new_data       = []
     today_str      = now_cst().strftime('%Y-%m-%d')
 
-    print(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
+    logger.info(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
     for page in range(1, 100):
         if page > 1 and not supports_paged:
             break
 
         paged_url = f"{rss_url}?paged={page}" if page > 1 else rss_url
-        print(f"  🔍 第 {page} 页：{paged_url}")
+        logger.info(f"  🔍 第 {page} 页：{paged_url}")
 
         feed = None
         for attempt in range(3):
@@ -386,24 +444,21 @@ def fetch_source(source, seven_days_ago, seen_urls):
                 if feed.entries:
                     break
             except Exception as e:
-                print(f"  ⚠️ 第 {attempt+1} 次请求异常：{e}")
+                logger.error(f"  ⚠️ 第 {attempt+1} 次请求异常：{e}")
                 feed = None
-            print(f"  ⚠️ 第 {attempt+1} 次返回空，等待后重试...")
+            logger.info(f"  ⚠️ 第 {attempt+1} 次返回空，等待后重试...")
             time.sleep(random.uniform(3.0, 6.0))
 
         if not feed or not feed.entries:
-            print("  🏁 重试3次仍为空，停止。")
+            logger.info("  🏁 重试3次仍为空，停止。")
             break
 
         hit_old = False
         for entry in feed.entries:
             link = entry.link
-            try:
-                pub_date = datetime.fromtimestamp(
-                    time.mktime(entry.published_parsed),
-                    tz=ZoneInfo("Asia/Shanghai")
-                )
-            except Exception:
+            pub_date = parse_pub_date(entry)
+            
+            if not pub_date:
                 continue
 
             if pub_date >= seven_days_ago:
@@ -418,7 +473,7 @@ def fetch_source(source, seven_days_ago, seen_urls):
                     ])
                     seen_urls.add(link)
             else:
-                print(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
+                logger.info(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
                 hit_old = True
                 break
 
@@ -426,7 +481,7 @@ def fetch_source(source, seven_days_ago, seen_urls):
             break
         time.sleep(random.uniform(1.5, 3.0))
 
-    print(f"  ✅ {name} 本次新增：{len(new_data)} 条")
+    logger.info(f"  ✅ {name} 本次新增：{len(new_data)} 条")
     return new_data
 
 # ══════════════════════════════════════
@@ -458,17 +513,17 @@ def cross_validate_regions(unused_news, data):
             })
 
     if conflicts:
-        file_exists = os.path.exists(CONFLICT_FILE)
-        with open(CONFLICT_FILE, "a", newline="", encoding="utf-8-sig") as f:
+        file_exists = os.path.exists(Config.CONFLICT_FILE)
+        with open(Config.CONFLICT_FILE, "a", newline="", encoding="utf-8-sig") as f:
             writer = csv.DictWriter(f, fieldnames=[
                 "index", "original_title", "ref_region", "ds_region", "date"
             ])
             if not file_exists:
                 writer.writeheader()
             writer.writerows(conflicts)
-        print(f"  ⚠️  区域不一致：{len(conflicts)} 条 → {CONFLICT_FILE}")
+        logger.info(f"  ⚠️  区域不一致：{len(conflicts)} 条 → {Config.CONFLICT_FILE}")
     else:
-        print("  ✅ 区域交叉验证通过，无冲突")
+        logger.info("  ✅ 区域交叉验证通过，无冲突")
 
     return conflicts
 
@@ -476,14 +531,14 @@ def cross_validate_regions(unused_news, data):
 #  CSV 处理函数
 # ══════════════════════════════════════
 def split_by_date(all_new_data):
-    os.makedirs(DAILY_DIR, exist_ok=True)
+    os.makedirs(Config.DAILY_DIR, exist_ok=True)
     grouped = defaultdict(list)
     for row in all_new_data:
         grouped[row[3]].append(row)
 
     written_files = []
     for date_str, rows in grouped.items():
-        daily_file = os.path.join(DAILY_DIR, f"news_{date_str}.csv")
+        daily_file = os.path.join(Config.DAILY_DIR, f"news_{date_str}.csv")
         existing_links = set()
         if os.path.isfile(daily_file):
             with open(daily_file, "r", encoding="utf-8-sig", errors="replace") as f:
@@ -501,11 +556,11 @@ def split_by_date(all_new_data):
         with open(daily_file, "a", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f)
             if not file_exists:
-                writer.writerow(HEADER)
+                writer.writerow(Config.HEADER)
             writer.writerows(new_rows)
 
         written_files.append(daily_file)
-        print(f"  📅 {date_str}：新增 {len(new_rows)} 条 → {daily_file}")
+        logger.info(f"  📅 {date_str}：新增 {len(new_rows)} 条 → {daily_file}")
 
     return written_files
 
@@ -514,8 +569,8 @@ def merge_to_master(daily_files):
         return
 
     existing_links = set()
-    if os.path.exists(MASTER_FILE):
-        with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
+    if os.path.exists(Config.MASTER_FILE):
+        with open(Config.MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
             reader = csv.reader(f)
             next(reader, None)
             for r in reader:
@@ -533,21 +588,21 @@ def merge_to_master(daily_files):
                         new_rows.append(r)
                         existing_links.add(r[4])
         except Exception as e:
-            print(f"  ⚠️ 读取 {filepath} 失败：{e}")
+            logger.error(f"  ⚠️ 读取 {filepath} 失败：{e}")
 
     if not new_rows:
-        print("📋 总表无新增内容。")
+        logger.info("📋 总表无新增内容。")
         return
 
-    file_exists = os.path.exists(MASTER_FILE)
-    with open(MASTER_FILE, "a", newline="", encoding="utf-8-sig") as f:
+    file_exists = os.path.exists(Config.MASTER_FILE)
+    with open(Config.MASTER_FILE, "a", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(HEADER)
+            writer.writerow(Config.HEADER)
         writer.writerows(new_rows)
 
     all_rows = []
-    with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
+    with open(Config.MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
         reader = csv.reader(f)
         next(reader, None)
         seen = set()
@@ -557,26 +612,26 @@ def merge_to_master(daily_files):
                 seen.add(r[4])
 
     all_rows.sort(key=lambda x: x[3], reverse=True)
-    with open(MASTER_FILE, "w", newline="", encoding="utf-8-sig") as f:
+    with open(Config.MASTER_FILE, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.writer(f)
-        writer.writerow(HEADER)
+        writer.writerow(Config.HEADER)
         writer.writerows(all_rows)
 
-    print(f"📋 总表已更新，新增 {len(new_rows)} 条，共 {len(all_rows)} 条")
+    logger.info(f"📋 总表已更新，新增 {len(new_rows)} 条，共 {len(all_rows)} 条")
 
 # ══════════════════════════════════════
 #  DeepSeek 调用（增强版）
 # ══════════════════════════════════════
 def call_deepseek(unused_news):
     if not client:
-        print("  ⚠️ DeepSeek 客户端未初始化，跳过筛选")
+        logger.warning("  ⚠️ DeepSeek 客户端未初始化，跳过筛选")
         return None, []
 
     if not unused_news:
-        print("  ⚠️ 没有未使用的新闻，跳过生成图片")
+        logger.warning("  ⚠️ 没有未使用的新闻，跳过生成图片")
         return None, []
 
-    print(f"\n🤖 调用 DeepSeek，从 {len(unused_news)} 条未使用新闻中筛选...")
+    logger.info(f"\n🤖 调用 DeepSeek，从 {len(unused_news)} 条未使用新闻中筛选...")
     today_str = now_cst().strftime("%Y年%m月%d日")
     news_text = "\n".join(
         f"{i+1}. [ref_region:{r[1]}] {r[2]} ({r[3]})"
@@ -594,7 +649,7 @@ def call_deepseek(unused_news):
 1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
 2. 彻底剔除【风能、氢能、生物质能、核能】
 3. **按区域归类，选择新闻最集中的5-8个核心区域**
-4. 每个精选区域保留3-5条新闻，确保区域内有足够的市场动态信息
+4. 每个精选区域保留3-5条新闻
 5. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
 6. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
 7. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号
@@ -620,14 +675,13 @@ def call_deepseek(unused_news):
 {news_text}
 """
 
-    max_retries = 5
-    for attempt in range(max_retries):
+    for attempt in range(Config.DEEPSEEK_MAX_RETRIES):
         try:
             resp = client.chat.completions.create(
                 model="deepseek-chat",
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-                timeout=45
+                temperature=Config.DEEPSEEK_TEMPERATURE,
+                timeout=Config.DEEPSEEK_TIMEOUT
             )
             raw = resp.choices[0].message.content.strip()
 
@@ -649,39 +703,38 @@ def call_deepseek(unused_news):
             
             # news_sections 为空时的处理
             if not data["news_sections"]:
-                print("  ⚠️ 注意：news_sections 为空，可能当天没有符合条件的新闻")
+                logger.warning("  ⚠️ 注意：news_sections 为空，可能当天没有符合条件的新闻")
                 return None, []
             
-            # === 区域数量优化（限制在3-5个区域）===
+            # === 区域数量优化（按用户要求：5-8个区域）===
             regions_count = len(data["news_sections"])
-            if regions_count > 5:
-                print(f"  ⚠️ DeepSeek 返回了 {regions_count} 个区域，超过5个限制，进行智能筛选")
-                # 按每个区域的新闻数量排序，保留新闻最多的前5个区域
+            if regions_count > Config.MAX_REGIONS:
+                logger.info(f"  ⚠️ DeepSeek 返回了 {regions_count} 个区域，超过{Config.MAX_REGIONS}个限制，进行智能筛选")
+                # 按每个区域的新闻数量排序，保留新闻最多的前MAX_REGIONS个区域
                 data["news_sections"].sort(
                     key=lambda x: len(x.get("titles", [])), 
                     reverse=True
                 )
-                data["news_sections"] = data["news_sections"][:5]
-                print(f"  ✅ 筛选后保留 {len(data['news_sections'])} 个区域")
-            elif regions_count < 3:
-                print(f"  ℹ️ 只有 {regions_count} 个区域有相关新闻")
+                data["news_sections"] = data["news_sections"][:Config.MAX_REGIONS]
+                logger.info(f"  ✅ 筛选后保留 {len(data['news_sections'])} 个区域")
+            elif regions_count < Config.MIN_REGIONS:
+                logger.info(f"  ℹ️ 只有 {regions_count} 个区域有相关新闻，低于建议的{Config.MIN_REGIONS}个")
             
-            # === 每个区域的新闻条数优化（限制在4-8条）===
+            # === 每个区域的新闻条数优化（按用户要求：3-5条）===
             total_titles_before = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
             for sec in data["news_sections"]:
                 titles = sec.get("titles", [])
-                if len(titles) > 8:
-                    print(f"  ⚠️ 区域 {sec['region']} 有 {len(titles)} 条新闻，精简到8条")
-                    sec["titles"] = titles[:8]
-                elif len(titles) < 4 and titles:
-                    print(f"  ℹ️ 区域 {sec['region']} 只有 {len(titles)} 条新闻")
+                if len(titles) > Config.MAX_TITLES_PER_REGION:
+                    logger.info(f"  ⚠️ 区域 {sec['region']} 有 {len(titles)} 条新闻，精简到{Config.MAX_TITLES_PER_REGION}条")
+                    sec["titles"] = titles[:Config.MAX_TITLES_PER_REGION]
+                elif len(titles) < Config.MIN_TITLES_PER_REGION and titles:
+                    logger.info(f"  ℹ️ 区域 {sec['region']} 只有 {len(titles)} 条新闻，低于建议的{Config.MIN_TITLES_PER_REGION}条")
             
             # === 标题去重（使用30个字符提高精度）===
             seen_titles = set()
             for sec in data["news_sections"]:
                 unique_titles = []
                 for title in sec.get("titles", []):
-                    # 使用标题的前30个字符作为去重特征
                     key = title[:30].strip()
                     if key not in seen_titles:
                         seen_titles.add(key)
@@ -697,9 +750,9 @@ def call_deepseek(unused_news):
             # 统计优化后的总条数
             total_titles_after = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
             if total_titles_after > 0:
-                print(f"  📊 优化后：{len(data['news_sections'])} 个区域，共 {total_titles_after} 条新闻")
+                logger.info(f"  📊 优化后：{len(data['news_sections'])} 个区域，共 {total_titles_after} 条新闻")
                 if total_titles_before != total_titles_after:
-                    print(f"     原返回 {total_titles_before} 条，优化后 {total_titles_after} 条")
+                    logger.info(f"     原返回 {total_titles_before} 条，优化后 {total_titles_after} 条")
             
             # === 处理 used_indices ===
             used_links = []
@@ -712,16 +765,16 @@ def call_deepseek(unused_news):
                         link = unused_news[pos][4]
                         if link not in used_links:
                             used_links.append(link)
-                print(f"  ✅ 第{attempt+1}次调用成功，编号匹配：标记 {len(used_links)} 条")
+                logger.info(f"  ✅ 第{attempt+1}次调用成功，编号匹配：标记 {len(used_links)} 条")
             
-            # 如果编号匹配不足，使用标题反查兜底
+            # 如果编号匹配不足，使用改进的标题反查兜底
             if not used_links or len(used_links) < max(1, total_titles_after // 2):
-                print("  ⚠️ 编号匹配不足，启用标题反查兜底...")
+                logger.info("  ⚠️ 编号匹配不足，启用标题反查兜底...")
                 fallback_links = match_used_links_by_title(unused_news, data)
                 for link in fallback_links:
                     if link not in used_links:
                         used_links.append(link)
-                print(f"  ✅ 兜底后共标记 {len(used_links)} 条")
+                logger.info(f"  ✅ 兜底后共标记 {len(used_links)} 条")
             
             # 区域交叉验证
             if used_links:
@@ -730,27 +783,27 @@ def call_deepseek(unused_news):
             return data, used_links
 
         except json.JSONDecodeError as e:
-            print(f"  ⚠️ 第{attempt+1}次 JSON 解析失败：{e}")
-            if attempt < max_retries - 1 and 'raw' in locals():
-                print(f"  原始返回内容预览：{raw[:200]}...")
+            logger.error(f"  ⚠️ 第{attempt+1}次 JSON 解析失败：{e}")
+            if attempt < Config.DEEPSEEK_MAX_RETRIES - 1 and 'raw' in locals():
+                logger.debug(f"  原始返回内容预览：{raw[:200]}...")
         except ValueError as e:
-            print(f"  ⚠️ 第{attempt+1}次字段校验失败：{e}")
+            logger.error(f"  ⚠️ 第{attempt+1}次字段校验失败：{e}")
         except Exception as e:
-            print(f"  ⚠️ 第{attempt+1}次调用异常：{type(e).__name__}: {e}")
+            logger.error(f"  ⚠️ 第{attempt+1}次调用异常：{type(e).__name__}: {e}")
             if "429" in str(e):
-                print("  ⚠️ 触发速率限制，延长等待时间")
+                logger.info("  ⚠️ 触发速率限制，延长等待时间")
 
-        if attempt < max_retries - 1:
+        if attempt < Config.DEEPSEEK_MAX_RETRIES - 1:
             # 指数退避 + 随机抖动
             sleep_time = (2 ** attempt) + random.uniform(0, 2)
-            print(f"  🔄 等待 {sleep_time:.1f} 秒后重试...")
+            logger.info(f"  🔄 等待 {sleep_time:.1f} 秒后重试...")
             time.sleep(sleep_time)
 
-    print("  ❌ DeepSeek 连续5次失败，跳过图片生成")
+    logger.error("  ❌ DeepSeek 连续5次失败，跳过图片生成")
     return None, []
 
 # ══════════════════════════════════════
-#  HTML 模板函数
+#  HTML 模板函数（保持原有不变，只修改了日志）
 # ══════════════════════════════════════
 def render_overview_html(data):
     sections_html = ""
@@ -973,11 +1026,11 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
 </div></body></html>"""
 
 # ══════════════════════════════════════
-#  截图函数（GitHub Actions 版）
+#  截图函数
 # ══════════════════════════════════════
 def html_to_image(html_content, output_path):
     if not PLAYWRIGHT_AVAILABLE:
-        print(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
+        logger.warning(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
         return
 
     result = {"error": None}
@@ -1004,13 +1057,13 @@ def html_to_image(html_content, output_path):
     t.start()
     t.join()
     if result["error"]:
-        print(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
+        logger.error(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
     else:
-        print(f"  🖼️  已生成：{output_path}")
+        logger.info(f"  🖼️  已生成：{output_path}")
 
 def html_to_image_xhs(html_content, output_path):
     if not PLAYWRIGHT_AVAILABLE:
-        print(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
+        logger.warning(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
         return
 
     result = {"error": None}
@@ -1037,23 +1090,23 @@ def html_to_image_xhs(html_content, output_path):
     t.start()
     t.join()
     if result["error"]:
-        print(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
+        logger.error(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
     else:
-        print(f"  📱 已生成（小红书）：{output_path}")
+        logger.info(f"  📱 已生成（小红书）：{output_path}")
 
 # ══════════════════════════════════════
-#  生成图片入口（内存优化：降低并发数）
+#  生成图片入口
 # ══════════════════════════════════════
 def generate_images():
-    os.makedirs(IMAGE_DIR, exist_ok=True)
-    os.makedirs(XHS_DIR, exist_ok=True)
+    os.makedirs(Config.IMAGE_DIR, exist_ok=True)
+    os.makedirs(Config.XHS_DIR, exist_ok=True)
     date_str = now_cst().strftime("%Y-%m-%d")
 
     unused_news = load_unused_news()
     data, used_links = call_deepseek(unused_news)
 
     if not data:
-        print("⚠️ 无可用新闻，跳过图片生成。")
+        logger.info("⚠️ 无可用新闻，跳过图片生成。")
         return
 
     # 建立 index → 来源名映射
@@ -1065,9 +1118,9 @@ def generate_images():
 
     tasks = [
         (render_overview_html(data),
-         os.path.join(IMAGE_DIR, f"overview_{date_str}.png"), False),
+         os.path.join(Config.IMAGE_DIR, f"overview_{date_str}.png"), False),
         (render_overview_xhs_html(data),
-         os.path.join(XHS_DIR, f"overview_xhs_{date_str}.png"), True),
+         os.path.join(Config.XHS_DIR, f"overview_xhs_{date_str}.png"), True),
     ]
 
     region_images     = []
@@ -1075,8 +1128,8 @@ def generate_images():
 
     for sec in data["news_sections"]:
         slug       = safe_slug(sec["region"])
-        region_img = os.path.join(IMAGE_DIR, f"region_{slug}_{date_str}.png")
-        region_xhs = os.path.join(XHS_DIR,   f"region_{slug}_xhs_{date_str}.png")
+        region_img = os.path.join(Config.IMAGE_DIR, f"region_{slug}_{date_str}.png")
+        region_xhs = os.path.join(Config.XHS_DIR,   f"region_{slug}_xhs_{date_str}.png")
 
         tasks.append((render_region_html(sec, data["date"], all_sources_str),     region_img, False))
         tasks.append((render_region_xhs_html(sec, data["date"], all_sources_str), region_xhs, True))
@@ -1098,56 +1151,56 @@ def generate_images():
             try:
                 f.result()
             except Exception as e:
-                print(f"  ⚠️ 截图任务异常：{e}")
+                logger.error(f"  ⚠️ 截图任务异常：{e}")
 
     if used_links:
         save_used_links(used_links)
-        print(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
+        logger.info(f"  ✅ 已标记 {len(used_links)} 条新闻为已使用")
 
     # 打包区域图
-    zip_region = os.path.join(IMAGE_DIR, f"regions_{date_str}.zip")
+    zip_region = os.path.join(Config.IMAGE_DIR, f"regions_{date_str}.zip")
     with zipfile.ZipFile(zip_region, "w", zipfile.ZIP_DEFLATED) as zf:
         for img_path in region_images:
             if os.path.exists(img_path):
                 zf.write(img_path, os.path.basename(img_path))
-    print(f"  📦 普通版区域图已打包：{zip_region}（共 {len(region_images)} 张）")
+    logger.info(f"  📦 普通版区域图已打包：{zip_region}（共 {len(region_images)} 张）")
 
-    zip_xhs = os.path.join(XHS_DIR, f"regions_xhs_{date_str}.zip")
+    zip_xhs = os.path.join(Config.XHS_DIR, f"regions_xhs_{date_str}.zip")
     with zipfile.ZipFile(zip_xhs, "w", zipfile.ZIP_DEFLATED) as zf:
         for img_path in xhs_region_images:
             if os.path.exists(img_path):
                 zf.write(img_path, os.path.basename(img_path))
-    print(f"  📦 小红书版区域图已打包：{zip_xhs}（共 {len(xhs_region_images)} 张）")
+    logger.info(f"  📦 小红书版区域图已打包：{zip_xhs}（共 {len(xhs_region_images)} 张）")
 
     for img_path in region_images + xhs_region_images:
         if os.path.exists(img_path):
             os.remove(img_path)
-    print("  🗑️  散装区域图已清理")
+    logger.info("  🗑️  散装区域图已清理")
 
-    print(f"\n📁 普通版总图：{os.path.join(IMAGE_DIR, f'overview_{date_str}.png')}")
-    print(f"📦 普通版区域包：{zip_region}")
-    print(f"📁 小红书版总图：{os.path.join(XHS_DIR, f'overview_xhs_{date_str}.png')}")
-    print(f"📦 小红书版区域包：{zip_xhs}")
+    logger.info(f"\n📁 普通版总图：{os.path.join(Config.IMAGE_DIR, f'overview_{date_str}.png')}")
+    logger.info(f"📦 普通版区域包：{zip_region}")
+    logger.info(f"📁 小红书版总图：{os.path.join(Config.XHS_DIR, f'overview_xhs_{date_str}.png')}")
+    logger.info(f"📦 小红书版区域包：{zip_xhs}")
 
 # ══════════════════════════════════════
 #  主程序
 # ══════════════════════════════════════
 def main():
-    seven_days_ago = now_cst() - timedelta(days=DAYS_BACK)
+    seven_days_ago = now_cst() - timedelta(days=Config.DAYS_BACK)
     seven_days_ago = seven_days_ago.replace(hour=0, minute=0, second=0)
 
-    print(f"[{now_cst().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控（北京时间）")
-    print(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
+    logger.info(f"[{now_cst().strftime('%Y-%m-%d %H:%M:%S')}] 启动全球新能源新闻监控（北京时间）")
+    logger.info(f"📅 抓取范围：{seven_days_ago.strftime('%Y-%m-%d')} 至今")
 
     seen_urls = set()
-    if os.path.exists(MASTER_FILE):
-        with open(MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
+    if os.path.exists(Config.MASTER_FILE):
+        with open(Config.MASTER_FILE, "r", encoding="utf-8-sig", errors="replace") as f:
             reader = csv.reader(f)
             next(reader, None)
             for r in reader:
                 if len(r) >= 5:
                     seen_urls.add(r[4])
-    print(f"📋 总表已有记录：{len(seen_urls)} 条，用于去重")
+    logger.info(f"📋 总表已有记录：{len(seen_urls)} 条，用于去重")
 
     all_new_data = []
     for source in SOURCES:
@@ -1159,12 +1212,12 @@ def main():
         all_new_data.sort(key=lambda x: x[3], reverse=True)
         written_files = split_by_date(all_new_data)
         merge_to_master(written_files)
-        print(f"  🎉 本次新增 {len(all_new_data)} 条新闻入库")
+        logger.info(f"  🎉 本次新增 {len(all_new_data)} 条新闻入库")
     else:
-        print("☕ 本次无新增新闻。")
+        logger.info("☕ 本次无新增新闻。")
 
     generate_images()
-    print(f"\n✅ 全部完成！")
+    logger.info(f"\n✅ 全部完成！")
 
 if __name__ == "__main__":
     main()
