@@ -3,8 +3,8 @@ import feedparser
 import time
 import random
 import logging
-from utils.time_utils import parse_pub_date, now_cst
-from utils.region_utils import get_region
+from ..utils.time_utils import parse_pub_date, now_cst
+from ..utils.region_utils import get_region
 
 logger = logging.getLogger(__name__)
 
