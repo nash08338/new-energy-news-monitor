@@ -4,8 +4,9 @@ import threading
 import zipfile
 import concurrent.futures
 import logging
-from utils.region_utils import safe_slug
-from utils.file_utils import save_used_links
+
+from ..utils.region_utils import safe_slug
+from ..utils.file_utils import save_used_links
 
 logger = logging.getLogger(__name__)
 
@@ -120,8 +121,8 @@ def generate_images(data, unused_news, used_links, config):
         region_img = os.path.join(config.IMAGE_DIR, f"region_{slug}_{date_str}.png")
         region_xhs = os.path.join(config.XHS_DIR, f"region_{slug}_xhs_{date_str}.png")
 
-        tasks.append((templates.render_region_html(sec, data["date"], all_sources_str), region_img, False))
-        tasks.append((templates.render_region_xhs_html(sec, data["date"], all_sources_str), region_xhs, True))
+        tasks.append((render_region_html(sec, data["date"], all_sources_str), region_img, False))
+        tasks.append((render_region_xhs_html(sec, data["date"], all_sources_str), region_xhs, True))
 
         region_images.append(region_img)
         xhs_region_images.append(region_xhs)
