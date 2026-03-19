@@ -88,7 +88,7 @@ def html_to_image_xhs(html_content, output_path):
 def generate_images(data, unused_news, used_links, config):
     """生成所有图片"""
     import os
-    from ..html import templates
+    from ..templates import templates
     
     os.makedirs(config.IMAGE_DIR, exist_ok=True)
     os.makedirs(config.XHS_DIR, exist_ok=True)
