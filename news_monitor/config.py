@@ -3,9 +3,9 @@ import os
 
 class Config:
     """集中管理所有配置"""
-
-class Config:
     # 区域限制（根据新需求调整）
+    
+    CREATED_BY = "香港汇展 Nash"
     MAX_REGIONS = 4                     # 从8降到4
     MIN_REGIONS = 3                      # 可保持3不变
     MAX_TITLES_PER_REGION = 4            # 从5降到4
