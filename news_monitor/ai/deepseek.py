@@ -98,10 +98,10 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
         f"{i+1}. [ref_region:{r[1]}] {r[2]} ({r[3]})"
         for i, r in enumerate(unused_news)
     )
-
+    
     prompt = f"""
 # Role
-你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网领域。
+你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网、电力领域。
 
 # Task
 对下方原始新闻标题进行筛选、翻译和润色，生成专业"行业内参"。
@@ -113,8 +113,13 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
 4. 每个精选区域保留{config.MIN_TITLES_PER_REGION}-{config.MAX_TITLES_PER_REGION}条新闻
 5. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
 6. 每个区域给出一条出海机遇或准入门槛的专业点评（中性）
-7. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号
-8. 同一条新闻只能出现在一个区域，严禁在不同区域重复出现同一内容
+7. **每条新闻必须附加一句“为什么重要”的解读，要求：**
+   - 必须结合新闻中的具体主体（国家、公司、技术、政策名称、数据等）
+   - 从以下角度切入（不限于）：市场准入、技术突破、竞争格局、投资风向、政策示范
+   - 避免使用“A类企业”“某些市场”等模糊指代
+   - 同一区域内的解读不能雷同，跨区域也尽量多样化
+8. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号
+9. 同一条新闻只能出现在一个区域，严禁在不同区域重复出现同一内容
 
 # Output
 只返回 JSON 本身，不要任何多余文字或 markdown：
@@ -125,7 +130,16 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
     {{
       "region": "区域名称",
       "market_insight": "该区域光储充市场研判",
-      "titles": ["标题1", "标题2", "标题3"]
+      "news": [
+        {{
+          "title": "标题1",
+          "importance": "为什么重要的解读（例如：此政策将允许外资独立开发智利锂矿，为宁德时代等电池巨头打开直接采购通道。）"
+        }},
+        {{
+          "title": "标题2",
+          "importance": "为什么重要的解读"
+        }}
+      ]
     }}
   ],
   "used_indices": [1, 3, 5, 8, 12]
