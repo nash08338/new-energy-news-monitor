@@ -3,10 +3,12 @@ import os
 
 class Config:
     """集中管理所有配置"""
-    # 区域限制（按用户要求）
-    MAX_REGIONS = 8
-    MIN_REGIONS = 5
-    MAX_TITLES_PER_REGION = 5
+
+class Config:
+    # 区域限制（根据新需求调整）
+    MAX_REGIONS = 4                     # 从8降到4
+    MIN_REGIONS = 3                      # 可保持3不变
+    MAX_TITLES_PER_REGION = 4            # 从5降到4
     MIN_TITLES_PER_REGION = 3
     
     # 时间范围
