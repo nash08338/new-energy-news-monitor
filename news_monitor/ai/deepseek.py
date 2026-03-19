@@ -4,8 +4,8 @@ import time
 import random
 import logging
 from openai import OpenAI
-from utils.time_utils import now_cst
-from utils.file_utils import save_used_links
+from ..utils.time_utils import now_cst
+from ..utils.file_utils import save_used_links
 
 logger = logging.getLogger(__name__)
 
