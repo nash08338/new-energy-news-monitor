@@ -88,7 +88,7 @@ def html_to_image_xhs(html_content, output_path):
 def generate_images(data, unused_news, used_links, config):
     """生成所有图片"""
     import os
-    from news_monitor.templates import templates
+    from ..templates import render_overview_html, render_overview_xhs_html, render_region_html, render_region_xhs_html
     
     os.makedirs(config.IMAGE_DIR, exist_ok=True)
     os.makedirs(config.XHS_DIR, exist_ok=True)
@@ -106,9 +106,9 @@ def generate_images(data, unused_news, used_links, config):
     ))
 
     tasks = [
-        (templates.render_overview_html(data),
+        (render_overview_html(data),
          os.path.join(config.IMAGE_DIR, f"overview_{date_str}.png"), False),
-        (templates.render_overview_xhs_html(data),
+        (render_overview_xhs_html(data),
          os.path.join(config.XHS_DIR, f"overview_xhs_{date_str}.png"), True),
     ]
 
