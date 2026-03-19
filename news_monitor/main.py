@@ -10,13 +10,15 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 from .config import Config
-from utils.time_utils import now_cst
-from utils.file_utils import load_unused_news
-from core.fetcher import fetch_source
-from core.esi_parser import parse_esi_africa_json
-from core.csv_handler import split_by_date, merge_to_master
-from ai.deepseek import call_deepseek
-from screenshot.generator import generate_images
+from .utils.time_utils import now_cst
+from .utils.file_utils import load_unused_news
+from .core.fetcher import fetch_source
+from .core.esi_parser import parse_esi_africa_json
+from .core.csv_handler import split_by_date, merge_to_master
+from .ai.deepseek import call_deepseek
+from .screenshot.generator import generate_images
+
+
 
 # 配置日志
 logging.basicConfig(
