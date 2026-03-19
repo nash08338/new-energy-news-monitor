@@ -54,7 +54,7 @@ jobs:
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           TZ: Asia/Shanghai          # 设置时区，与脚本内时区处理保持一致（非必需）
-        run: python news_monitor/main.py    # 注意：根据您的多模块文件结构调整路径
+        run: python -m news_monitor.main    # 注意：根据您的多模块文件结构调整路径
 
       # 8. 提交生成的文档（CSV、图片等）到仓库
       - name: Commit and push changes
