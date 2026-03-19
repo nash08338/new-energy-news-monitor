@@ -1,19 +1,26 @@
 # templates/templates.py
-# 保持原有的四个渲染函数不变，只需要修改导入的FOOTER
+# 更新后的渲染函数，适配新的 news 数据结构，并优化页脚
 from ..config import Config
 
 def render_overview_html(data):
     """渲染概览HTML（普通版）"""
     sections_html = ""
     for sec in data["news_sections"]:
-        titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+        news_html = ""
+        for item in sec.get("news", []):
+            news_html += f"""
+            <li>
+                <div class="news-title">{item['title']}</div>
+                <div class="news-importance">💡 {item['importance']}</div>
+            </li>
+            """
         sections_html += f"""
         <div class="section">
           <div class="region-header">
             <span class="region-tag">{sec['region']}</span>
           </div>
           <div class="insight">💡 {sec['market_insight']}</div>
-          <ul class="news-list">{titles_html}</ul>
+          <ul class="news-list">{news_html}</ul>
         </div>"""
 
     return f"""<!DOCTYPE html>
@@ -39,10 +46,18 @@ def render_overview_html(data):
   .insight {{ font-size:14px; color:#0369a1; background:#f0f9ff;
               border-radius:6px; padding:10px 14px; margin:8px 0 10px;
               border-left:3px solid #38bdf8; line-height:1.7; }}
-  .news-list {{ padding-left:18px; }}
-  .news-list li {{ font-size:15px; color:#334155; line-height:1.9; margin-bottom:2px; }}
-  .footer {{ overflow:hidden; padding:14px 16px; font-size:12px;
-             color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .news-list {{ list-style:none; padding-left:0; margin:0; }}
+  .news-list li {{ margin-bottom:12px; }}
+  .news-title {{ font-size:15px; font-weight:500; color:#1e293b; line-height:1.5; }}
+  .news-importance {{ font-size:13px; color:#4b5563; background:#f9fafb;
+                      padding:6px 10px; border-radius:6px; margin-top:4px;
+                      border-left:3px solid #9ca3af; line-height:1.5; }}
+  .footer {{ display:flex; justify-content:space-between; align-items:center;
+             padding:14px 16px; font-size:12px; color:#94a3b8;
+             background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .footer-left {{ flex:1; white-space:normal; word-wrap:break-word; }}
+  .footer-right {{ flex-shrink:0; margin-left:10px;
+                   font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }}
 </style></head><body>
 <div class="card">
   <div class="header">
@@ -54,9 +69,8 @@ def render_overview_html(data):
   </div>
   <div class="body">{sections_html}</div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {Config.FOOTER_SHORT}</span>
-    <span style="float:right;font-size:12px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
+    <span class="footer-left">Data Sources: {Config.FOOTER_SHORT}</span>
+    <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
 
@@ -64,14 +78,21 @@ def render_overview_xhs_html(data):
     """渲染概览HTML（小红书版）"""
     sections_html = ""
     for sec in data["news_sections"]:
-        titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+        news_html = ""
+        for item in sec.get("news", []):
+            news_html += f"""
+            <li>
+                <div class="news-title">{item['title']}</div>
+                <div class="news-importance">💡 {item['importance']}</div>
+            </li>
+            """
         sections_html += f"""
         <div class="section">
           <div class="region-header">
             <span class="region-tag">{sec['region']}</span>
           </div>
           <div class="insight">💡 {sec['market_insight']}</div>
-          <ul class="news-list">{titles_html}</ul>
+          <ul class="news-list">{news_html}</ul>
         </div>"""
 
     return f"""<!DOCTYPE html>
@@ -97,10 +118,18 @@ def render_overview_xhs_html(data):
   .insight {{ font-size:18px; color:#0369a1; background:#f0f9ff;
               border-radius:10px; padding:14px 18px; margin:12px 0 16px;
               border-left:4px solid #38bdf8; line-height:1.7; }}
-  .news-list {{ padding-left:24px; }}
-  .news-list li {{ font-size:19px; color:#334155; line-height:1.9; margin-bottom:4px; }}
-  .footer {{ overflow:hidden; padding:20px 24px; font-size:13px;
-             color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .news-list {{ list-style:none; padding-left:0; margin:0; }}
+  .news-list li {{ margin-bottom:16px; }}
+  .news-title {{ font-size:20px; font-weight:500; color:#1e293b; line-height:1.5; }}
+  .news-importance {{ font-size:17px; color:#4b5563; background:#f9fafb;
+                      padding:8px 12px; border-radius:8px; margin-top:6px;
+                      border-left:4px solid #9ca3af; line-height:1.5; }}
+  .footer {{ display:flex; justify-content:space-between; align-items:center;
+             padding:20px 24px; font-size:13px; color:#94a3b8;
+             background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .footer-left {{ flex:1; white-space:normal; word-wrap:break-word; }}
+  .footer-right {{ flex-shrink:0; margin-left:15px;
+                   font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }}
 </style></head><body>
 <div class="card">
   <div class="header">
@@ -112,9 +141,8 @@ def render_overview_xhs_html(data):
   </div>
   <div class="body">{sections_html}</div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {Config.FOOTER_SHORT}</span>
-    <span style="float:right;font-size:13px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
+    <span class="footer-left">Data Sources: {Config.FOOTER_SHORT}</span>
+    <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
 
@@ -129,7 +157,16 @@ def render_region_html(sec, date_str, sources_used=""):
         "中亚":"#7c3aed","俄罗斯及高加索":"#991b1b","中非及北非其他":"#854d0e",
     }
     accent = color_map.get(sec["region"], "#0f3460")
-    titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+    
+    news_html = ""
+    for item in sec.get("news", []):
+        news_html += f"""
+        <li>
+            <div class="news-title">{item['title']}</div>
+            <div class="news-importance">💡 {item['importance']}</div>
+        </li>
+        """
+    
     footer_src = sources_used if sources_used else Config.FOOTER_SHORT
 
     return f"""<!DOCTYPE html>
@@ -148,10 +185,18 @@ def render_region_html(sec, date_str, sources_used=""):
               border-radius:8px; padding:12px 16px; margin-bottom:18px;
               border-left:4px solid {accent}; line-height:1.7; }}
   .news-title {{ font-size:13px; color:#64748b; margin-bottom:10px; font-weight:500; }}
-  .news-list {{ padding-left:18px; }}
-  .news-list li {{ font-size:14px; color:#1e293b; line-height:1.9; margin-bottom:4px; }}
-  .footer {{ overflow:hidden; padding:12px 16px; font-size:11px;
-             color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .news-list {{ list-style:none; padding-left:0; margin:0; }}
+  .news-list li {{ margin-bottom:14px; }}
+  .news-title {{ font-size:14px; font-weight:500; color:#1e293b; line-height:1.5; }}
+  .news-importance {{ font-size:12px; color:#4b5563; background:#f9fafb;
+                      padding:5px 8px; border-radius:4px; margin-top:3px;
+                      border-left:3px solid #9ca3af; line-height:1.5; }}
+  .footer {{ display:flex; justify-content:space-between; align-items:center;
+             padding:12px 16px; font-size:11px; color:#94a3b8;
+             background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .footer-left {{ flex:1; white-space:normal; word-wrap:break-word; }}
+  .footer-right {{ flex-shrink:0; margin-left:10px;
+                   font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }}
 </style></head><body>
 <div class="card">
   <div class="header">
@@ -163,12 +208,11 @@ def render_region_html(sec, date_str, sources_used=""):
   <div class="body">
     <div class="insight">💡 市场研判：{sec['market_insight']}</div>
     <div class="news-title">本期精选资讯</div>
-    <ul class="news-list">{titles_html}</ul>
+    <ul class="news-list">{news_html}</ul>
   </div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {footer_src}</span>
-    <span style="float:right;font-size:11px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
+    <span class="footer-left">Data Sources: {footer_src}</span>
+    <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
 
@@ -183,7 +227,16 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
         "中亚":"#7c3aed","俄罗斯及高加索":"#991b1b","中非及北非其他":"#854d0e",
     }
     accent = color_map.get(sec["region"], "#0f3460")
-    titles_html = "".join(f"<li>{t}</li>" for t in sec["titles"])
+    
+    news_html = ""
+    for item in sec.get("news", []):
+        news_html += f"""
+        <li>
+            <div class="news-title">{item['title']}</div>
+            <div class="news-importance">💡 {item['importance']}</div>
+        </li>
+        """
+    
     footer_src = sources_used if sources_used else Config.FOOTER_SHORT
 
     return f"""<!DOCTYPE html>
@@ -202,10 +255,18 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
               border-radius:12px; padding:20px 24px; margin-bottom:28px;
               border-left:6px solid {accent}; line-height:1.8; }}
   .news-title {{ font-size:20px; color:#64748b; margin-bottom:16px; font-weight:500; }}
-  .news-list {{ padding-left:28px; }}
-  .news-list li {{ font-size:21px; color:#1e293b; line-height:2.0; margin-bottom:8px; }}
-  .footer {{ overflow:hidden; padding:20px 24px; font-size:13px;
-             color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .news-list {{ list-style:none; padding-left:0; margin:0; }}
+  .news-list li {{ margin-bottom:24px; }}
+  .news-title {{ font-size:21px; font-weight:500; color:#1e293b; line-height:1.5; }}
+  .news-importance {{ font-size:18px; color:#4b5563; background:#f9fafb;
+                      padding:10px 14px; border-radius:8px; margin-top:6px;
+                      border-left:5px solid #9ca3af; line-height:1.5; }}
+  .footer {{ display:flex; justify-content:space-between; align-items:center;
+             padding:20px 24px; font-size:13px; color:#94a3b8;
+             background:#f8fafc; border-top:1px solid #f1f5f9; }}
+  .footer-left {{ flex:1; white-space:normal; word-wrap:break-word; }}
+  .footer-right {{ flex-shrink:0; margin-left:15px;
+                   font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }}
 </style></head><body>
 <div class="card">
   <div class="header">
@@ -217,11 +278,10 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
   <div class="body">
     <div class="insight">💡 市场研判：{sec['market_insight']}</div>
     <div class="news-title">本期精选资讯</div>
-    <ul class="news-list">{titles_html}</ul>
+    <ul class="news-list">{news_html}</ul>
   </div>
   <div class="footer">
-    <span style="float:left;">Data Sources: {footer_src}</span>
-    <span style="float:right;font-size:13px;color:rgba(0,0,0,0.40);
-                 font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif;">Created by 香港汇展 Nash</span>
+    <span class="footer-left">Data Sources: {footer_src}</span>
+    <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
