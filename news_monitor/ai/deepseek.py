@@ -127,26 +127,25 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
 只返回 JSON 本身，不要任何多余文字或 markdown：
 {{
   "date": "{today_str}",
-  "daily_focus": "今日核心关注点的专业分析",
+  "daily_focus": "今日核心关注点的专业分析（一句话）",
   "news_sections": [
-    {{
+    {
       "region": "区域名称",
-      "market_insight": "该区域光储充市场研判",
+      "market_insight": "该区域光储充市场研判（35字内）",
       "news": [
-        {{
+        {
           "title": "标题1",
-          "importance": "为什么重要的解读（例如：此政策将允许外资独立开发智利锂矿，为宁德时代等电池巨头打开直接采购通道。）"
-        }},
-        {{
+          "importance": "重要性解读（15字内）"
+        },
+        {
           "title": "标题2",
-          "importance": "为什么重要的解读"
-        }}
+          "importance": "重要性解读（15字内）"
+        }
       ]
-    }}
+    }
   ],
   "used_indices": [1, 3, 5, 8, 12]
 }}
-
 # 新闻列表
 {news_text}
 """
