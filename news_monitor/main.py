@@ -9,7 +9,7 @@ from openai import OpenAI
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
-from config import Config
+from .config import Config
 from utils.time_utils import now_cst
 from utils.file_utils import load_unused_news
 from core.fetcher import fetch_source
