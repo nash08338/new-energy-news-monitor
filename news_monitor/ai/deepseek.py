@@ -10,10 +10,11 @@ from ..utils.file_utils import save_used_links
 logger = logging.getLogger(__name__)
 
 def match_used_links_by_title(unused_news, data):
-    """改进的标题匹配函数"""
+    """改进的标题匹配函数（适配新数据结构）"""
     selected_titles = []
     for sec in data.get("news_sections", []):
-        selected_titles.extend(sec.get("titles", []))
+        for item in sec.get("news", []):
+            selected_titles.append(item.get("title", ""))
 
     used_links = []
     for title in selected_titles:
@@ -98,7 +99,7 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
         f"{i+1}. [ref_region:{r[1]}] {r[2]} ({r[3]})"
         for i, r in enumerate(unused_news)
     )
-    
+
     prompt = f"""
 # Role
 你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网、电力领域。
@@ -179,12 +180,12 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
                 logger.warning("  ⚠️ 注意：news_sections 为空，可能当天没有符合条件的新闻")
                 return None, []
             
-            # 区域数量优化
+            # 区域数量优化（基于 news 列表长度排序）
             regions_count = len(data["news_sections"])
             if regions_count > config.MAX_REGIONS:
                 logger.info(f"  ⚠️ DeepSeek 返回了 {regions_count} 个区域，超过{config.MAX_REGIONS}个限制，进行智能筛选")
                 data["news_sections"].sort(
-                    key=lambda x: len(x.get("titles", [])), 
+                    key=lambda x: len(x.get("news", [])), 
                     reverse=True
                 )
                 data["news_sections"] = data["news_sections"][:config.MAX_REGIONS]
@@ -193,34 +194,35 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
                 logger.info(f"  ℹ️ 只有 {regions_count} 个区域有相关新闻，低于建议的{config.MIN_REGIONS}个")
             
             # 每个区域的新闻条数优化
-            total_titles_before = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
+            total_titles_before = sum(len(sec.get("news", [])) for sec in data["news_sections"])
             for sec in data["news_sections"]:
-                titles = sec.get("titles", [])
-                if len(titles) > config.MAX_TITLES_PER_REGION:
-                    logger.info(f"  ⚠️ 区域 {sec['region']} 有 {len(titles)} 条新闻，精简到{config.MAX_TITLES_PER_REGION}条")
-                    sec["titles"] = titles[:config.MAX_TITLES_PER_REGION]
-                elif len(titles) < config.MIN_TITLES_PER_REGION and titles:
-                    logger.info(f"  ℹ️ 区域 {sec['region']} 只有 {len(titles)} 条新闻，低于建议的{config.MIN_TITLES_PER_REGION}条")
+                news_list = sec.get("news", [])
+                if len(news_list) > config.MAX_TITLES_PER_REGION:
+                    logger.info(f"  ⚠️ 区域 {sec['region']} 有 {len(news_list)} 条新闻，精简到{config.MAX_TITLES_PER_REGION}条")
+                    sec["news"] = news_list[:config.MAX_TITLES_PER_REGION]
+                elif len(news_list) < config.MIN_TITLES_PER_REGION and news_list:
+                    logger.info(f"  ℹ️ 区域 {sec['region']} 只有 {len(news_list)} 条新闻，低于建议的{config.MIN_TITLES_PER_REGION}条")
             
-            # 标题去重
+            # 标题去重（基于 title 字段）
             seen_titles = set()
             for sec in data["news_sections"]:
-                unique_titles = []
-                for title in sec.get("titles", []):
+                unique_news = []
+                for item in sec.get("news", []):
+                    title = item.get("title", "")
                     key = title[:30].strip()
                     if key not in seen_titles:
                         seen_titles.add(key)
-                        unique_titles.append(title)
-                sec["titles"] = unique_titles
+                        unique_news.append(item)
+                sec["news"] = unique_news
             
-            # 过滤掉没有标题的区域
+            # 过滤掉没有新闻的区域
             data["news_sections"] = [
                 sec for sec in data["news_sections"]
-                if sec.get("titles")
+                if sec.get("news")
             ]
             
             # 统计优化后的总条数
-            total_titles_after = sum(len(sec.get("titles", [])) for sec in data["news_sections"])
+            total_titles_after = sum(len(sec.get("news", [])) for sec in data["news_sections"])
             if total_titles_after > 0:
                 logger.info(f"  📊 优化后：{len(data['news_sections'])} 个区域，共 {total_titles_after} 条新闻")
                 if total_titles_before != total_titles_after:
