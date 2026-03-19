@@ -1,6 +1,6 @@
-# html/templates.py
+# templates/templates.py
 # 保持原有的四个渲染函数不变，只需要修改导入的FOOTER
-from config import Config
+from ..config import Config
 
 def render_overview_html(data):
     """渲染概览HTML（普通版）"""
