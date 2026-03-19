@@ -2,6 +2,46 @@
 # 更新后的渲染函数，适配新的 news 数据结构，并优化页脚，统一样式管理
 from ..config import Config
 
+def _get_importance_emoji(text):
+    """根据重要性文本关键词匹配emoji"""
+    text_lower = text.lower()
+    
+    # 政策/法规类
+    if any(k in text_lower for k in ["政策", "法规", "补贴", "关税", "mandate", "policy", "规则", "法案", "regulation"]):
+        return "🏛️"
+    # 项目/投资类
+    if any(k in text_lower for k in ["项目", "投资", "投产", "产能", "project", "investment", "工厂", "产线", "部署"]):
+        return "🏗️"
+    # 技术突破类
+    if any(k in text_lower for k in ["技术", "效率", "研发", "突破", "technology", "efficiency", "创新", "认证"]):
+        return "🔬"
+    # 市场准入类
+    if any(k in text_lower for k in ["市场", "准入", "出口", "market", "access", "准入", "壁垒", "机会"]):
+        return "🚪"
+    # 环境/气候类
+    if any(k in text_lower for k in ["环境", "气候", "减排", "绿色", "environment", "climate", "sustainable"]):
+        return "🌍"
+    # 风险/挑战类
+    if any(k in text_lower for k in ["风险", "挑战", "压力", "risk", "challenge", "危机", "不确定性"]):
+        return "⚠️"
+    # 储能/电池类
+    if any(k in text_lower for k in ["储能", "电池", "battery", "storage", "bess"]):
+        return "🔋"
+    # 光伏/太阳能类
+    if any(k in text_lower for k in ["光伏", "太阳能", "solar", "pv", "photovoltaic"]):
+        return "☀️"
+    # 电网/电力类
+    if any(k in text_lower for k in ["电网", "电力", "grid", "power", "electricity"]):
+        return "⚡"
+    
+    return "📢"  # 默认
+
+
+
+
+
+
+
 # 基础样式（所有版本共享）
 BASE_STYLE = """
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -17,13 +57,18 @@ BASE_STYLE = """
   .region-tag { background:#0f3460; color:white; font-weight:500; border-radius:20px; }
   .insight { color:#0369a1; background:#f0f9ff; border-left:3px solid #38bdf8; line-height:1.7; }
   .news-list { list-style:none; padding-left:0; margin:0; }
-  .news-list li { margin-bottom:12px; }
-  .news-title { font-weight:500; color:#1e293b; line-height:1.5; }
-  .news-importance { color:#ea580c; background:#f9fafb; border-radius:6px; border-left:3px solid #9ca3af; line-height:1.5; }
+  .news-list li { margin-bottom:8px; }
+  .news-title { font-size:14px; font-weight:500; color:#1e293b; line-height:1.4; }
+  .news-importance { font-size:12px; color:#ea580c; background:#f9fafb; border-radius:4px; border-left:3px solid #9ca3af; line-height:1.4; padding:4px 8px; margin-top:2px; }
   .footer { display:flex; justify-content:space-between; align-items:center; color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }
   .footer-left { flex:1; white-space:normal; word-wrap:break-word; }
   .footer-right { flex-shrink:0; font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }
 """
+  
+
+
+
+
 
 def _format_region_name(region):
     """格式化区域名称：将“中非及北非其他”显示为“中非”"""
@@ -36,12 +81,14 @@ def render_overview_html(data):
         region_display = _format_region_name(sec['region'])
         news_html = ""
         for item in sec.get("news", []):
+            emoji = _get_importance_emoji(item['importance'])
             news_html += f"""
             <li>
                 <div class="news-title">{item['title']}</div>
-                <div class="news-importance">💡 {item['importance']}</div>
+                <div class="news-importance">{emoji} {item['importance']}</div>
             </li>
             """
+     
         sections_html += f"""
         <div class="section">
           <div class="region-header">
@@ -97,12 +144,14 @@ def render_overview_xhs_html(data):
         region_display = _format_region_name(sec['region'])
         news_html = ""
         for item in sec.get("news", []):
+            emoji = _get_importance_emoji(item['importance'])
             news_html += f"""
             <li>
                 <div class="news-title">{item['title']}</div>
-                <div class="news-importance">💡 {item['importance']}</div>
+                <div class="news-importance">{emoji} {item['importance']}</div>
             </li>
             """
+     
         sections_html += f"""
         <div class="section">
           <div class="region-header">
@@ -166,10 +215,11 @@ def render_region_html(sec, date_str, sources_used=""):
     
     news_html = ""
     for item in sec.get("news", []):
+        emoji = _get_importance_emoji(item['importance'])
         news_html += f"""
         <li>
             <div class="news-title">{item['title']}</div>
-            <div class="news-importance">💡 {item['importance']}</div>
+            <div class="news-importance">{emoji} {item['importance']}</div>
         </li>
         """
     
@@ -229,10 +279,11 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
     
     news_html = ""
     for item in sec.get("news", []):
+        emoji = _get_importance_emoji(item['importance'])
         news_html += f"""
         <li>
             <div class="news-title">{item['title']}</div>
-            <div class="news-importance">💡 {item['importance']}</div>
+            <div class="news-importance">{emoji} {item['importance']}</div>
         </li>
         """
     
