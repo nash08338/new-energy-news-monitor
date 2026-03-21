@@ -6,6 +6,7 @@ import logging
 from openai import OpenAI
 from ..utils.time_utils import now_cst
 from ..utils.file_utils import save_used_links
+from ..utils.file_utils import get_recent_regions, save_region_history
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +101,11 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
         for i, r in enumerate(unused_news)
     )
 
+    recent_regions = get_recent_regions(days=3)
+    recent_hint = ""
+    if recent_regions:
+        recent_hint = f"\n**注意：最近3天已重点报道的区域有：{', '.join(recent_regions)}。请优先选择其他区域，若其他区域新闻不足，可酌情包含部分重复区域。**\n"
+
     prompt = f"""
 # Role
 你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网、电力领域。
@@ -111,6 +117,7 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
 1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
 2. 彻底剔除【风能、氢能、生物质能、核能】
 3. **按区域归类，选择新闻最集中的{config.MIN_REGIONS}-{config.MAX_REGIONS}个核心区域**
+{recent_hint}
 4. 每个精选区域保留{config.MIN_TITLES_PER_REGION}-{config.MAX_TITLES_PER_REGION}条新闻
 5. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
 6. 每个区域给出一条出海机遇或准入门槛的专业点评（中性），**字数控制在35字以内，用一句话概括核心机会或门槛**，例如：“本土化清单扩展，外资需技术转让或合资以进入印度市场。”
@@ -254,7 +261,10 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
             # 区域交叉验证
             if used_links:
                 cross_validate_regions(unused_news, data, conflict_file)
-            
+            # 保存当天选中的区域
+            regions_today = [sec['region'] for sec in data.get('news_sections', [])]
+            if regions_today:
+                save_region_history(regions_today)
             return data, used_links
 
         except json.JSONDecodeError as e:

@@ -3,6 +3,9 @@ import os
 import csv
 from .time_utils import now_cst
 import logging
+import json
+from datetime import datetime, timedelta
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,3 +72,37 @@ def load_unused_news(master_file, used_file, max_count=150):
     if len(unused) < 8:
         logger.info(f"  ⚠️ 未使用新闻不足8条，建议增加抓取频率或扩大 DAYS_BACK")
     return unused
+
+
+REGION_HISTORY_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "used_regions.json")
+
+def save_region_history(regions):
+    """保存当天选中的区域列表到历史文件"""
+    today_str = now_cst().strftime("%Y-%m-%d")
+    history = {}
+    if os.path.exists(REGION_HISTORY_FILE):
+        with open(REGION_HISTORY_FILE, "r", encoding="utf-8") as f:
+            history = json.load(f)
+    history[today_str] = regions
+    # 只保留最近7天记录
+    cutoff = now_cst() - timedelta(days=7)
+    history = {date: reg for date, reg in history.items() 
+               if datetime.strptime(date, "%Y-%m-%d") >= cutoff}
+    with open(REGION_HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+def get_recent_regions(days=3):
+    """获取最近几天出现的区域（不含今天）"""
+    if not os.path.exists(REGION_HISTORY_FILE):
+        return []
+    with open(REGION_HISTORY_FILE, "r", encoding="utf-8") as f:
+        history = json.load(f)
+    today = now_cst().strftime("%Y-%m-%d")
+    recent = []
+    for date, regions in sorted(history.items(), reverse=True):
+        if date == today:
+            continue
+        recent.extend(regions)
+        if len(set(recent)) >= days * 3:  # 粗略限制，避免过多
+            break
+    return list(set(recent))
