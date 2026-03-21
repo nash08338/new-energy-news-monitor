@@ -46,6 +46,8 @@ class Config:
         {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
         {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
         {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False},
+        {"name": "GNews_StrategicEnergy", "rss": "https://news.google.com/rss/search?q=Strategic+Energy&hl=en-US&gl=US&ceid=US:en", "paged": False},
+        {"name": "GNews_ESI_Africa", "rss": "https://news.google.com/rss/search?q=site:esi-africa.com+energy&hl=en-US&gl=US&ceid=US:en", "paged": False},
     ]
     
     # ESI Africa 关键词
@@ -56,7 +58,7 @@ class Config:
     ]
     
     # Footer
-    FOOTER_SHORT = "SolarQuarter · PVMagazine · PVTech · EnergyStorageNews · RenewEconomy · MercomIndia · ESI_Africa · 及其他"
+    FOOTER_SHORT = "SolarQuarter · PVMagazine · PVTech · EnergyStorageNews · RenewEconomy · MercomIndia · StrategicEnergy · ESIAfrica · 及其他"
     
     # DeepSeek 配置
     DEEPSEEK_TIMEOUT = 45

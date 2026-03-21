@@ -68,11 +68,11 @@ def main():
         all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
 
     # 解析ESI Africa
-    all_new_data.extend(parse_esi_africa_json(
-        Config.ESI_JSON_FILE, 
-        Config.ESI_KEYWORDS, 
-        seen_urls
-    ))
+    # all_new_data.extend(parse_esi_africa_json(
+    #     Config.ESI_JSON_FILE, 
+    #     Config.ESI_KEYWORDS, 
+    #     seen_urls
+    # ))
 
     # 处理CSV文件
     if all_new_data:
