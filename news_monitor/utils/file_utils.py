@@ -77,12 +77,15 @@ def load_unused_news(master_file, used_file, max_count=150):
     return unused
 
 
-# 区域历史文件路径（使用项目根目录下的 docs 文件夹）
-REGION_HISTORY_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "used_regions.json")
+# 区域历史文件路径（指向项目根目录下的 docs）
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+REGION_HISTORY_FILE = os.path.join(ROOT_DIR, "docs", "used_regions.json")
 
 
 def save_region_history(regions):
     """保存当天选中的区域列表到历史文件"""
+    # 确保 docs 目录存在
+    os.makedirs(os.path.dirname(REGION_HISTORY_FILE), exist_ok=True)
     today_str = now_cst().strftime("%Y-%m-%d")
     history = {}
     if os.path.exists(REGION_HISTORY_FILE):
