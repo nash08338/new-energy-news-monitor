@@ -26,7 +26,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
-          pip install feedparser openai playwright
+          pip install feedparser openai playwright requests
 
       # 4. 安装 Playwright 浏览器及系统依赖（稳健版）
       - name: Install Playwright browsers and dependencies
