@@ -57,6 +57,7 @@ class Config:
         "microgrid", "power", "electricity", "bess",
     ]
     
+    # 新增：光伏与储能关键词（用于 sitemap 筛选）
     SOLAR_STORAGE_KEYWORDS = ["solar", "pv", "photovoltaic",  "storage", "battery", 
              "charging", "grid", "renewable", "energy transition",
              "microgrid", "power", "electricity", "bess", "solar-plus-storage"]
@@ -70,11 +71,25 @@ class Config:
     DEEPSEEK_MAX_RETRIES = 5
     DEEPSEEK_TEMPERATURE = 0.3
 
+    # 固定区域白名单（DeepSeek 只能从这里选）
+    REGION_LIST = [
+        "全球/其他",
+        "东亚",        # 中国、日本、韩国、台湾
+        "东南亚",      # 泰国、越南、印尼、菲律宾、马来西亚
+        "南亚",        # 印度、巴基斯坦、孟加拉
+        "大洋洲",      # 澳大利亚、新西兰
+        "西欧",        # 英国、德国、法国、西班牙、葡萄牙、荷兰、比利时
+        "南欧",        # 希腊、意大利、土耳其
+        "东欧",        # 波兰、罗马尼亚、捷克、匈牙利、乌克兰
+        "北美",        # 美国、加拿大、墨西哥
+        "拉丁美洲",    # 巴西、智利、哥伦比亚、秘鲁、阿根廷
+        "中东/北非",   # 沙特、UAE、埃及、摩洛哥
+        "东非",        # 肯尼亚、坦桑尼亚、埃塞俄比亚
+        "西非",        # 尼日利亚、加纳、塞内加尔
+        "南部非洲",    # 南非、赞比亚、津巴布韦
+        "跨区域",      # 多国联合项目
+    ]
 
-    # 新增：光伏与储能关键词（用于 sitemap 筛选）
-    SOLAR_STORAGE_KEYWORDS = [
-    "solar", "pv", "photovoltaic", "storage", "battery", "bess",
-    "solar-plus-storage", "solar+storage", "energy storage", "ess"]
     
     @classmethod
     def get_prompt_limits(cls):
