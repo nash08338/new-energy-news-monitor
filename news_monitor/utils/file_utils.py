@@ -1,13 +1,14 @@
 # utils/file_utils.py
 import os
 import csv
-from .time_utils import now_cst
-import logging
 import json
+import logging
 from datetime import datetime, timedelta
 
+from .time_utils import now_cst
 
 logger = logging.getLogger(__name__)
+
 
 def load_used_links(used_file):
     """加载已使用的链接"""
@@ -20,6 +21,7 @@ def load_used_links(used_file):
                 if r:
                     used.add(r[0])
     return used
+
 
 def save_used_links(links, used_file):
     """保存已使用的链接"""
@@ -46,6 +48,7 @@ def save_used_links(links, used_file):
             writer.writerow([link, now_cst().strftime("%Y-%m-%d")])
 
     logger.info(f"  ✅ 写入 {len(new_links)} 条到 used_news（跳过 {len(links)-len(new_links)} 条重复）")
+
 
 def load_unused_news(master_file, used_file, max_count=150):
     """加载未使用的新闻"""
@@ -74,7 +77,9 @@ def load_unused_news(master_file, used_file, max_count=150):
     return unused
 
 
+# 区域历史文件路径（使用项目根目录下的 docs 文件夹）
 REGION_HISTORY_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "used_regions.json")
+
 
 def save_region_history(regions):
     """保存当天选中的区域列表到历史文件"""
@@ -84,12 +89,13 @@ def save_region_history(regions):
         with open(REGION_HISTORY_FILE, "r", encoding="utf-8") as f:
             history = json.load(f)
     history[today_str] = regions
-    # 只保留最近7天记录
-    cutoff = now_cst() - timedelta(days=7)
-    history = {date: reg for date, reg in history.items() 
-               if datetime.strptime(date, "%Y-%m-%d") >= cutoff}
+    # 只保留最近7天记录（按日期比较）
+    cutoff_date = (now_cst() - timedelta(days=7)).date()
+    history = {date: reg for date, reg in history.items()
+               if datetime.strptime(date, "%Y-%m-%d").date() >= cutoff_date}
     with open(REGION_HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
+
 
 def get_recent_regions(days=3):
     """获取最近几天出现的区域（不含今天）"""
@@ -98,11 +104,14 @@ def get_recent_regions(days=3):
     with open(REGION_HISTORY_FILE, "r", encoding="utf-8") as f:
         history = json.load(f)
     today = now_cst().strftime("%Y-%m-%d")
+    cutoff_date = (now_cst() - timedelta(days=days)).date()
     recent = []
     for date, regions in sorted(history.items(), reverse=True):
         if date == today:
             continue
-        recent.extend(regions)
-        if len(set(recent)) >= days * 3:  # 粗略限制，避免过多
-            break
+        dt_date = datetime.strptime(date, "%Y-%m-%d").date()
+        if dt_date >= cutoff_date:
+            recent.extend(regions)
+        else:
+            break   # 日期降序，一旦早于截止日就停止
     return list(set(recent))
