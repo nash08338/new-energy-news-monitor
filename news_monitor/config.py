@@ -41,7 +41,7 @@ class Config:
         {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                                   "paged": True},
         {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
         {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
-        {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
+        {"name": "RenewablesNow", "sitemap": "placeholder", "paged": False},
         # 以下 Google News 源均添加 stop_on_old=False
         {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False, "stop_on_old": False},
         {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False, "stop_on_old": False},
@@ -57,13 +57,24 @@ class Config:
         "microgrid", "power", "electricity", "bess",
     ]
     
+    SOLAR_STORAGE_KEYWORDS = ["solar", "pv", "photovoltaic",  "storage", "battery", 
+             "charging", "grid", "renewable", "energy transition",
+             "microgrid", "power", "electricity", "bess", "solar-plus-storage"]
+
+
     # Footer
     FOOTER_SHORT = "SolarQuarter · PVMagazine · PVTech · EnergyStorageNews · RenewEconomy · MercomIndia · StrategicEnergy · ESIAfrica · 及其他"
     
     # DeepSeek 配置
-    DEEPSEEK_TIMEOUT = 45
+    DEEPSEEK_TIMEOUT = 60
     DEEPSEEK_MAX_RETRIES = 5
     DEEPSEEK_TEMPERATURE = 0.3
+
+
+    # 新增：光伏与储能关键词（用于 sitemap 筛选）
+    SOLAR_STORAGE_KEYWORDS = [
+    "solar", "pv", "photovoltaic", "storage", "battery", "bess",
+    "solar-plus-storage", "solar+storage", "energy storage", "ess"]
     
     @classmethod
     def get_prompt_limits(cls):

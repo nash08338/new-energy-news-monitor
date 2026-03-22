@@ -13,12 +13,10 @@ from .config import Config
 from .utils.time_utils import now_cst
 from .utils.file_utils import load_unused_news
 from .core.fetcher import fetch_source
-from .core.esi_parser import parse_esi_africa_json
+from .core.sitemap_parser import fetch_from_sitemap   # 新增 sitemap 解析器
 from .core.csv_handler import split_by_date, merge_to_master
 from .ai.deepseek import call_deepseek
 from .screenshot.generator import generate_images
-
-
 
 # 配置日志
 logging.basicConfig(
@@ -62,19 +60,37 @@ def main():
                     seen_urls.add(r[4])
     logger.info(f"📋 总表已有记录：{len(seen_urls)} 条，用于去重")
 
-    # 抓取所有RSS源
+
+    # 抓取所有 RSS / sitemap 源
     all_new_data = []
     for source in Config.SOURCES:
-        all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
+        # 特殊处理 RenewablesNow 的 sitemap（动态生成当前月份）
+        if source["name"] == "RenewablesNow" and "sitemap" in source:
+            current_month = now_cst().strftime('%Y-%m')
+            sitemap_url = f"https://renewablesnow.com/sitemap/news-{current_month}.xml"
+            all_new_data.extend(fetch_from_sitemap(
+                sitemap_url,
+                seven_days_ago,
+                seen_urls,
+                source["name"],
+                keywords=getattr(Config, "SOLAR_STORAGE_KEYWORDS", None)
+            ))
+        # 其他 sitemap 源（如果有）仍可使用配置中的固定 URL
+        elif "sitemap" in source:
+            all_new_data.extend(fetch_from_sitemap(
+                source["sitemap"],
+                seven_days_ago,
+                seen_urls,
+                source["name"],
+                keywords=getattr(Config, "SOLAR_STORAGE_KEYWORDS", None)
+            ))
+        else:
+            # 原有 RSS 抓取
+            all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
+    # 注释原有的 ESI Africa JSON 解析（已改用 Google News RSS）
+    # all_new_data.extend(parse_esi_africa_json(Config.ESI_JSON_FILE, Config.ESI_KEYWORDS, seen_urls))
 
-    # 解析ESI Africa
-    # all_new_data.extend(parse_esi_africa_json(
-    #     Config.ESI_JSON_FILE, 
-    #     Config.ESI_KEYWORDS, 
-    #     seen_urls
-    # ))
-
-    # 处理CSV文件
+    # 处理 CSV 文件
     if all_new_data:
         all_new_data.sort(key=lambda x: x[3], reverse=True)
         written_files = split_by_date(all_new_data, Config.DAILY_DIR, Config.HEADER)
@@ -86,16 +102,16 @@ def main():
     # 生成图片
     unused_news = load_unused_news(Config.MASTER_FILE, Config.USED_FILE)
     data, used_links = call_deepseek(
-        unused_news, 
-        Config, 
-        client, 
-        Config.USED_FILE, 
+        unused_news,
+        Config,
+        client,
+        Config.USED_FILE,
         Config.CONFLICT_FILE
     )
-    
+
     if data:
         generate_images(data, unused_news, used_links, Config)
-    
+
     logger.info(f"\n✅ 全部完成！")
 
 if __name__ == "__main__":
