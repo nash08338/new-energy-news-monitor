@@ -109,7 +109,7 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
 
     region_list_str = "、".join(config.REGION_LIST)
 
-    
+
     prompt = f"""
     # Role
     你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网、电力领域。
@@ -132,7 +132,7 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
         * 澳大利亚、新西兰 → 大洋洲
         * 沙特、UAE、埃及、摩洛哥、以色列、约旦 → 中东/北非
         * 肯尼亚、坦桑尼亚、埃塞俄比亚、乌干达 → 东非
-        * 南非、赞比亚、津巴布韦、莫桑比克 → 南部非洲
+        * 南非、赞比亚、津巴布韦、莫桑比克 → 非洲南部
         * 尼日利亚、加纳、塞内加尔、科特迪瓦 → 西非
         * 中国、日本、韩国、台湾 → 东亚
         * 印度、巴基斯坦、孟加拉、斯里兰卡 → 南亚
