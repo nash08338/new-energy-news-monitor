@@ -9,12 +9,12 @@ from ..utils.region_utils import get_region
 logger = logging.getLogger(__name__)
 
 def fetch_source(source, seven_days_ago, seen_urls):
-    """抓取单个RSS源"""
-    name = source["name"]
-    rss_url = source["rss"]
+    name           = source["name"]
+    rss_url        = source["rss"]
     supports_paged = source.get("paged", True)
-    new_data = []
-    today_str = now_cst().strftime('%Y-%m-%d')
+    stop_on_old    = source.get("stop_on_old", True)   # 默认 True（保持原有行为）
+    new_data       = []
+    today_str      = now_cst().strftime('%Y-%m-%d')
 
     logger.info(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
@@ -55,7 +55,6 @@ def fetch_source(source, seven_days_ago, seen_urls):
         for entry in feed.entries:
             link = entry.link
             pub_date = parse_pub_date(entry)
-            
             if not pub_date:
                 continue
 
@@ -71,9 +70,13 @@ def fetch_source(source, seven_days_ago, seen_urls):
                     ])
                     seen_urls.add(link)
             else:
-                logger.info(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
-                hit_old = True
-                break
+                if stop_on_old:
+                    logger.info(f"  🛑 触达时间边界 ({pub_date.strftime('%Y-%m-%d')})，停止。")
+                    hit_old = True
+                    break
+                else:
+                    logger.info(f"  ℹ️ 跳过旧新闻 {pub_date.strftime('%Y-%m-%d')}，但继续抓取后续条目。")
+                    # 不 break，继续循环
 
         if hit_old:
             break
