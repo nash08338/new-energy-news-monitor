@@ -27,14 +27,19 @@ def now_cst():
         return datetime.utcnow() + timedelta(hours=8)
 
 def parse_pub_date(entry):
-    """安全地解析发布日期"""
+    """安全地解析发布日期，返回带时区的 datetime 对象（Asia/Shanghai）"""
     try:
         if hasattr(entry, 'published_parsed') and entry.published_parsed:
             timestamp = time.mktime(entry.published_parsed)
-            if USE_ZONEINFO is True:
+            # 优先使用 pytz（兼容性好）
+            try:
+                import pytz
+                tz = pytz.timezone("Asia/Shanghai")
+                return datetime.fromtimestamp(timestamp, tz=tz)
+            except ImportError:
+                # 回退到 zoneinfo（Python 3.9+）
+                from zoneinfo import ZoneInfo
                 return datetime.fromtimestamp(timestamp, tz=ZoneInfo("Asia/Shanghai"))
-            else:
-                return datetime.utcfromtimestamp(timestamp) + timedelta(hours=8)
     except Exception as e:
         logger.debug(f"日期解析失败：{e}")
         return None
