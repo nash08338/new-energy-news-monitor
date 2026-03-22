@@ -30,7 +30,6 @@ class Config:
     # CSV 头
     HEADER = ['来源', '所属区域', '文章标题', '发布日期', '详情链接', '抓取日期']
     
-    # RSS 源配置
     SOURCES = [
         {"name": "SolarQuarter",      "rss": "https://solarquarter.com/category/news/feed/",                        "paged": True},
         {"name": "Electrive",         "rss": "https://www.electrive.com/category/energy-infrastructure/feed/",      "paged": True},
@@ -43,11 +42,12 @@ class Config:
         {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
         {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
         {"name": "RenewablesNow_SSA", "rss": "https://renewablesnow.com/news/news_feed/?region=sub-saharan+africa", "paged": False},
-        {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False},
-        {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False},
-        {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False},
-        {"name": "GNews_StrategicEnergy", "rss": "https://news.google.com/rss/search?q=Strategic+Energy&hl=en-US&gl=US&ceid=US:en", "paged": False},
-        {"name": "GNews_ESI_Africa", "rss": "https://news.google.com/rss/search?q=site:esi-africa.com+energy&hl=en-US&gl=US&ceid=US:en", "paged": False},
+        # 以下 Google News 源均添加 stop_on_old=False
+        {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False, "stop_on_old": False},
+        {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False, "stop_on_old": False},
+        {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False, "stop_on_old": False},
+        {"name": "GNews_StrategicEnergy", "rss": "https://news.google.com/rss/search?q=Strategic+Energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
+        {"name": "GNews_ESI_Africa", "rss": "https://news.google.com/rss/search?q=site:esi-africa.com+energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
     ]
     
     # ESI Africa 关键词
