@@ -4,6 +4,7 @@ import threading
 import zipfile
 import concurrent.futures
 import logging
+from datetime import datetime
 
 from ..utils.region_utils import safe_slug
 from ..utils.file_utils import save_used_links
@@ -93,7 +94,7 @@ def generate_images(data, unused_news, used_links, config):
     
     os.makedirs(config.IMAGE_DIR, exist_ok=True)
     os.makedirs(config.XHS_DIR, exist_ok=True)
-    date_str = data['date'].replace('年', '-').replace('月', '-').replace('日', '')
+    date_str = datetime.now().strftime("%Y-%m-%d_%H%M")
 
     if not data:
         logger.info("⚠️ 无可用新闻，跳过图片生成。")
