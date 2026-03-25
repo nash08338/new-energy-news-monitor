@@ -84,6 +84,35 @@ def cross_validate_regions(unused_news, data, conflict_file):
 
     return conflicts
 
+def deduplicate_news_by_similarity(news_items, threshold=0.7):
+    """
+    对新闻列表进行基于标题相似度的去重
+    :param news_items: list of dict, 每个包含 'title' 字段
+    :param threshold: 相似度阈值，超过则视为重复
+    :return: 去重后的列表
+    """
+    if not news_items:
+        return news_items
+    
+    # 使用简单的分词后Jaccard相似度
+    def jaccard_similarity(a, b):
+        set_a = set(a.lower().split())
+        set_b = set(b.lower().split())
+        if not set_a or not set_b:
+            return 0
+        return len(set_a & set_b) / len(set_a | set_b)
+    
+    unique_items = []
+    for item in news_items:
+        is_duplicate = False
+        for existing in unique_items:
+            if jaccard_similarity(item['title'], existing['title']) >= threshold:
+                is_duplicate = True
+                break
+        if not is_duplicate:
+            unique_items.append(item)
+    return unique_items
+
 def call_deepseek(unused_news, config, client, used_file, conflict_file):
     """调用DeepSeek API"""
     if not client:
@@ -106,78 +135,81 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
     if recent_regions:
         recent_hint = f"\n**注意：最近3天已重点报道的区域有：{', '.join(recent_regions)}。请优先选择其他区域，若其他区域新闻不足，可酌情包含部分重复区域。**\n"
 
-
-    region_list_str = "、".join(config.REGION_LIST)
-
+    # 构建区域白名单字符串
+    if hasattr(config, 'REGION_LIST') and config.REGION_LIST:
+        region_list_str = "、".join(config.REGION_LIST)
+    else:
+        from ..utils.region_utils import REGION_MAP
+        region_list_str = "、".join(REGION_MAP.keys())
 
     prompt = f"""
-    # Role
-    你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网、电力领域。
+# Role
+你是一名资深的全球新能源行业分析师，深度聚焦于"光储充"一体化及智能电网、电力领域。
 
-    # Task
-    对下方原始新闻标题进行筛选、翻译和润色，生成专业"行业内参"。
+# Task
+对下方原始新闻标题进行筛选、翻译和润色，生成专业"行业内参"。
 
-    # Requirements
-    1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
-    2. 彻底剔除【风能、氢能、生物质能、核能】
-    3. **按区域归类，选择新闻最集中的{config.MIN_REGIONS}-{config.MAX_REGIONS}个核心区域**
-    - 区域名称必须严格从以下列表中选择，不得使用其他名称：
-        {region_list_str}
-    - 国家归属规则（强制执行）：
-        * 希腊、意大利、西班牙、葡萄牙、土耳其 → 南欧
-        * 波兰、罗马尼亚、捷克、匈牙利、乌克兰、塞尔维亚 → 东欧
-        * 英国、德国、法国、荷兰、比利时、瑞典、丹麦、挪威 → 西欧
-        * 美国、加拿大 → 北美
-        * 墨西哥、巴西、智利、秘鲁、哥伦比亚、阿根廷 → 拉丁美洲
-        * 澳大利亚、新西兰 → 大洋洲
-        * 沙特、UAE、埃及、摩洛哥、以色列、约旦 → 中东/北非
-        * 肯尼亚、坦桑尼亚、埃塞俄比亚、乌干达 → 东非
-        * 南非、赞比亚、津巴布韦、莫桑比克 → 非洲南部
-        * 尼日利亚、加纳、塞内加尔、科特迪瓦 → 西非
-        * 中国、日本、韩国、台湾 → 东亚
-        * 印度、巴基斯坦、孟加拉、斯里兰卡 → 南亚
-        * 泰国、越南、印尼、菲律宾、马来西亚、新加坡 → 东南亚
-    - 若新闻涉及多国或全球性内容，归入"跨区域"或"全球/其他"
-    {recent_hint}
-    4. 每个精选区域保留{config.MIN_TITLES_PER_REGION}-{config.MAX_TITLES_PER_REGION}条新闻
-    5. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
-    6. 每个区域给出一条出海机遇或准入门槛的专业点评（中性），**字数控制在35字以内，用一句话概括核心机会或门槛**，例如："本土化清单扩展，外资需技术转让或合资以进入印度市场。"
-    7. **每条新闻必须附加一句"为什么重要"的解读，要求：**
+# Requirements
+1. 仅保留【光伏、储能、充电桩、微电网、电力/电网/能源转型】相关内容
+2. 彻底剔除【风能、氢能、生物质能、核能】
+3. **按区域归类，选择新闻最集中的{config.MIN_REGIONS}-{config.MAX_REGIONS}个核心区域**
+- 区域名称必须严格从以下列表中选择，不得使用其他名称：
+    {region_list_str}
+- 国家归属规则（强制执行）：
+    * 希腊、意大利、西班牙、葡萄牙、土耳其 → 南欧
+    * 波兰、罗马尼亚、捷克、匈牙利、乌克兰、塞尔维亚 → 东欧
+    * 英国、德国、法国、荷兰、比利时、瑞典、丹麦、挪威 → 西欧
+    * 美国、加拿大 → 北美
+    * 墨西哥、巴西、智利、秘鲁、哥伦比亚、阿根廷 → 拉丁美洲
+    * 澳大利亚、新西兰 → 大洋洲
+    * 沙特、UAE、埃及、摩洛哥、以色列、约旦 → 中东/北非
+    * 肯尼亚、坦桑尼亚、埃塞俄比亚、乌干达 → 东非
+    * 南非、赞比亚、津巴布韦、莫桑比克 → 非洲南部
+    * 尼日利亚、加纳、塞内加尔、科特迪瓦 → 西非
+    * 中国、日本、韩国、台湾 → 东亚
+    * 印度、巴基斯坦、孟加拉、斯里兰卡 → 南亚
+    * 泰国、越南、印尼、菲律宾、马来西亚、新加坡 → 东南亚
+- 若新闻涉及多国或全球性内容，归入"跨区域"或"全球/其他"
+{recent_hint}
+4. 每个精选区域保留{config.MIN_TITLES_PER_REGION}-{config.MAX_TITLES_PER_REGION}条新闻
+5. 所有标题必须翻译成中文，术语专业准确（工商业储能、并网政策、户用光伏等）
+6. 每个区域给出一条出海机遇或准入门槛的专业点评（中性），**字数控制在35字以内，用一句话概括核心机会或门槛**，例如："本土化清单扩展，外资需技术转让或合资以进入印度市场。"
+7. **每条新闻必须附加一句"为什么重要"的解读，要求：**
     - **字数控制在15字以内，一句话点明核心价值**
     - 必须结合新闻中的具体主体（国家、公司、技术、政策名称、数据等）
     - 从以下角度切入（不限于）：市场准入、技术突破、竞争格局、投资风向、政策示范
     - 避免使用"A类企业""某些市场"等模糊指代
     - 同一区域内的解读不能雷同，跨区域也尽量多样化
-    8. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号
-    9. 同一条新闻只能出现在一个区域，严禁在不同区域重复出现同一内容
+8. used_indices 必须返回你选中新闻对应的编号，编号来自新闻列表前的序号
+9. 同一条新闻只能出现在一个区域，严禁在不同区域重复出现同一内容
 
-    # Output
-    只返回 JSON 本身，不要任何多余文字或 markdown：
+# Output
+只返回 JSON 本身，不要任何多余文字或 markdown：
 
+{{
+  "date": "{today_str}",
+  "daily_focus": "今日核心关注点的专业分析（一句话）",
+  "news_sections": [
     {{
-    "date": "{today_str}",
-    "daily_focus": "今日核心关注点的专业分析（一句话）",
-    "news_sections": [
+      "region": "区域名称（必须来自上方白名单）",
+      "market_insight": "该区域光储充市场研判（35字内）",
+      "news": [
         {{
-        "region": "区域名称（必须来自上方白名单）",
-        "market_insight": "该区域光储充市场研判（35字内）",
-        "news": [
-            {{
-            "title": "标题1",
-            "importance": "重要性解读（15字内）"
-            }},
-            {{
-            "title": "标题2",
-            "importance": "重要性解读（15字内）"
-            }}
-        ]
+          "title": "标题1",
+          "importance": "重要性解读（15字内）"
+        }},
+        {{
+          "title": "标题2",
+          "importance": "重要性解读（15字内）"
         }}
-    ],
-    "used_indices": [1, 3, 5, 8, 12]
+      ]
     }}
-    # 新闻列表
-    {news_text}
-    """
+  ],
+  "used_indices": [1, 3, 5, 8, 12]
+}}
+# 新闻列表
+{news_text}
+"""
 
     for attempt in range(config.DEEPSEEK_MAX_RETRIES):
         try:
@@ -243,6 +275,10 @@ def call_deepseek(unused_news, config, client, used_file, conflict_file):
                         seen_titles.add(key)
                         unique_news.append(item)
                 sec["news"] = unique_news
+            
+            # 语义相似度去重
+            for sec in data["news_sections"]:
+                sec["news"] = deduplicate_news_by_similarity(sec.get("news", []), threshold=0.7)
             
             # 过滤掉没有新闻的区域
             data["news_sections"] = [
