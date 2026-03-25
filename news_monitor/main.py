@@ -100,7 +100,7 @@ def main():
         logger.info("☕ 本次无新增新闻。")
 
     # 生成图片
-    unused_news = load_unused_news(Config.MASTER_FILE, Config.USED_FILE)
+    unused_news = load_unused_news(Config.MASTER_FILE, Config.USED_FILE, max_count=300)
     data, used_links = call_deepseek(
         unused_news,
         Config,
