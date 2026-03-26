@@ -42,6 +42,8 @@ class Config:
         {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
         {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
         {"name": "RenewablesNow", "sitemap": "placeholder", "paged": False},
+        {"name": "EVInfrastructureNews_Archive", "type": "archive", "paged": False},
+        {"name": "EVInfrastructureNews", "rss": "https://www.evinfrastructurenews.com/googlenews.xml", "paged": False},
         # 以下 Google News 源均添加 stop_on_old=False
         {"name": "GNews_SouthAfrica", "rss": "https://news.google.com/rss/search?q=south+africa+solar+battery+storage&hl=en-US&gl=US&ceid=US:en",  "paged": False, "stop_on_old": False},
         {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False, "stop_on_old": False},

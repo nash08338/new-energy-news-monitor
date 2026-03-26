@@ -17,6 +17,8 @@ from .core.sitemap_parser import fetch_from_sitemap   # 新增 sitemap 解析器
 from .core.csv_handler import split_by_date, merge_to_master
 from .ai.deepseek import call_deepseek
 from .screenshot.generator import generate_images
+from .core.archive_parser import fetch_ev_archive      # 新增归档解析器
+from .core.esi_parser import parse_esi_africa_json
 
 # 配置日志
 logging.basicConfig(
@@ -61,11 +63,20 @@ def main():
     logger.info(f"📋 总表已有记录：{len(seen_urls)} 条，用于去重")
 
 
-    # 抓取所有 RSS / sitemap 源
+    # 抓取所有 RSS / sitemap / 归档源
     all_new_data = []
     for source in Config.SOURCES:
+        # 特殊处理 EVInfrastructureNews 归档源
+        if source["name"] == "EVInfrastructureNews_Archive":
+            base_url = "https://www.evinfrastructurenews.com/news/archive/{year}/{month}.xml"
+            all_new_data.extend(fetch_ev_archive(
+                source["name"],
+                base_url,
+                seven_days_ago,
+                seen_urls
+            ))
         # 特殊处理 RenewablesNow 的 sitemap（动态生成当前月份）
-        if source["name"] == "RenewablesNow" and "sitemap" in source:
+        elif source["name"] == "RenewablesNow" and "sitemap" in source:
             current_month = now_cst().strftime('%Y-%m')
             sitemap_url = f"https://renewablesnow.com/sitemap/news-{current_month}.xml"
             all_new_data.extend(fetch_from_sitemap(
@@ -87,8 +98,9 @@ def main():
         else:
             # 原有 RSS 抓取
             all_new_data.extend(fetch_source(source, seven_days_ago, seen_urls))
+
     # 注释原有的 ESI Africa JSON 解析（已改用 Google News RSS）
-    # all_new_data.extend(parse_esi_africa_json(Config.ESI_JSON_FILE, Config.ESI_KEYWORDS, seen_urls))
+    all_new_data.extend(parse_esi_africa_json(Config.ESI_JSON_FILE, Config.ESI_KEYWORDS, seen_urls))
 
     # 处理 CSV 文件
     if all_new_data:
