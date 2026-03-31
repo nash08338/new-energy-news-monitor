@@ -8,8 +8,8 @@ class Config:
     CREATED_BY = "香港汇展 Nash"
     MAX_TITLES_PER_REGION = 3            
     MIN_TITLES_PER_REGION = 3
-    MIN_REGIONS = 4
-    MAX_REGIONS = 5
+    MIN_REGIONS = 5
+    MAX_REGIONS = 6
 
     
     # 时间范围
