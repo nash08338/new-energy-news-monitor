@@ -40,6 +40,7 @@ class Config:
         {"name": "EnergyCapitalPow",  "rss": "https://energycapitalpower.com/feed/",                                "paged": True},
         {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                                   "paged": True},
         {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
+        {"name": "BalkanGreenEnergyNews", "api": "https://balkangreenenergynews.com/wp-json/wp/v2/posts", "paged": True},
         {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
         {"name": "RenewablesNow", "sitemap": "placeholder", "paged": False},
         {"name": "EVInfrastructureNews_Archive", "type": "archive", "paged": False},
