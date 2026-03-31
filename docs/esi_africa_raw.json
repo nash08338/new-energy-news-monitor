@@ -1,5 +1,373 @@
 [
   {
+    "id": 213007,
+    "date": "2026-03-30T09:23:56",
+    "date_gmt": "2026-03-30T07:23:56",
+    "guid": {
+      "rendered": "https://www.esi-africa.com/?p=213007"
+    },
+    "modified": "2026-03-30T09:23:58",
+    "modified_gmt": "2026-03-30T07:23:58",
+    "slug": "master-grid-feeding-system-design-in-minutes",
+    "status": "publish",
+    "type": "post",
+    "link": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/",
+    "title": {
+      "rendered": "From complexity to clarity: Master grid feeding system design in minutes"
+    },
+    "content": {
+      "rendered": "\n\u003Cp\u003EAs Distributed Energy Resources (DERs) scale globally, \u003Cstrong\u003Edesigning grid-feeding protection systems\u003C/strong\u003E that ensure safety, compliance, and grid stability is now crucial. \u003C/p\u003E\n\n\n\n\u003Cp\u003EProtection schemes, regional standards, and fast project workflows must \u003Cstrong\u003Ealign seamlessly\u003C/strong\u003E to keep pace with demand.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-full\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg\" alt=\"\" class=\"wp-image-213014\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg 728w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-300x37.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-630x78.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-400x49.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-107x13.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-295x36.jpg 295w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EIn this Q&amp;A, experts from ABB, a global leader in electrification solutions for energy transition, share insights on grid feeding system designs. \u003Cspan style=\"box-sizing: border-box; margin: 0px; padding: 0px;\"\u003EWe ask Solar Solution Manager\u003Cstrong\u003E Flurina Heuberger, \u003C/strong\u003EProduct Marketing Specialist: ABB South Africa, \u003Cstrong\u003EElvis Khumalo, \u003C/strong\u003Eand Analyst \u003Cstrong\u003EMaciej Maselek \u003C/strong\u003Ehow ABB partners are succeeding in this fast-changing landscape.\u003C/span\u003E   \u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat impact do DERs have on the grid? \u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003E\u003Cstrong\u003EFlurina\u003C/strong\u003E: \u003C/strong\u003ERising DER sources are reshaping grid dynamics and challenging existing infrastructure. \u003C/p\u003E\n\n\n\n\u003Cp\u003EGrid-feeding protection\u003Cstrong\u003E \u003C/strong\u003Eprevents faults and islanding\u003Cstrong\u003E,\u003C/strong\u003E but adapting to grid codes and varying infrastructure and architectures is time-consuming. This is why designing flexible solutions is key to maintaining grid stability while keeping projects on schedule.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat are the challenges of integrating DERs in the African region?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina &amp; Elvis:\u003C/strong\u003E South Africa, for instance, is facing one of its biggest energy sector challenges: integrating a rapidly growing installed base of distributed energy resources into an already strained electricity grid. \u003C/p\u003E\n\n\n\n\u003Cp\u003EGrid‑connection capacity has long been a bottleneck, but the country has now launched a major upgrade program that includes new long‑distance transmission lines and expanded large-scale transformer capacity. This decade‑long effort aims to ease severe congestion, address structural capacity constraints, and lower barriers to connecting new renewable projects.\u003C/p\u003E\n\n\n\n\u003Cp\u003EAlthough national loadshedding has been suspended since late March 2024, load reduction remains common in areas where local networks are at risk of overloading. \u003C/p\u003E\n\n\n\n\u003Cp\u003EThese targeted interventions are used to protect vulnerable infrastructure from failure. In this context, grid‑feeding systems can significantly enhance the protection and stability of installations, helping the energy system cope more effectively with periods of high stress.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhy is automatic disconnection so critical when integrating DER into the grid?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina:\u003C/strong\u003E When DERs remain connected during a grid fault, they can magnify the problem instead of helping solve it. \u003C/p\u003E\n\n\n\n\u003Cp\u003EIf a small utility grid issue occurs and DERs continue to pump power into an unstable system, it can escalate into a major disruption. Grid-feeding systems detect voltage and frequency deviations instantly and isolate the DERs, preventing cascade failures and protecting both grid stability and worker safety.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow does the Application Configurator speed up the selection of grid feeding systems?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej: \u003C/strong\u003ESelecting the right products for grid feeding systems can be time-consuming and complex. Engineers often need to navigate extensive datasheets, technical catalogues, and multiple product families. This effort becomes frustrating when system requirements are well understood, but identifying the matching products from hundreds of options is not easy.\u003C/p\u003E\n\n\n\n\u003Cp\u003EABB&#8217;s Application Configurator transforms this experience. Instead of spending hours manually evaluating protection devices, interface relays, and other required products, the tool enables you to generate a complete and validated bill of materials in just minutes.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-full\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg\" alt=\"\" class=\"wp-image-213014\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg 728w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-300x37.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-630x78.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-400x49.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-107x13.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-295x36.jpg 295w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EThrough a guided workflow, it simplifies every step of the design process. It reduces engineering complexity, minimises the risk of mis-sizing or compatibility errors, and removes the need to constantly cross-reference multiple catalogues. \u003C/p\u003E\n\n\n\n\u003Cp\u003EBased on the grid feeding system parameters you enter (such as grid code standards, generation power, backup and interface devices, inverter details, short-circuit levels, and connection configuration), the configurator automatically proposes the optimal electrical architecture using ABB&#8217;s full product portfolio.\u003C/p\u003E\n\n\n\n\u003Cp\u003EIt ensures proper grading, selectivity, and protection coordination across the entire grid feeding system. The whole process becomes streamlined, accurate, and completely free of guesswork.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow does guided selection work in Application Configurator?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej:\u003C/strong\u003E Application Configurator simplifies configuration through four simple steps. Users provide key system inputs, and the configurator automatically filters out irrelevant or incompatible products based on these parameters.\u003C/p\u003E\n\n\n\n\u003Cp\u003ELeveraging ABB&#8217;s built-in expertise and pre-validated combinations, the tool recommends the most suitable protection devices, interface relays, disconnecting devices, surge protection, accessories, and communication or monitoring options for compliant grid-feeding systems.\u003C/p\u003E\n\n\n\n\u003Cp\u003EThe configurator automatically checks critical technical aspects such as selectivity, protection coordination, short-circuit withstand ratings, interface protection requirements, and compatibility between products. This reduces design errors and ensures a safe, reliable, and standards-compliant grid feeding system.\u003C/p\u003E\n\n\n\n\u003Cp\u003EUsers can still adjust quantities, swap components, or add accessories at any stage, and the configurator instantly updates the recommendations. The result is a complete, validated bill of materials tailored specifically to your grid feeding project.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow much does Application Configurator cost?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej:\u003C/strong\u003E Application Configurator is free for anyone to use, whether you&#8217;re an existing ABB customer or new to ABB solutions. Simply create an account, input your project details, and start configuring immediately. No prior ABB relationship is required, and there is no cost.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EAbout the experts\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina Heuberger \u003C/strong\u003Eis a Solution Product Manager at ABB Electrification, where she focuses on business strategy and innovation in the Solar, BESS, and Hydrogen Sectors.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej Maselek\u003C/strong\u003E is the Functional Analyst for the Application Configurator at ABB Electrification. With his expertise as a functional Analyst, he ensures a seamless user experience and efficient application configuration.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EElvis Khumalo \u003C/strong\u003Eis the Product Marketing Specialist for Low Voltage Products at ABB Electrification in South Africa, specialising in motor control, protection products and solutions across various industry segments.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-large\"\u003E\u003Ca href=\"https://campaign-el.abb.com/l/961032/2026-03-05/7vk98\" target=\"_blank\" rel=\" noreferrer noopener\"\u003E\u003Cimg decoding=\"async\" width=\"1024\" height=\"576\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1024x576.jpg\" alt=\"\" class=\"wp-image-213012\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1024x576.jpg 1024w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-300x169.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-768x432.jpg 768w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1536x864.jpg 1536w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-630x354.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-400x225.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-107x60.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-276x155.jpg 276w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1.jpg 1920w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" /\u003E\u003C/a\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "\u003Cp\u003EIn this Q&#038;A, experts from ABB share insights on grid feeding system designs\u003C/p\u003E\n",
+      "protected": false
+    },
+    "author": 3,
+    "featured_media": 213015,
+    "comment_status": "closed",
+    "ping_status": "closed",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "_acf_changed": false,
+      "footnotes": ""
+    },
+    "categories": [764, 3923, 4520, 746, 487, 3924, 3832, 4725, 4768, 703, 4529],
+    "tags": [680, 670, 4499, 1133, 1030, 912],
+    "class_list": [
+      "post-213007",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "has-post-thumbnail",
+      "hentry",
+      "category-africa",
+      "category-asset-maintenance",
+      "category-energy-storage",
+      "category-features-analysis",
+      "category-renewable-energy",
+      "category-smart-technologies",
+      "category-solar",
+      "category-solar-and-storage",
+      "category-tech-news",
+      "category-transmission-and-distribution",
+      "category-wind",
+      "tag-abb",
+      "tag-energy-storage",
+      "tag-grid-resilience",
+      "tag-smart-grids",
+      "tag-solar-power",
+      "tag-wind-energy"
+    ],
+    "acf": [],
+    "yoast_head": "\u003C!-- This site is optimized with the Yoast SEO plugin v27.2 - https://yoast.com/product/yoast-seo-wordpress/ --\u003E\n\u003Ctitle\u003EExpert Q&amp;A into mastering grid feeding system design\u003C/title\u003E\n\u003Cmeta name=\"description\" content=\"In this Q&amp;A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\" /\u003E\n\u003Cmeta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" /\u003E\n\u003Clink rel=\"canonical\" href=\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\" /\u003E\n\u003Cmeta property=\"og:locale\" content=\"en_US\" /\u003E\n\u003Cmeta property=\"og:type\" content=\"article\" /\u003E\n\u003Cmeta property=\"og:title\" content=\"Expert Q&amp;A into mastering grid feeding system design\" /\u003E\n\u003Cmeta property=\"og:description\" content=\"In this Q&amp;A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\" /\u003E\n\u003Cmeta property=\"og:url\" content=\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\" /\u003E\n\u003Cmeta property=\"og:site_name\" content=\"ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"article:publisher\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:author\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:published_time\" content=\"2026-03-30T07:23:56+00:00\" /\u003E\n\u003Cmeta property=\"article:modified_time\" content=\"2026-03-30T07:23:58+00:00\" /\u003E\n\u003Cmeta property=\"og:image\" content=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\" /\u003E\n\t\u003Cmeta property=\"og:image:width\" content=\"1440\" /\u003E\n\t\u003Cmeta property=\"og:image:height\" content=\"1080\" /\u003E\n\t\u003Cmeta property=\"og:image:type\" content=\"image/jpeg\" /\u003E\n\u003Cmeta name=\"author\" content=\"ESI Africa\" /\u003E\n\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\" /\u003E\n\u003Cmeta name=\"twitter:creator\" content=\"@https://twitter.com/esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:site\" content=\"@esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:label1\" content=\"Written by\" /\u003E\n\t\u003Cmeta name=\"twitter:data1\" content=\"ESI Africa\" /\u003E\n\t\u003Cmeta name=\"twitter:label2\" content=\"Est. reading time\" /\u003E\n\t\u003Cmeta name=\"twitter:data2\" content=\"5 minutes\" /\u003E\n\u003Cscript type=\"application/ld+json\" class=\"yoast-schema-graph\"\u003E{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Article\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#article\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"},\"author\":{\"name\":\"ESI Africa\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\"},\"headline\":\"From complexity to clarity: Master grid feeding system design in minutes\",\"datePublished\":\"2026-03-30T07:23:56+00:00\",\"dateModified\":\"2026-03-30T07:23:58+00:00\",\"mainEntityOfPage\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"},\"wordCount\":863,\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"image\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"keywords\":[\"ABB\",\"Energy Storage\",\"grid resilience\",\"Smart grids\",\"solar power\",\"wind energy\"],\"articleSection\":[\"Africa\",\"Asset Maintenance\",\"Energy Storage\",\"Features/Analysis\",\"Renewable energy\",\"Smart Technologies\",\"Solar\",\"Solar and Storage\",\"Tech news\",\"Transmission and Distribution\",\"Wind\"],\"inLanguage\":\"en-ZA\"},{\"@type\":\"WebPage\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\",\"url\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\",\"name\":\"Expert Q&A into mastering grid feeding system design\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"image\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"datePublished\":\"2026-03-30T07:23:56+00:00\",\"dateModified\":\"2026-03-30T07:23:58+00:00\",\"description\":\"In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\",\"breadcrumb\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb\"},\"inLanguage\":\"en-ZA\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"width\":1440,\"height\":1080,\"caption\":\"grid feeding\"},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.esi-africa.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"From complexity to clarity: Master grid feeding system design in minutes\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://www.esi-africa.com/#website\",\"url\":\"https://www.esi-africa.com/\",\"name\":\"ESI-Africa.com\",\"description\":\"Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.\",\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.esi-africa.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-ZA\"},{\"@type\":\"Organization\",\"@id\":\"https://www.esi-africa.com/#organization\",\"name\":\"ESI Africa\",\"url\":\"https://www.esi-africa.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"width\":272,\"height\":221,\"caption\":\"ESI Africa\"},\"image\":{\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\"},\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://x.com/esiafrica\",\"https://www.linkedin.com/company/esi-africa/\",\"https://www.youtube.com/user/ESIAfricaTV\"]},{\"@type\":\"Person\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\",\"name\":\"ESI Africa\",\"image\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"caption\":\"ESI Africa\"},\"description\":\"A daily multimedia gateway underpinned by our print journal, we spot trends, identify market shifts and contextualise energy and power matters through an Africa lens. At ESI Africa, content is our product, facilitating deep-rooted connections is our passion. Click on the mail icons below to follow us on social media.\",\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://www.linkedin.com/company/esi-africa/\",\"https://x.com/https://twitter.com/esiafrica\",\"https://www.youtube.com/user/ESIAfricaTV\"],\"url\":\"https://www.esi-africa.com/author/kim-admin/\"}]}\u003C/script\u003E\n\u003C!-- / Yoast SEO plugin. --\u003E",
+    "yoast_head_json": {
+      "title": "Expert Q&A into mastering grid feeding system design",
+      "description": "In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.",
+      "robots": {
+        "index": "index",
+        "follow": "follow",
+        "max-snippet": "max-snippet:-1",
+        "max-image-preview": "max-image-preview:large",
+        "max-video-preview": "max-video-preview:-1"
+      },
+      "canonical": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/",
+      "og_locale": "en_US",
+      "og_type": "article",
+      "og_title": "Expert Q&A into mastering grid feeding system design",
+      "og_description": "In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.",
+      "og_url": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/",
+      "og_site_name": "ESI-Africa.com",
+      "article_publisher": "https://www.facebook.com/ESIAfricaNews",
+      "article_author": "https://www.facebook.com/ESIAfricaNews",
+      "article_published_time": "2026-03-30T07:23:56+00:00",
+      "article_modified_time": "2026-03-30T07:23:58+00:00",
+      "og_image": [
+        {
+          "width": 1440,
+          "height": 1080,
+          "url": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg",
+          "type": "image/jpeg"
+        }
+      ],
+      "author": "ESI Africa",
+      "twitter_card": "summary_large_image",
+      "twitter_creator": "@https://twitter.com/esiafrica",
+      "twitter_site": "@esiafrica",
+      "twitter_misc": {
+        "Written by": "ESI Africa",
+        "Est. reading time": "5 minutes"
+      },
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Article",
+            "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#article",
+            "isPartOf": {
+              "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/"
+            },
+            "author": {
+              "name": "ESI Africa",
+              "@id": "https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1"
+            },
+            "headline": "From complexity to clarity: Master grid feeding system design in minutes",
+            "datePublished": "2026-03-30T07:23:56+00:00",
+            "dateModified": "2026-03-30T07:23:58+00:00",
+            "mainEntityOfPage": {
+              "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/"
+            },
+            "wordCount": 863,
+            "publisher": {
+              "@id": "https://www.esi-africa.com/#organization"
+            },
+            "image": {
+              "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage"
+            },
+            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg",
+            "keywords": [
+              "ABB",
+              "Energy Storage",
+              "grid resilience",
+              "Smart grids",
+              "solar power",
+              "wind energy"
+            ],
+            "articleSection": [
+              "Africa",
+              "Asset Maintenance",
+              "Energy Storage",
+              "Features/Analysis",
+              "Renewable energy",
+              "Smart Technologies",
+              "Solar",
+              "Solar and Storage",
+              "Tech news",
+              "Transmission and Distribution",
+              "Wind"
+            ],
+            "inLanguage": "en-ZA"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/",
+            "url": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/",
+            "name": "Expert Q&A into mastering grid feeding system design",
+            "isPartOf": {
+              "@id": "https://www.esi-africa.com/#website"
+            },
+            "primaryImageOfPage": {
+              "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage"
+            },
+            "image": {
+              "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage"
+            },
+            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg",
+            "datePublished": "2026-03-30T07:23:56+00:00",
+            "dateModified": "2026-03-30T07:23:58+00:00",
+            "description": "In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.",
+            "breadcrumb": {
+              "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb"
+            },
+            "inLanguage": "en-ZA",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/"
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "ImageObject",
+            "inLanguage": "en-ZA",
+            "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage",
+            "url": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg",
+            "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg",
+            "width": 1440,
+            "height": 1080,
+            "caption": "grid feeding"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.esi-africa.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "From complexity to clarity: Master grid feeding system design in minutes"
+              }
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.esi-africa.com/#website",
+            "url": "https://www.esi-africa.com/",
+            "name": "ESI-Africa.com",
+            "description": "Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.",
+            "publisher": {
+              "@id": "https://www.esi-africa.com/#organization"
+            },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://www.esi-africa.com/?s={search_term_string}"
+                },
+                "query-input": {
+                  "@type": "PropertyValueSpecification",
+                  "valueRequired": true,
+                  "valueName": "search_term_string"
+                }
+              }
+            ],
+            "inLanguage": "en-ZA"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://www.esi-africa.com/#organization",
+            "name": "ESI Africa",
+            "url": "https://www.esi-africa.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-ZA",
+              "@id": "https://www.esi-africa.com/#/schema/logo/image/",
+              "url": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
+              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
+              "width": 272,
+              "height": 221,
+              "caption": "ESI Africa"
+            },
+            "image": {
+              "@id": "https://www.esi-africa.com/#/schema/logo/image/"
+            },
+            "sameAs": [
+              "https://www.facebook.com/ESIAfricaNews",
+              "https://x.com/esiafrica",
+              "https://www.linkedin.com/company/esi-africa/",
+              "https://www.youtube.com/user/ESIAfricaTV"
+            ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1",
+            "name": "ESI Africa",
+            "image": {
+              "@type": "ImageObject",
+              "inLanguage": "en-ZA",
+              "@id": "https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png",
+              "url": "https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png",
+              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png",
+              "caption": "ESI Africa"
+            },
+            "description": "A daily multimedia gateway underpinned by our print journal, we spot trends, identify market shifts and contextualise energy and power matters through an Africa lens. At ESI Africa, content is our product, facilitating deep-rooted connections is our passion. Click on the mail icons below to follow us on social media.",
+            "sameAs": [
+              "https://www.facebook.com/ESIAfricaNews",
+              "https://www.linkedin.com/company/esi-africa/",
+              "https://x.com/https://twitter.com/esiafrica",
+              "https://www.youtube.com/user/ESIAfricaTV"
+            ],
+            "url": "https://www.esi-africa.com/author/kim-admin/"
+          }
+        ]
+      }
+    },
+    "distributor_meta": false,
+    "distributor_terms": false,
+    "distributor_media": false,
+    "distributor_original_site_name": "ESI-Africa.com",
+    "distributor_original_site_url": "https://www.esi-africa.com",
+    "push-errors": false,
+    "amp_enabled": true,
+    "_links": {
+      "self": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213007",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/types/post"
+        }
+      ],
+      "author": [
+        {
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/users/3"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/comments?post=213007"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 1,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213007/revisions"
+        }
+      ],
+      "predecessor-version": [
+        {
+          "id": 213016,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213007/revisions/213016"
+        }
+      ],
+      "wp:featuredmedia": [
+        {
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/media/213015"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/media?parent=213007"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/categories?post=213007"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/tags?post=213007"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
     "id": 205570,
     "date": "2026-03-27T09:00:00",
     "date_gmt": "2026-03-27T07:00:00",
@@ -3208,361 +3576,6 @@
           "taxonomy": "post_tag",
           "embeddable": true,
           "href": "https://www.esi-africa.com/wp-json/wp/v2/tags?post=138234"
-        }
-      ],
-      "curies": [
-        {
-          "name": "wp",
-          "href": "https://api.w.org/{rel}",
-          "templated": true
-        }
-      ]
-    }
-  },
-  {
-    "id": 212743,
-    "date": "2026-03-20T10:36:25",
-    "date_gmt": "2026-03-20T08:36:25",
-    "guid": {
-      "rendered": "https://www.esi-africa.com/?p=212743"
-    },
-    "modified": "2026-03-20T10:37:47",
-    "modified_gmt": "2026-03-20T08:37:47",
-    "slug": "developing-projects-for-bankability-africa",
-    "status": "publish",
-    "type": "post",
-    "link": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/",
-    "title": {
-      "rendered": "Developing projects to reach bankability in Africa"
-    },
-    "content": {
-      "rendered": "\n\u003Cp\u003EKarim Mhirsi, Senior Investment Officer at Africa50, shares key insights on the \u003Cstrong\u003Echallenges facing energy and infrastructure investment\u003C/strong\u003E across the continent with \u003Cem\u003EESI Africa \u003C/em\u003EEditor-in-Chief Nicolette Pombo-van Zyl.\u003C/p\u003E\n\n\n\n\u003Cp\u003EAfrica50 was set up a decade ago to focus on early-stage project development. They see a lot of appetite from financiers to invest once projects in Africa are well-structured and studies are done and \u003Cstrong\u003Ebankability \u003C/strong\u003Eof been achieved.\u003C/p\u003E\n\n\n\n\u003Cp\u003E“But there is \u003Cstrong\u003Escarce appetite to co-invest at early stage\u003C/strong\u003E to derisk the project to carry out the relevant engineering studies, to negotiate the contracts, to procure the key contracts… what is needed for the projects to be bankable.\u003C/p\u003E\n\n\n\n\u003Cp\u003E“So that&#8217;s one of the main bottlenecks and this is what we&#8217;re focusing our efforts[on] to actually unlock the potential.”\u003C/p\u003E\n\n\n\n\u003Cp\u003EMhirsi emphasised that sourcing \u003Ca href=\"https://www.esi-africa.com/finance-investment/\" type=\"link\" id=\"https://www.esi-africa.com/finance-investment/\"\u003Efinancing\u003C/a\u003E for bankable projects is not the issue. &#8220;There is a lack of financing for projects that are two or three years before that stage.&#8221;\u003C/p\u003E\n\n\n\n\u003Cp\u003EHe explains the type of funding that is available in Africa to derisk projects to get them to bankability, and how Africa50 works in this space.\u003C/p\u003E\n\n\n\n\u003Cdiv class=\"wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex\"\u003E\n\u003Cdiv class=\"wp-block-button aligncenter is-style-round td_btn_normal overflow-text-wrap is-style-outline is-style-outline--3\"\u003E\u003Ca class=\"wp-block-button__link has-light-background-color has-background wp-element-button\" href=\"mailto:nicolette@wearevuka.com\" target=\"_blank\" rel=\"noreferrer noopener\"\u003EBook an interview with \u003Cem\u003EESI Africa\u003C/em\u003E at our media partner events Enlit Africa, Windaba, AGES, C&amp;I Solar+Storage Summit, Electra Mining and more.\u003C/a\u003E\u003C/div\u003E\n\u003C/div\u003E\n",
-      "protected": false
-    },
-    "excerpt": {
-      "rendered": "\u003Cp\u003ETalent and entrepreneurial spirit are not in short supply in Africa, but derisking projects to attract financing and unlock potential is not easy\u003C/p\u003E\n",
-      "protected": false
-    },
-    "author": 3,
-    "featured_media": 198530,
-    "comment_status": "closed",
-    "ping_status": "closed",
-    "sticky": false,
-    "template": "",
-    "format": "video",
-    "meta": {
-      "_acf_changed": false,
-      "footnotes": ""
-    },
-    "categories": [764, 746, 4618, 4727, 760],
-    "tags": [4502, 1685, 2400, 1295, 4829],
-    "class_list": [
-      "post-212743",
-      "post",
-      "type-post",
-      "status-publish",
-      "format-video",
-      "has-post-thumbnail",
-      "hentry",
-      "category-africa",
-      "category-features-analysis",
-      "category-finance",
-      "category-finance-and-investment",
-      "category-multimedia",
-      "tag-africas-green-economy-summit",
-      "tag-africa50",
-      "tag-bankability",
-      "tag-infrastructure-development",
-      "tag-risk",
-      "post_format-post-format-video"
-    ],
-    "acf": [],
-    "yoast_head": "\u003C!-- This site is optimized with the Yoast SEO plugin v27.2 - https://yoast.com/product/yoast-seo-wordpress/ --\u003E\n\u003Ctitle\u003EDeveloping projects to reach bankability in Africa - ESI-Africa.com\u003C/title\u003E\n\u003Cmeta name=\"description\" content=\"Karim Mhirsi, Africa50 Senior Investment Officer explains the type of funding that is available to derisk projects to get them to bankability\" /\u003E\n\u003Cmeta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" /\u003E\n\u003Clink rel=\"canonical\" href=\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\" /\u003E\n\u003Cmeta property=\"og:locale\" content=\"en_US\" /\u003E\n\u003Cmeta property=\"og:type\" content=\"article\" /\u003E\n\u003Cmeta property=\"og:title\" content=\"Developing projects to reach bankability in Africa - ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"og:description\" content=\"Karim Mhirsi, Africa50 Senior Investment Officer explains the type of funding that is available to derisk projects to get them to bankability\" /\u003E\n\u003Cmeta property=\"og:url\" content=\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\" /\u003E\n\u003Cmeta property=\"og:site_name\" content=\"ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"article:publisher\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:author\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:published_time\" content=\"2026-03-20T08:36:25+00:00\" /\u003E\n\u003Cmeta property=\"article:modified_time\" content=\"2026-03-20T08:37:47+00:00\" /\u003E\n\u003Cmeta property=\"og:image\" content=\"https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg\" /\u003E\n\t\u003Cmeta property=\"og:image:width\" content=\"1440\" /\u003E\n\t\u003Cmeta property=\"og:image:height\" content=\"1080\" /\u003E\n\t\u003Cmeta property=\"og:image:type\" content=\"image/jpeg\" /\u003E\n\u003Cmeta name=\"author\" content=\"ESI Africa\" /\u003E\n\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\" /\u003E\n\u003Cmeta name=\"twitter:creator\" content=\"@https://twitter.com/esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:site\" content=\"@esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:label1\" content=\"Written by\" /\u003E\n\t\u003Cmeta name=\"twitter:data1\" content=\"ESI Africa\" /\u003E\n\t\u003Cmeta name=\"twitter:label2\" content=\"Est. reading time\" /\u003E\n\t\u003Cmeta name=\"twitter:data2\" content=\"2 minutes\" /\u003E\n\u003Cscript type=\"application/ld+json\" class=\"yoast-schema-graph\"\u003E{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Article\",\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#article\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\"},\"author\":{\"name\":\"ESI Africa\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\"},\"headline\":\"Developing projects to reach bankability in Africa\",\"datePublished\":\"2026-03-20T08:36:25+00:00\",\"dateModified\":\"2026-03-20T08:37:47+00:00\",\"mainEntityOfPage\":{\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\"},\"wordCount\":190,\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"image\":{\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg\",\"keywords\":[\"Africa's Green Economy Summit\",\"Africa50\",\"bankability\",\"infrastructure development\",\"risk\"],\"articleSection\":[\"Africa\",\"Features/Analysis\",\"Finance\",\"Finance and Investment\",\"Multimedia\"],\"inLanguage\":\"en-ZA\"},{\"@type\":\"WebPage\",\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\",\"url\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\",\"name\":\"Developing projects to reach bankability in Africa - ESI-Africa.com\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage\"},\"image\":{\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg\",\"datePublished\":\"2026-03-20T08:36:25+00:00\",\"dateModified\":\"2026-03-20T08:37:47+00:00\",\"description\":\"Karim Mhirsi, Africa50 Senior Investment Officer explains the type of funding that is available to derisk projects to get them to bankability\",\"breadcrumb\":{\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#breadcrumb\"},\"inLanguage\":\"en-ZA\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg\",\"width\":1440,\"height\":1080,\"caption\":\"Image source: mikkiorso©123rf\"},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.esi-africa.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Developing projects to reach bankability in Africa\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://www.esi-africa.com/#website\",\"url\":\"https://www.esi-africa.com/\",\"name\":\"ESI-Africa.com\",\"description\":\"Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.\",\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.esi-africa.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-ZA\"},{\"@type\":\"Organization\",\"@id\":\"https://www.esi-africa.com/#organization\",\"name\":\"ESI Africa\",\"url\":\"https://www.esi-africa.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"width\":272,\"height\":221,\"caption\":\"ESI Africa\"},\"image\":{\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\"},\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://x.com/esiafrica\",\"https://www.linkedin.com/company/esi-africa/\",\"https://www.youtube.com/user/ESIAfricaTV\"]},{\"@type\":\"Person\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\",\"name\":\"ESI Africa\",\"image\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"caption\":\"ESI Africa\"},\"description\":\"A daily multimedia gateway underpinned by our print journal, we spot trends, identify market shifts and contextualise energy and power matters through an Africa lens. At ESI Africa, content is our product, facilitating deep-rooted connections is our passion. Click on the mail icons below to follow us on social media.\",\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://www.linkedin.com/company/esi-africa/\",\"https://x.com/https://twitter.com/esiafrica\",\"https://www.youtube.com/user/ESIAfricaTV\"],\"url\":\"https://www.esi-africa.com/author/kim-admin/\"}]}\u003C/script\u003E\n\u003C!-- / Yoast SEO plugin. --\u003E",
-    "yoast_head_json": {
-      "title": "Developing projects to reach bankability in Africa - ESI-Africa.com",
-      "description": "Karim Mhirsi, Africa50 Senior Investment Officer explains the type of funding that is available to derisk projects to get them to bankability",
-      "robots": {
-        "index": "index",
-        "follow": "follow",
-        "max-snippet": "max-snippet:-1",
-        "max-image-preview": "max-image-preview:large",
-        "max-video-preview": "max-video-preview:-1"
-      },
-      "canonical": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/",
-      "og_locale": "en_US",
-      "og_type": "article",
-      "og_title": "Developing projects to reach bankability in Africa - ESI-Africa.com",
-      "og_description": "Karim Mhirsi, Africa50 Senior Investment Officer explains the type of funding that is available to derisk projects to get them to bankability",
-      "og_url": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/",
-      "og_site_name": "ESI-Africa.com",
-      "article_publisher": "https://www.facebook.com/ESIAfricaNews",
-      "article_author": "https://www.facebook.com/ESIAfricaNews",
-      "article_published_time": "2026-03-20T08:36:25+00:00",
-      "article_modified_time": "2026-03-20T08:37:47+00:00",
-      "og_image": [
-        {
-          "width": 1440,
-          "height": 1080,
-          "url": "https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg",
-          "type": "image/jpeg"
-        }
-      ],
-      "author": "ESI Africa",
-      "twitter_card": "summary_large_image",
-      "twitter_creator": "@https://twitter.com/esiafrica",
-      "twitter_site": "@esiafrica",
-      "twitter_misc": {
-        "Written by": "ESI Africa",
-        "Est. reading time": "2 minutes"
-      },
-      "schema": {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Article",
-            "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#article",
-            "isPartOf": {
-              "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/"
-            },
-            "author": {
-              "name": "ESI Africa",
-              "@id": "https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1"
-            },
-            "headline": "Developing projects to reach bankability in Africa",
-            "datePublished": "2026-03-20T08:36:25+00:00",
-            "dateModified": "2026-03-20T08:37:47+00:00",
-            "mainEntityOfPage": {
-              "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/"
-            },
-            "wordCount": 190,
-            "publisher": {
-              "@id": "https://www.esi-africa.com/#organization"
-            },
-            "image": {
-              "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage"
-            },
-            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg",
-            "keywords": [
-              "Africa's Green Economy Summit",
-              "Africa50",
-              "bankability",
-              "infrastructure development",
-              "risk"
-            ],
-            "articleSection": [
-              "Africa",
-              "Features/Analysis",
-              "Finance",
-              "Finance and Investment",
-              "Multimedia"
-            ],
-            "inLanguage": "en-ZA"
-          },
-          {
-            "@type": "WebPage",
-            "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/",
-            "url": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/",
-            "name": "Developing projects to reach bankability in Africa - ESI-Africa.com",
-            "isPartOf": {
-              "@id": "https://www.esi-africa.com/#website"
-            },
-            "primaryImageOfPage": {
-              "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage"
-            },
-            "image": {
-              "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage"
-            },
-            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg",
-            "datePublished": "2026-03-20T08:36:25+00:00",
-            "dateModified": "2026-03-20T08:37:47+00:00",
-            "description": "Karim Mhirsi, Africa50 Senior Investment Officer explains the type of funding that is available to derisk projects to get them to bankability",
-            "breadcrumb": {
-              "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#breadcrumb"
-            },
-            "inLanguage": "en-ZA",
-            "potentialAction": [
-              {
-                "@type": "ReadAction",
-                "target": [
-                  "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/"
-                ]
-              }
-            ]
-          },
-          {
-            "@type": "ImageObject",
-            "inLanguage": "en-ZA",
-            "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#primaryimage",
-            "url": "https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg",
-            "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2025/05/infrastructure-development-.jpg",
-            "width": 1440,
-            "height": 1080,
-            "caption": "Image source: mikkiorso©123rf"
-          },
-          {
-            "@type": "BreadcrumbList",
-            "@id": "https://www.esi-africa.com/africa/developing-projects-for-bankability-africa/#breadcrumb",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://www.esi-africa.com/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Developing projects to reach bankability in Africa"
-              }
-            ]
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://www.esi-africa.com/#website",
-            "url": "https://www.esi-africa.com/",
-            "name": "ESI-Africa.com",
-            "description": "Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.",
-            "publisher": {
-              "@id": "https://www.esi-africa.com/#organization"
-            },
-            "potentialAction": [
-              {
-                "@type": "SearchAction",
-                "target": {
-                  "@type": "EntryPoint",
-                  "urlTemplate": "https://www.esi-africa.com/?s={search_term_string}"
-                },
-                "query-input": {
-                  "@type": "PropertyValueSpecification",
-                  "valueRequired": true,
-                  "valueName": "search_term_string"
-                }
-              }
-            ],
-            "inLanguage": "en-ZA"
-          },
-          {
-            "@type": "Organization",
-            "@id": "https://www.esi-africa.com/#organization",
-            "name": "ESI Africa",
-            "url": "https://www.esi-africa.com/",
-            "logo": {
-              "@type": "ImageObject",
-              "inLanguage": "en-ZA",
-              "@id": "https://www.esi-africa.com/#/schema/logo/image/",
-              "url": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
-              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
-              "width": 272,
-              "height": 221,
-              "caption": "ESI Africa"
-            },
-            "image": {
-              "@id": "https://www.esi-africa.com/#/schema/logo/image/"
-            },
-            "sameAs": [
-              "https://www.facebook.com/ESIAfricaNews",
-              "https://x.com/esiafrica",
-              "https://www.linkedin.com/company/esi-africa/",
-              "https://www.youtube.com/user/ESIAfricaTV"
-            ]
-          },
-          {
-            "@type": "Person",
-            "@id": "https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1",
-            "name": "ESI Africa",
-            "image": {
-              "@type": "ImageObject",
-              "inLanguage": "en-ZA",
-              "@id": "https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png",
-              "url": "https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png",
-              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png",
-              "caption": "ESI Africa"
-            },
-            "description": "A daily multimedia gateway underpinned by our print journal, we spot trends, identify market shifts and contextualise energy and power matters through an Africa lens. At ESI Africa, content is our product, facilitating deep-rooted connections is our passion. Click on the mail icons below to follow us on social media.",
-            "sameAs": [
-              "https://www.facebook.com/ESIAfricaNews",
-              "https://www.linkedin.com/company/esi-africa/",
-              "https://x.com/https://twitter.com/esiafrica",
-              "https://www.youtube.com/user/ESIAfricaTV"
-            ],
-            "url": "https://www.esi-africa.com/author/kim-admin/"
-          }
-        ]
-      }
-    },
-    "distributor_meta": false,
-    "distributor_terms": false,
-    "distributor_media": false,
-    "distributor_original_site_name": "ESI-Africa.com",
-    "distributor_original_site_url": "https://www.esi-africa.com",
-    "push-errors": false,
-    "amp_enabled": true,
-    "_links": {
-      "self": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/212743",
-          "targetHints": {
-            "allow": [
-              "GET"
-            ]
-          }
-        }
-      ],
-      "collection": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts"
-        }
-      ],
-      "about": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/types/post"
-        }
-      ],
-      "author": [
-        {
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/users/3"
-        }
-      ],
-      "replies": [
-        {
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/comments?post=212743"
-        }
-      ],
-      "version-history": [
-        {
-          "count": 2,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/212743/revisions"
-        }
-      ],
-      "predecessor-version": [
-        {
-          "id": 212751,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/212743/revisions/212751"
-        }
-      ],
-      "wp:featuredmedia": [
-        {
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/media/198530"
-        }
-      ],
-      "wp:attachment": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/media?parent=212743"
-        }
-      ],
-      "wp:term": [
-        {
-          "taxonomy": "category",
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/categories?post=212743"
-        },
-        {
-          "taxonomy": "post_tag",
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/tags?post=212743"
         }
       ],
       "curies": [
