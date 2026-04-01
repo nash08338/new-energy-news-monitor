@@ -1,13 +1,359 @@
 [
   {
+    "id": 213022,
+    "date": "2026-03-31T08:30:00",
+    "date_gmt": "2026-03-31T06:30:00",
+    "guid": {
+      "rendered": "https://www.esi-africa.com/?p=213022"
+    },
+    "modified": "2026-03-30T13:04:11",
+    "modified_gmt": "2026-03-30T11:04:11",
+    "slug": "grid-feeding-forming-shaping-modern-power-systems",
+    "status": "publish",
+    "type": "post",
+    "link": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/",
+    "title": {
+      "rendered": "Grid feeding vs grid forming: Understanding the control philosophies shaping modern power systems"
+    },
+    "content": {
+      "rendered": "\n\u003Cp\u003EAs power systems transition from \u003Cstrong\u003Esynchronous, inertia-rich generation to inverter-based resources\u003C/strong\u003E (IBRs) such as solar PV, wind and battery storage, the way these resources interact with the grid has become a defining technical and commercial issue.\u003C/p\u003E\n\n\n\n\u003Cp\u003EAt the centre of this shift are two distinct operating philosophies: grid feeding (grid-following) and grid forming.\u003C/p\u003E\n\n\n\n\u003Cp class=\"has-text-align-center\"\u003E\u003Ca href=\"https://campaign-el.abb.com/design-grid-feeding-protection-systems-webinar?utm_source=ESI+Africa&amp;utm_medium=magazine&amp;utm_term=Application+Configurator&amp;utm_campaign=EL_GBL_2026_ApplicationConfigurator_Solar_Webinar\" target=\"_blank\" rel=\"noreferrer noopener\"\u003ERegister for the \u003Cem\u003E\u003Cstrong\u003EDesign Grid-Feeding Protection Systems\u003C/strong\u003E\u003C/em\u003E webinar, taking place on\u003Cstrong\u003E 15 April\u003C/strong\u003E,\u003C/a\u003E\u003Cbr\u003E\u003Ca href=\"https://campaign-el.abb.com/design-grid-feeding-protection-systems-webinar?utm_source=ESI+Africa&amp;utm_medium=magazine&amp;utm_term=Application+Configurator&amp;utm_campaign=EL_GBL_2026_ApplicationConfigurator_Solar_Webinar\"\u003Ewith two sessions available \u003Cstrong\u003E(9.30am and 4pm CET)\u003C/strong\u003E\u003C/a\u003E\u003C/p\u003E\n\n\n\n\u003Cp\u003ETo understand the difference between the two, you must examine the mechanisms, behaviour, advantages and limitations of each approach, and explore how utilities, developers and system operators deploy them in practice.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EDefining the control philosophies\u003C/h2\u003E\n\n\n\n\u003Cp\u003EThe fundamental distinction between the two technologies lies in \u003Cstrong\u003Ewho establishes the grid conditions\u003C/strong\u003E—specifically, voltage and frequency—and who simply responds to them.\u003C/p\u003E\n\n\n\n\u003Cul class=\"wp-block-list\"\u003E\n\u003Cli\u003E\u003Cstrong\u003EGrid feeding (grid-following):\u003C/strong\u003E These inverters measure the existing grid voltage and frequency to synchronise their output, injecting current accordingly.\u003C/li\u003E\n\n\n\n\u003Cli\u003E\u003Cstrong\u003EGrid forming:\u003C/strong\u003E These inverters act as a reference for the grid by autonomously establishing and regulating voltage and frequency.\u003C/li\u003E\n\u003C/ul\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003ECore mechanisms and behaviour\u003C/h2\u003E\n\n\n\n\u003Cp\u003EThe operational differences stem from how each system interacts with the electrical environment.\u003C/p\u003E\n\n\n\n\u003Ch4 class=\"wp-block-heading\"\u003EGrid-feeding mechanisms\u003C/h4\u003E\n\n\n\n\u003Cp\u003EGrid-following inverters operate as \u003Cstrong\u003Ecurrent sources\u003C/strong\u003E. They utilise a \u003Cstrong\u003EPhase-locked loop (PLL)\u003C/strong\u003E to continuously track the grid’s voltage angle and frequency, adjusting their active (P) and reactive (Q) power injection based on these external setpoints. \u003C/p\u003E\n\n\n\n\u003Cp\u003EBecause they require a stable external voltage waveform to function, they are highly dependent on grid strength; if the grid signal becomes unstable or disappears, the inverter may lose its reference and trip offline.\u003C/p\u003E\n\n\n\n\u003Ch4 class=\"wp-block-heading\"\u003EGrid-forming mechanisms\u003C/h4\u003E\n\n\n\n\u003Cp\u003EIn contrast, grid-forming inverters behave as \u003Cstrong\u003Evoltage sources\u003C/strong\u003E. Using advanced algorithms like \u003Cstrong\u003Edroop control\u003C/strong\u003E and \u003Cstrong\u003EVirtual Synchronous Machine (VSM)\u003C/strong\u003E technology, they mimic the inertia and damping behaviour of traditional synchronous generators. \u003C/p\u003E\n\n\n\n\u003Cp\u003EThey do not wait for a grid signal; instead, they create an internal voltage phasor to set the local frequency and magnitude. This allows them to operate in weak grids, support islanded systems, and even provide \u003Cstrong\u003Eblack-start capabilities\u003C/strong\u003E.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EKey differences at a glance\u003C/h2\u003E\n\n\n\n\u003Cfigure class=\"wp-block-table\"\u003E\u003Ctable class=\"has-fixed-layout\"\u003E\u003Ctbody\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EAttribute\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003E\u003Cstrong\u003EGrid Feeding\u003Cbr\u003E(Grid-Following)\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003E\u003Cstrong\u003EGrid Forming\u003C/strong\u003E\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EControl Type\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003ECurrent source\u003C/td\u003E\u003Ctd\u003EVoltage source\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EReference\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003EExternal (grid)\u003C/td\u003E\u003Ctd\u003EInternal (self-generated)\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EGrid Dependency\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003EHigh\u003C/td\u003E\u003Ctd\u003ELow\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EInertia Contribution\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003ENone\u003C/td\u003E\u003Ctd\u003ESynthetic inertia\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EWeak Grid Performance\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003ELimited\u003C/td\u003E\u003Ctd\u003EStrong\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd\u003E\u003Cstrong\u003EBlack Start\u003C/strong\u003E\u003C/td\u003E\u003Ctd\u003ENo\u003C/td\u003E\u003Ctd\u003EYes\u003C/td\u003E\u003C/tr\u003E\u003C/tbody\u003E\u003C/table\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EPros and cons for the energy market\u003C/h2\u003E\n\n\n\n\u003Ch4 class=\"wp-block-heading\"\u003EGrid feeding\u003C/h4\u003E\n\n\n\n\u003Cul class=\"wp-block-list\"\u003E\n\u003Cli\u003E\u003Cstrong\u003EPros:\u003C/strong\u003E This is a mature, widely deployed technology with a lower cost and simpler control architecture. It offers fast, precise power control when connected to robust grids.\u003C/li\u003E\n\n\n\n\u003Cli\u003E\u003Cstrong\u003ECons:\u003C/strong\u003E It cannot provide inertia or system strength and is prone to instability at high levels of renewable penetration. It is effectively useless for blackout recovery or islanded operation.\u003C/li\u003E\n\u003C/ul\u003E\n\n\n\n\u003Ch4 class=\"wp-block-heading\"\u003EGrid forming\u003C/h4\u003E\n\n\n\n\u003Cul class=\"wp-block-list\"\u003E\n\u003Cli\u003E\u003Cstrong\u003EPros:\u003C/strong\u003E It enhances resilience by providing voltage control, synthetic inertia and ancillary services. It is essential for stabilising weak or renewable-dominated grids.\u003C/li\u003E\n\n\n\n\u003Cli\u003E\u003Cstrong\u003ECons:\u003C/strong\u003E The technology requires more complex control designs, greater engineering effort and higher initial costs. Interoperability standards are still evolving, requiring careful coordination with existing protection systems.\u003C/li\u003E\n\u003C/ul\u003E\n\n\n\n\u003Cp class=\"has-text-align-center\"\u003E\u003Ca href=\"https://campaign-el.abb.com/design-grid-feeding-protection-systems-webinar?utm_source=ESI+Africa&amp;utm_medium=magazine&amp;utm_term=Application+Configurator&amp;utm_campaign=EL_GBL_2026_ApplicationConfigurator_Solar_Webinar\" target=\"_blank\" rel=\"noreferrer noopener\"\u003ERegister for the&nbsp;\u003Cem\u003E\u003Cstrong\u003EDesign Grid-Feeding Protection Systems\u003C/strong\u003E\u003C/em\u003E&nbsp;webinar, taking place on\u003Cstrong\u003E&nbsp;15 April\u003C/strong\u003E,\u003C/a\u003E\u003Cbr\u003E\u003Ca href=\"https://campaign-el.abb.com/design-grid-feeding-protection-systems-webinar?utm_source=ESI+Africa&amp;utm_medium=magazine&amp;utm_term=Application+Configurator&amp;utm_campaign=EL_GBL_2026_ApplicationConfigurator_Solar_Webinar\"\u003Ewith two sessions available&nbsp;\u003Cstrong\u003E(9.30am and 4pm CET)\u003C/strong\u003E.\u003C/a\u003E\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003ETools, products, and services\u003C/h2\u003E\n\n\n\n\u003Cp\u003EThe ecosystem for managing these technologies is diverse, involving specialised hardware and analytical services.\u003C/p\u003E\n\n\n\n\u003Cul class=\"wp-block-list\"\u003E\n\u003Cli\u003E\u003Cstrong\u003EGrid-feeding ecosystem:\u003C/strong\u003E Includes standard utility-scale PV inverters, wind turbine converters and EV charging infrastructure. Management services focus on \u003Cstrong\u003EPLL tuning\u003C/strong\u003E, grid compliance studies and \u003Cstrong\u003ESCADA-based\u003C/strong\u003E dispatch.\u003C/li\u003E\n\n\n\n\u003Cli\u003E\u003Cstrong\u003EGrid-forming ecosystem:\u003C/strong\u003E Centred around\u003Cstrong\u003E Battery Energy Storage Systems\u003C/strong\u003E (BESS) with GFM firmware, as well as advanced STATCOM and HVDC systems. Supporting these requires Electromagnetic Transient (EMT) modelling, system strength studies and specialised microgrid control systems.\u003C/li\u003E\n\u003C/ul\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003E\u003Cem\u003E\u003Ca href=\"https://www.esi-africa.com/advertise-in-print/\"\u003EContact our sales team to position your smart solution to power Africa&#8217;s grids\u003C/a\u003E\u003C/em\u003E\u003C/strong\u003E\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003ECurrent applications and examples\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EGrid-following\u003C/strong\u003E remains the global backbone, currently used in most utility-scale solar plants and wind farms where the grid is still rich in traditional inertia.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EGrid-forming\u003C/strong\u003E is being deployed where traditional assumptions of grid stability no longer hold. Key use cases include:\u003C/p\u003E\n\n\n\n\u003Cul class=\"wp-block-list\"\u003E\n\u003Cli\u003E\u003Cstrong\u003EMicrogrids\u003C/strong\u003E in remote regions or island systems.\u003C/li\u003E\n\n\n\n\u003Cli\u003E\u003Cstrong\u003EWeak grids\u003C/strong\u003E in parts of Australia and Africa, where system strength is low.\u003C/li\u003E\n\n\n\n\u003Cli\u003E\u003Cstrong\u003EBlack-start services,\u003C/strong\u003E where BESS units are replacing thermal plants to restore power after a blackout.\u003C/li\u003E\n\u003C/ul\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n\n\n\n\u003Cp class=\"has-text-align-center\"\u003E\u003Cem\u003E\u003Cstrong\u003EFollow our \u003Ca href=\"https://whatsapp.com/channel/0029VaUWKMT0gcfJxOIto332\"\u003EWhatsApp channel\u003C/a\u003E for exclusive daily content, breaking energy and water news, \u003C/strong\u003E\u003C/em\u003E\u003Cbr\u003E\u003Cem\u003E\u003Cstrong\u003Einsights from industry experts and more\u003C/strong\u003E\u003C/em\u003E\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EThe emerging paradigm\u003C/h2\u003E\n\n\n\n\u003Cp\u003EGrid-following inverters enabled the first wave of renewable integration. But as systems decarbonise and inertia declines, they are no longer sufficient on their own.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EGrid-forming technology represents a structural shif\u003C/strong\u003Et—from passive participation in the grid to active creation of it.\u003C/p\u003E\n\n\n\n\u003Cp\u003EThe future of the power system is therefore not a binary choice between the two. Instead, the industry is moving toward a \u003Cstrong\u003Ecoordinated model \u003C/strong\u003Ewhere grid-forming units provide the &#8220;grid backbone&#8221; (stability and frequency), while grid-following units provide efficient, scalable bulk energy injection.\u003C/p\u003E\n\n\n\n\u003Cp\u003EAs systems continue to decarbonise, finding the optimal mix of these technologies is the next major challenge for utilities, developers, regulators and policymakers. \u003C/p\u003E\n\n\n\n\u003Cp class=\"has-text-align-center\"\u003E\u003Cem\u003E\u003Cstrong\u003E\u003Cmark style=\"background-color:rgba(0, 0, 0, 0)\" class=\"has-inline-color has-vivid-cyan-blue-color\"\u003E\u003Cstrong\u003E\u003Ca href=\"https://share-eu1.hsforms.com/16FqcOXg0QsCqaN9qBsgtWwewv4c\"\u003EEnlit Africa returns to the CTICC from 19 to 21 May in 2026\u003C/a\u003E\u003C/strong\u003E\u003C/mark\u003E\u003C/strong\u003E\u003C/em\u003E\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n",
+      "protected": false
+    },
+    "excerpt": {
+      "rendered": "\u003Cp\u003ECurrently, energy resilience depends on a coordinated balance between two philosophies to maintain a stable and reliable power supply\u003C/p\u003E\n",
+      "protected": false
+    },
+    "author": 621,
+    "featured_media": 213023,
+    "comment_status": "closed",
+    "ping_status": "closed",
+    "sticky": false,
+    "template": "",
+    "format": "standard",
+    "meta": {
+      "_acf_changed": false,
+      "footnotes": ""
+    },
+    "categories": [764, 746, 494, 487, 703],
+    "tags": [1381, 4499, 1030, 912],
+    "class_list": [
+      "post-213022",
+      "post",
+      "type-post",
+      "status-publish",
+      "format-standard",
+      "has-post-thumbnail",
+      "hentry",
+      "category-africa",
+      "category-features-analysis",
+      "category-international",
+      "category-renewable-energy",
+      "category-transmission-and-distribution",
+      "tag-battery-storage",
+      "tag-grid-resilience",
+      "tag-solar-power",
+      "tag-wind-energy"
+    ],
+    "acf": [],
+    "yoast_head": "\u003C!-- This site is optimized with the Yoast SEO plugin v27.2 - https://yoast.com/product/yoast-seo-wordpress/ --\u003E\n\u003Ctitle\u003EShifting from grid feeding to grid forming in modern power systems\u003C/title\u003E\n\u003Cmeta name=\"description\" content=\"Current energy resilience depends on a coordinated balance between grid feeding and grid forming to maintain a stable and reliable network.\" /\u003E\n\u003Cmeta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" /\u003E\n\u003Clink rel=\"canonical\" href=\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\" /\u003E\n\u003Cmeta property=\"og:locale\" content=\"en_US\" /\u003E\n\u003Cmeta property=\"og:type\" content=\"article\" /\u003E\n\u003Cmeta property=\"og:title\" content=\"Shifting from grid feeding to grid forming in modern power systems\" /\u003E\n\u003Cmeta property=\"og:description\" content=\"Current energy resilience depends on a coordinated balance between grid feeding and grid forming to maintain a stable and reliable network.\" /\u003E\n\u003Cmeta property=\"og:url\" content=\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\" /\u003E\n\u003Cmeta property=\"og:site_name\" content=\"ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"article:publisher\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:published_time\" content=\"2026-03-31T06:30:00+00:00\" /\u003E\n\u003Cmeta property=\"og:image\" content=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg\" /\u003E\n\t\u003Cmeta property=\"og:image:width\" content=\"1440\" /\u003E\n\t\u003Cmeta property=\"og:image:height\" content=\"1080\" /\u003E\n\t\u003Cmeta property=\"og:image:type\" content=\"image/jpeg\" /\u003E\n\u003Cmeta name=\"author\" content=\"Nicolette Pombo-van Zyl\" /\u003E\n\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\" /\u003E\n\u003Cmeta name=\"twitter:creator\" content=\"@https://twitter.com/nicolettepombo\" /\u003E\n\u003Cmeta name=\"twitter:site\" content=\"@esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:label1\" content=\"Written by\" /\u003E\n\t\u003Cmeta name=\"twitter:data1\" content=\"Nicolette Pombo-van Zyl\" /\u003E\n\t\u003Cmeta name=\"twitter:label2\" content=\"Est. reading time\" /\u003E\n\t\u003Cmeta name=\"twitter:data2\" content=\"4 minutes\" /\u003E\n\u003Cscript type=\"application/ld+json\" class=\"yoast-schema-graph\"\u003E{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Article\",\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#article\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\"},\"author\":{\"name\":\"Nicolette Pombo-van Zyl\",\"@id\":\"https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb\"},\"headline\":\"Grid feeding vs grid forming: Understanding the control philosophies shaping modern power systems\",\"datePublished\":\"2026-03-31T06:30:00+00:00\",\"mainEntityOfPage\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\"},\"wordCount\":792,\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"image\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg\",\"keywords\":[\"Battery storage\",\"grid resilience\",\"solar power\",\"wind energy\"],\"articleSection\":[\"Africa\",\"Features/Analysis\",\"International\",\"Renewable energy\",\"Transmission and Distribution\"],\"inLanguage\":\"en-ZA\"},{\"@type\":\"WebPage\",\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\",\"url\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\",\"name\":\"Shifting from grid feeding to grid forming in modern power systems\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage\"},\"image\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg\",\"datePublished\":\"2026-03-31T06:30:00+00:00\",\"description\":\"Current energy resilience depends on a coordinated balance between grid feeding and grid forming to maintain a stable and reliable network.\",\"breadcrumb\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#breadcrumb\"},\"inLanguage\":\"en-ZA\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg\",\"width\":1440,\"height\":1080,\"caption\":\"Image source: romanzaiets/123rf.com\"},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.esi-africa.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Grid feeding vs grid forming: Understanding the control philosophies shaping modern power systems\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://www.esi-africa.com/#website\",\"url\":\"https://www.esi-africa.com/\",\"name\":\"ESI-Africa.com\",\"description\":\"Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.\",\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.esi-africa.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-ZA\"},{\"@type\":\"Organization\",\"@id\":\"https://www.esi-africa.com/#organization\",\"name\":\"ESI Africa\",\"url\":\"https://www.esi-africa.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"width\":272,\"height\":221,\"caption\":\"ESI Africa\"},\"image\":{\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\"},\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://x.com/esiafrica\",\"https://www.linkedin.com/company/esi-africa/\",\"https://www.youtube.com/user/ESIAfricaTV\"]},{\"@type\":\"Person\",\"@id\":\"https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb\",\"name\":\"Nicolette Pombo-van Zyl\",\"image\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg\",\"caption\":\"Nicolette Pombo-van Zyl\"},\"description\":\"Nicolette is the Editor-in-Chief of ESI Africa, ESI-Africa.com and the annual African Power &amp; Energy Elites. She is passionate about placing African countries on the international stage and is driven by the motto, \\\"The only way to predict the future is to create it\\\". Join her in creating a sustainable future through articles and multimedia content.\",\"sameAs\":[\"https://www.linkedin.com/in/nicolette-pombo-van-zyl/\",\"https://x.com/https://twitter.com/nicolettepombo\"],\"url\":\"https://www.esi-africa.com/author/nicolette/\"}]}\u003C/script\u003E\n\u003C!-- / Yoast SEO plugin. --\u003E",
+    "yoast_head_json": {
+      "title": "Shifting from grid feeding to grid forming in modern power systems",
+      "description": "Current energy resilience depends on a coordinated balance between grid feeding and grid forming to maintain a stable and reliable network.",
+      "robots": {
+        "index": "index",
+        "follow": "follow",
+        "max-snippet": "max-snippet:-1",
+        "max-image-preview": "max-image-preview:large",
+        "max-video-preview": "max-video-preview:-1"
+      },
+      "canonical": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/",
+      "og_locale": "en_US",
+      "og_type": "article",
+      "og_title": "Shifting from grid feeding to grid forming in modern power systems",
+      "og_description": "Current energy resilience depends on a coordinated balance between grid feeding and grid forming to maintain a stable and reliable network.",
+      "og_url": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/",
+      "og_site_name": "ESI-Africa.com",
+      "article_publisher": "https://www.facebook.com/ESIAfricaNews",
+      "article_published_time": "2026-03-31T06:30:00+00:00",
+      "og_image": [
+        {
+          "width": 1440,
+          "height": 1080,
+          "url": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg",
+          "type": "image/jpeg"
+        }
+      ],
+      "author": "Nicolette Pombo-van Zyl",
+      "twitter_card": "summary_large_image",
+      "twitter_creator": "@https://twitter.com/nicolettepombo",
+      "twitter_site": "@esiafrica",
+      "twitter_misc": {
+        "Written by": "Nicolette Pombo-van Zyl",
+        "Est. reading time": "4 minutes"
+      },
+      "schema": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Article",
+            "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#article",
+            "isPartOf": {
+              "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/"
+            },
+            "author": {
+              "name": "Nicolette Pombo-van Zyl",
+              "@id": "https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb"
+            },
+            "headline": "Grid feeding vs grid forming: Understanding the control philosophies shaping modern power systems",
+            "datePublished": "2026-03-31T06:30:00+00:00",
+            "mainEntityOfPage": {
+              "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/"
+            },
+            "wordCount": 792,
+            "publisher": {
+              "@id": "https://www.esi-africa.com/#organization"
+            },
+            "image": {
+              "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage"
+            },
+            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg",
+            "keywords": [
+              "Battery storage",
+              "grid resilience",
+              "solar power",
+              "wind energy"
+            ],
+            "articleSection": [
+              "Africa",
+              "Features/Analysis",
+              "International",
+              "Renewable energy",
+              "Transmission and Distribution"
+            ],
+            "inLanguage": "en-ZA"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/",
+            "url": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/",
+            "name": "Shifting from grid feeding to grid forming in modern power systems",
+            "isPartOf": {
+              "@id": "https://www.esi-africa.com/#website"
+            },
+            "primaryImageOfPage": {
+              "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage"
+            },
+            "image": {
+              "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage"
+            },
+            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg",
+            "datePublished": "2026-03-31T06:30:00+00:00",
+            "description": "Current energy resilience depends on a coordinated balance between grid feeding and grid forming to maintain a stable and reliable network.",
+            "breadcrumb": {
+              "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#breadcrumb"
+            },
+            "inLanguage": "en-ZA",
+            "potentialAction": [
+              {
+                "@type": "ReadAction",
+                "target": [
+                  "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/"
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "ImageObject",
+            "inLanguage": "en-ZA",
+            "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#primaryimage",
+            "url": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg",
+            "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image-1-1.jpg",
+            "width": 1440,
+            "height": 1080,
+            "caption": "Image source: romanzaiets/123rf.com"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.esi-africa.com/industry-sectors/transmission-and-distribution/grid-feeding-forming-shaping-modern-power-systems/#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://www.esi-africa.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Grid feeding vs grid forming: Understanding the control philosophies shaping modern power systems"
+              }
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.esi-africa.com/#website",
+            "url": "https://www.esi-africa.com/",
+            "name": "ESI-Africa.com",
+            "description": "Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.",
+            "publisher": {
+              "@id": "https://www.esi-africa.com/#organization"
+            },
+            "potentialAction": [
+              {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://www.esi-africa.com/?s={search_term_string}"
+                },
+                "query-input": {
+                  "@type": "PropertyValueSpecification",
+                  "valueRequired": true,
+                  "valueName": "search_term_string"
+                }
+              }
+            ],
+            "inLanguage": "en-ZA"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://www.esi-africa.com/#organization",
+            "name": "ESI Africa",
+            "url": "https://www.esi-africa.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "inLanguage": "en-ZA",
+              "@id": "https://www.esi-africa.com/#/schema/logo/image/",
+              "url": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
+              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
+              "width": 272,
+              "height": 221,
+              "caption": "ESI Africa"
+            },
+            "image": {
+              "@id": "https://www.esi-africa.com/#/schema/logo/image/"
+            },
+            "sameAs": [
+              "https://www.facebook.com/ESIAfricaNews",
+              "https://x.com/esiafrica",
+              "https://www.linkedin.com/company/esi-africa/",
+              "https://www.youtube.com/user/ESIAfricaTV"
+            ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb",
+            "name": "Nicolette Pombo-van Zyl",
+            "image": {
+              "@type": "ImageObject",
+              "inLanguage": "en-ZA",
+              "@id": "https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg",
+              "url": "https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg",
+              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg",
+              "caption": "Nicolette Pombo-van Zyl"
+            },
+            "description": "Nicolette is the Editor-in-Chief of ESI Africa, ESI-Africa.com and the annual African Power &amp; Energy Elites. She is passionate about placing African countries on the international stage and is driven by the motto, \"The only way to predict the future is to create it\". Join her in creating a sustainable future through articles and multimedia content.",
+            "sameAs": [
+              "https://www.linkedin.com/in/nicolette-pombo-van-zyl/",
+              "https://x.com/https://twitter.com/nicolettepombo"
+            ],
+            "url": "https://www.esi-africa.com/author/nicolette/"
+          }
+        ]
+      }
+    },
+    "distributor_meta": false,
+    "distributor_terms": false,
+    "distributor_media": false,
+    "distributor_original_site_name": "ESI-Africa.com",
+    "distributor_original_site_url": "https://www.esi-africa.com",
+    "push-errors": false,
+    "amp_enabled": true,
+    "_links": {
+      "self": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213022",
+          "targetHints": {
+            "allow": [
+              "GET"
+            ]
+          }
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts"
+        }
+      ],
+      "about": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/types/post"
+        }
+      ],
+      "author": [
+        {
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/users/621"
+        }
+      ],
+      "replies": [
+        {
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/comments?post=213022"
+        }
+      ],
+      "version-history": [
+        {
+          "count": 3,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213022/revisions"
+        }
+      ],
+      "predecessor-version": [
+        {
+          "id": 213030,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213022/revisions/213030"
+        }
+      ],
+      "wp:featuredmedia": [
+        {
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/media/213023"
+        }
+      ],
+      "wp:attachment": [
+        {
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/media?parent=213022"
+        }
+      ],
+      "wp:term": [
+        {
+          "taxonomy": "category",
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/categories?post=213022"
+        },
+        {
+          "taxonomy": "post_tag",
+          "embeddable": true,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/tags?post=213022"
+        }
+      ],
+      "curies": [
+        {
+          "name": "wp",
+          "href": "https://api.w.org/{rel}",
+          "templated": true
+        }
+      ]
+    }
+  },
+  {
     "id": 213007,
     "date": "2026-03-30T09:23:56",
     "date_gmt": "2026-03-30T07:23:56",
     "guid": {
       "rendered": "https://www.esi-africa.com/?p=213007"
     },
-    "modified": "2026-03-30T09:23:58",
-    "modified_gmt": "2026-03-30T07:23:58",
+    "modified": "2026-04-01T11:33:27",
+    "modified_gmt": "2026-04-01T09:33:27",
     "slug": "master-grid-feeding-system-design-in-minutes",
     "status": "publish",
     "type": "post",
@@ -16,7 +362,7 @@
       "rendered": "From complexity to clarity: Master grid feeding system design in minutes"
     },
     "content": {
-      "rendered": "\n\u003Cp\u003EAs Distributed Energy Resources (DERs) scale globally, \u003Cstrong\u003Edesigning grid-feeding protection systems\u003C/strong\u003E that ensure safety, compliance, and grid stability is now crucial. \u003C/p\u003E\n\n\n\n\u003Cp\u003EProtection schemes, regional standards, and fast project workflows must \u003Cstrong\u003Ealign seamlessly\u003C/strong\u003E to keep pace with demand.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-full\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg\" alt=\"\" class=\"wp-image-213014\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg 728w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-300x37.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-630x78.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-400x49.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-107x13.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-295x36.jpg 295w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EIn this Q&amp;A, experts from ABB, a global leader in electrification solutions for energy transition, share insights on grid feeding system designs. \u003Cspan style=\"box-sizing: border-box; margin: 0px; padding: 0px;\"\u003EWe ask Solar Solution Manager\u003Cstrong\u003E Flurina Heuberger, \u003C/strong\u003EProduct Marketing Specialist: ABB South Africa, \u003Cstrong\u003EElvis Khumalo, \u003C/strong\u003Eand Analyst \u003Cstrong\u003EMaciej Maselek \u003C/strong\u003Ehow ABB partners are succeeding in this fast-changing landscape.\u003C/span\u003E   \u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat impact do DERs have on the grid? \u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003E\u003Cstrong\u003EFlurina\u003C/strong\u003E: \u003C/strong\u003ERising DER sources are reshaping grid dynamics and challenging existing infrastructure. \u003C/p\u003E\n\n\n\n\u003Cp\u003EGrid-feeding protection\u003Cstrong\u003E \u003C/strong\u003Eprevents faults and islanding\u003Cstrong\u003E,\u003C/strong\u003E but adapting to grid codes and varying infrastructure and architectures is time-consuming. This is why designing flexible solutions is key to maintaining grid stability while keeping projects on schedule.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat are the challenges of integrating DERs in the African region?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina &amp; Elvis:\u003C/strong\u003E South Africa, for instance, is facing one of its biggest energy sector challenges: integrating a rapidly growing installed base of distributed energy resources into an already strained electricity grid. \u003C/p\u003E\n\n\n\n\u003Cp\u003EGrid‑connection capacity has long been a bottleneck, but the country has now launched a major upgrade program that includes new long‑distance transmission lines and expanded large-scale transformer capacity. This decade‑long effort aims to ease severe congestion, address structural capacity constraints, and lower barriers to connecting new renewable projects.\u003C/p\u003E\n\n\n\n\u003Cp\u003EAlthough national loadshedding has been suspended since late March 2024, load reduction remains common in areas where local networks are at risk of overloading. \u003C/p\u003E\n\n\n\n\u003Cp\u003EThese targeted interventions are used to protect vulnerable infrastructure from failure. In this context, grid‑feeding systems can significantly enhance the protection and stability of installations, helping the energy system cope more effectively with periods of high stress.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhy is automatic disconnection so critical when integrating DER into the grid?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina:\u003C/strong\u003E When DERs remain connected during a grid fault, they can magnify the problem instead of helping solve it. \u003C/p\u003E\n\n\n\n\u003Cp\u003EIf a small utility grid issue occurs and DERs continue to pump power into an unstable system, it can escalate into a major disruption. Grid-feeding systems detect voltage and frequency deviations instantly and isolate the DERs, preventing cascade failures and protecting both grid stability and worker safety.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow does the Application Configurator speed up the selection of grid feeding systems?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej: \u003C/strong\u003ESelecting the right products for grid feeding systems can be time-consuming and complex. Engineers often need to navigate extensive datasheets, technical catalogues, and multiple product families. This effort becomes frustrating when system requirements are well understood, but identifying the matching products from hundreds of options is not easy.\u003C/p\u003E\n\n\n\n\u003Cp\u003EABB&#8217;s Application Configurator transforms this experience. Instead of spending hours manually evaluating protection devices, interface relays, and other required products, the tool enables you to generate a complete and validated bill of materials in just minutes.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-full\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg\" alt=\"\" class=\"wp-image-213014\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg 728w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-300x37.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-630x78.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-400x49.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-107x13.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-295x36.jpg 295w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EThrough a guided workflow, it simplifies every step of the design process. It reduces engineering complexity, minimises the risk of mis-sizing or compatibility errors, and removes the need to constantly cross-reference multiple catalogues. \u003C/p\u003E\n\n\n\n\u003Cp\u003EBased on the grid feeding system parameters you enter (such as grid code standards, generation power, backup and interface devices, inverter details, short-circuit levels, and connection configuration), the configurator automatically proposes the optimal electrical architecture using ABB&#8217;s full product portfolio.\u003C/p\u003E\n\n\n\n\u003Cp\u003EIt ensures proper grading, selectivity, and protection coordination across the entire grid feeding system. The whole process becomes streamlined, accurate, and completely free of guesswork.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow does guided selection work in Application Configurator?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej:\u003C/strong\u003E Application Configurator simplifies configuration through four simple steps. Users provide key system inputs, and the configurator automatically filters out irrelevant or incompatible products based on these parameters.\u003C/p\u003E\n\n\n\n\u003Cp\u003ELeveraging ABB&#8217;s built-in expertise and pre-validated combinations, the tool recommends the most suitable protection devices, interface relays, disconnecting devices, surge protection, accessories, and communication or monitoring options for compliant grid-feeding systems.\u003C/p\u003E\n\n\n\n\u003Cp\u003EThe configurator automatically checks critical technical aspects such as selectivity, protection coordination, short-circuit withstand ratings, interface protection requirements, and compatibility between products. This reduces design errors and ensures a safe, reliable, and standards-compliant grid feeding system.\u003C/p\u003E\n\n\n\n\u003Cp\u003EUsers can still adjust quantities, swap components, or add accessories at any stage, and the configurator instantly updates the recommendations. The result is a complete, validated bill of materials tailored specifically to your grid feeding project.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow much does Application Configurator cost?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej:\u003C/strong\u003E Application Configurator is free for anyone to use, whether you&#8217;re an existing ABB customer or new to ABB solutions. Simply create an account, input your project details, and start configuring immediately. No prior ABB relationship is required, and there is no cost.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EAbout the experts\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina Heuberger \u003C/strong\u003Eis a Solution Product Manager at ABB Electrification, where she focuses on business strategy and innovation in the Solar, BESS, and Hydrogen Sectors.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej Maselek\u003C/strong\u003E is the Functional Analyst for the Application Configurator at ABB Electrification. With his expertise as a functional Analyst, he ensures a seamless user experience and efficient application configuration.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EElvis Khumalo \u003C/strong\u003Eis the Product Marketing Specialist for Low Voltage Products at ABB Electrification in South Africa, specialising in motor control, protection products and solutions across various industry segments.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-large\"\u003E\u003Ca href=\"https://campaign-el.abb.com/l/961032/2026-03-05/7vk98\" target=\"_blank\" rel=\" noreferrer noopener\"\u003E\u003Cimg decoding=\"async\" width=\"1024\" height=\"576\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1024x576.jpg\" alt=\"\" class=\"wp-image-213012\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1024x576.jpg 1024w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-300x169.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-768x432.jpg 768w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1536x864.jpg 1536w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-630x354.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-400x225.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-107x60.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-276x155.jpg 276w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1.jpg 1920w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" /\u003E\u003C/a\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n",
+      "rendered": "\n\u003Cp\u003EAs Distributed Energy Resources (DERs) scale globally, \u003Cstrong\u003Edesigning grid-feeding protection systems\u003C/strong\u003E that ensure safety, compliance, and grid stability is now crucial. \u003C/p\u003E\n\n\n\n\u003Cp\u003EProtection schemes, regional standards, and fast project workflows must \u003Cstrong\u003Ealign seamlessly\u003C/strong\u003E to keep pace with demand.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-full\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg\" alt=\"\" class=\"wp-image-213014\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg 728w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-300x37.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-630x78.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-400x49.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-107x13.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-295x36.jpg 295w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EIn this Q&amp;A, experts from ABB, a global leader in electrification solutions for energy transition, share insights on grid feeding system designs. \u003Cspan style=\"box-sizing: border-box; margin: 0px; padding: 0px;\"\u003EWe ask Solar Solution Manager\u003Cstrong\u003E&nbsp;Flurina Heuberger,&nbsp;\u003C/strong\u003EProduct Marketing Specialist: ABB South Africa,&nbsp;\u003Cstrong\u003EElvis Khumalo,&nbsp;\u003C/strong\u003Eand Analyst&nbsp;\u003Cstrong\u003EMaciej Maselek&nbsp;\u003C/strong\u003Ehow ABB partners are succeeding in this fast-changing landscape.\u003C/span\u003E &nbsp;&nbsp;\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat impact do DERs have on the grid?&nbsp;\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003E\u003Cstrong\u003EFlurina\u003C/strong\u003E: \u003C/strong\u003ERising DER sources are reshaping grid dynamics and challenging existing infrastructure. \u003C/p\u003E\n\n\n\n\u003Cp\u003EGrid-feeding protection\u003Cstrong\u003E \u003C/strong\u003Eprevents faults and islanding\u003Cstrong\u003E,\u003C/strong\u003E but adapting to grid codes and varying infrastructure and architectures is time-consuming. This is why designing flexible solutions is key to maintaining grid stability while keeping projects on schedule.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat are the challenges of integrating DERs in the African region?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina &amp; Elvis:\u003C/strong\u003E South Africa, for instance, is facing one of its biggest energy sector challenges: integrating a rapidly growing installed base of distributed energy resources into an already strained electricity grid. \u003C/p\u003E\n\n\n\n\u003Cp\u003EGrid‑connection capacity has long been a bottleneck, but the country has now launched a major upgrade program that includes new long‑distance transmission lines and expanded large-scale transformer capacity. This decade‑long effort aims to ease severe congestion, address structural capacity constraints, and lower barriers to connecting new renewable projects.\u003C/p\u003E\n\n\n\n\u003Cp\u003EAlthough national loadshedding has been suspended since late March 2024, load reduction remains common in areas where local networks are at risk of overloading. \u003C/p\u003E\n\n\n\n\u003Cp\u003EThese targeted interventions are used to protect vulnerable infrastructure from failure. In this context, grid‑feeding systems can significantly enhance the protection and stability of installations, helping the energy system cope more effectively with periods of high stress.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhy is automatic disconnection so critical when integrating DER into the grid?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina:\u003C/strong\u003E When DERs remain connected during a grid fault, they can magnify the problem instead of helping solve it. \u003C/p\u003E\n\n\n\n\u003Cp\u003EIf a small utility grid issue occurs and DERs continue to pump power into an unstable system, it can escalate into a major disruption. Grid-feeding systems detect voltage and frequency deviations instantly and isolate the DERs, preventing cascade failures and protecting both grid stability and worker safety.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow does the Application Configurator speed up the selection of grid feeding systems?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej: \u003C/strong\u003ESelecting the right products for grid feeding systems can be time-consuming and complex. Engineers often need to navigate extensive datasheets, technical catalogues, and multiple product families. This effort becomes frustrating when system requirements are well understood, but identifying the matching products from hundreds of options is not easy.\u003C/p\u003E\n\n\n\n\u003Cp\u003EABB&#8217;s Application Configurator transforms this experience. Instead of spending hours manually evaluating protection devices, interface relays, and other required products, the tool enables you to generate a complete and validated bill of materials in just minutes.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-full\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg\" alt=\"\" class=\"wp-image-213014\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI.jpg 728w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-300x37.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-630x78.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-400x49.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-107x13.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-App-Config-728x90-ESI-295x36.jpg 295w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EThrough a guided workflow, it simplifies every step of the design process. It reduces engineering complexity, minimises the risk of mis-sizing or compatibility errors, and removes the need to constantly cross-reference multiple catalogues. \u003C/p\u003E\n\n\n\n\u003Cp\u003EBased on the grid feeding system parameters you enter (such as grid code standards, generation power, backup and interface devices, inverter details, short-circuit levels, and connection configuration), the configurator automatically proposes the optimal electrical architecture using ABB&#8217;s full product portfolio.\u003C/p\u003E\n\n\n\n\u003Cp\u003EIt ensures proper grading, selectivity, and protection coordination across the entire grid feeding system. The whole process becomes streamlined, accurate, and completely free of guesswork.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow does guided selection work in Application Configurator?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej:\u003C/strong\u003E Application Configurator simplifies configuration through four simple steps. Users provide key system inputs, and the configurator automatically filters out irrelevant or incompatible products based on these parameters.\u003C/p\u003E\n\n\n\n\u003Cp\u003ELeveraging ABB&#8217;s built-in expertise and pre-validated combinations, the tool recommends the most suitable protection devices, interface relays, disconnecting devices, surge protection, accessories, and communication or monitoring options for compliant grid-feeding systems.\u003C/p\u003E\n\n\n\n\u003Cp\u003EThe configurator automatically checks critical technical aspects such as selectivity, protection coordination, short-circuit withstand ratings, interface protection requirements, and compatibility between products. This reduces design errors and ensures a safe, reliable, and standards-compliant grid feeding system.\u003C/p\u003E\n\n\n\n\u003Cp\u003EUsers can still adjust quantities, swap components, or add accessories at any stage, and the configurator instantly updates the recommendations. The result is a complete, validated bill of materials tailored specifically to your grid feeding project.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EHow much does Application Configurator cost?\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej:\u003C/strong\u003E Application Configurator is free for anyone to use, whether you&#8217;re an existing ABB customer or new to ABB solutions. Simply create an account, input your project details, and start configuring immediately. No prior ABB relationship is required, and there is no cost.\u003C/p\u003E\n\n\n\n\u003Cp\u003ERegister for ABB’s webinar, “\u003Ca href=\"https://campaign-el.abb.com/l/961032/2026-03-05/7vk98\"\u003EDesign Grid-Feeding Protectio\u003C/a\u003E\u003Ca href=\"https://campaign-el.abb.com/l/961032/2026-03-05/7vk98\" target=\"_blank\" rel=\"noreferrer noopener\"\u003En\u003C/a\u003E\u003Ca href=\"https://campaign-el.abb.com/l/961032/2026-03-05/7vk98\"\u003E Systems\u003C/a\u003E,” on April 15 to see how \u003Cstrong\u003EApplication Configurator\u003C/strong\u003E simplifies and accelerates the design of compliant grid-feeding protection systems that ensure safety, grid stability, availability, and power continuity.\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EAbout the experts\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EFlurina Heuberger \u003C/strong\u003Eis a Solution Product Manager at ABB Electrification, where she focuses on business strategy and innovation in the Solar, BESS, and Hydrogen Sectors.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EMaciej Maselek\u003C/strong\u003E is the Functional Analyst for the Application Configurator at ABB Electrification. With his expertise as a functional Analyst, he ensures a seamless user experience and efficient application configuration.\u003C/p\u003E\n\n\n\n\u003Cp\u003E\u003Cstrong\u003EElvis Khumalo \u003C/strong\u003Eis the Product Marketing Specialist for Low Voltage Products at ABB Electrification in South Africa, specialising in motor control, protection products and solutions across various industry segments.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image size-large\"\u003E\u003Ca href=\"https://campaign-el.abb.com/l/961032/2026-03-05/7vk98\" target=\"_blank\" rel=\" noreferrer noopener\"\u003E\u003Cimg decoding=\"async\" width=\"1024\" height=\"576\" src=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1024x576.jpg\" alt=\"\" class=\"wp-image-213012\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1024x576.jpg 1024w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-300x169.jpg 300w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-768x432.jpg 768w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-1536x864.jpg 1536w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-630x354.jpg 630w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-400x225.jpg 400w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-107x60.jpg 107w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1-276x155.jpg 276w, https://www.esi-africa.com/wp-content/uploads/2026/03/ABB-Webinar-Expert-Speakers-1.jpg 1920w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" /\u003E\u003C/a\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003E\u003C/p\u003E\n",
       "protected": false
     },
     "excerpt": {
@@ -63,7 +409,7 @@
       "tag-wind-energy"
     ],
     "acf": [],
-    "yoast_head": "\u003C!-- This site is optimized with the Yoast SEO plugin v27.2 - https://yoast.com/product/yoast-seo-wordpress/ --\u003E\n\u003Ctitle\u003EExpert Q&amp;A into mastering grid feeding system design\u003C/title\u003E\n\u003Cmeta name=\"description\" content=\"In this Q&amp;A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\" /\u003E\n\u003Cmeta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" /\u003E\n\u003Clink rel=\"canonical\" href=\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\" /\u003E\n\u003Cmeta property=\"og:locale\" content=\"en_US\" /\u003E\n\u003Cmeta property=\"og:type\" content=\"article\" /\u003E\n\u003Cmeta property=\"og:title\" content=\"Expert Q&amp;A into mastering grid feeding system design\" /\u003E\n\u003Cmeta property=\"og:description\" content=\"In this Q&amp;A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\" /\u003E\n\u003Cmeta property=\"og:url\" content=\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\" /\u003E\n\u003Cmeta property=\"og:site_name\" content=\"ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"article:publisher\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:author\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:published_time\" content=\"2026-03-30T07:23:56+00:00\" /\u003E\n\u003Cmeta property=\"article:modified_time\" content=\"2026-03-30T07:23:58+00:00\" /\u003E\n\u003Cmeta property=\"og:image\" content=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\" /\u003E\n\t\u003Cmeta property=\"og:image:width\" content=\"1440\" /\u003E\n\t\u003Cmeta property=\"og:image:height\" content=\"1080\" /\u003E\n\t\u003Cmeta property=\"og:image:type\" content=\"image/jpeg\" /\u003E\n\u003Cmeta name=\"author\" content=\"ESI Africa\" /\u003E\n\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\" /\u003E\n\u003Cmeta name=\"twitter:creator\" content=\"@https://twitter.com/esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:site\" content=\"@esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:label1\" content=\"Written by\" /\u003E\n\t\u003Cmeta name=\"twitter:data1\" content=\"ESI Africa\" /\u003E\n\t\u003Cmeta name=\"twitter:label2\" content=\"Est. reading time\" /\u003E\n\t\u003Cmeta name=\"twitter:data2\" content=\"5 minutes\" /\u003E\n\u003Cscript type=\"application/ld+json\" class=\"yoast-schema-graph\"\u003E{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Article\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#article\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"},\"author\":{\"name\":\"ESI Africa\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\"},\"headline\":\"From complexity to clarity: Master grid feeding system design in minutes\",\"datePublished\":\"2026-03-30T07:23:56+00:00\",\"dateModified\":\"2026-03-30T07:23:58+00:00\",\"mainEntityOfPage\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"},\"wordCount\":863,\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"image\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"keywords\":[\"ABB\",\"Energy Storage\",\"grid resilience\",\"Smart grids\",\"solar power\",\"wind energy\"],\"articleSection\":[\"Africa\",\"Asset Maintenance\",\"Energy Storage\",\"Features/Analysis\",\"Renewable energy\",\"Smart Technologies\",\"Solar\",\"Solar and Storage\",\"Tech news\",\"Transmission and Distribution\",\"Wind\"],\"inLanguage\":\"en-ZA\"},{\"@type\":\"WebPage\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\",\"url\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\",\"name\":\"Expert Q&A into mastering grid feeding system design\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"image\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"datePublished\":\"2026-03-30T07:23:56+00:00\",\"dateModified\":\"2026-03-30T07:23:58+00:00\",\"description\":\"In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\",\"breadcrumb\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb\"},\"inLanguage\":\"en-ZA\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"width\":1440,\"height\":1080,\"caption\":\"grid feeding\"},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.esi-africa.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"From complexity to clarity: Master grid feeding system design in minutes\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://www.esi-africa.com/#website\",\"url\":\"https://www.esi-africa.com/\",\"name\":\"ESI-Africa.com\",\"description\":\"Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.\",\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.esi-africa.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-ZA\"},{\"@type\":\"Organization\",\"@id\":\"https://www.esi-africa.com/#organization\",\"name\":\"ESI Africa\",\"url\":\"https://www.esi-africa.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"width\":272,\"height\":221,\"caption\":\"ESI Africa\"},\"image\":{\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\"},\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://x.com/esiafrica\",\"https://www.linkedin.com/company/esi-africa/\",\"https://www.youtube.com/user/ESIAfricaTV\"]},{\"@type\":\"Person\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\",\"name\":\"ESI Africa\",\"image\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"caption\":\"ESI Africa\"},\"description\":\"A daily multimedia gateway underpinned by our print journal, we spot trends, identify market shifts and contextualise energy and power matters through an Africa lens. At ESI Africa, content is our product, facilitating deep-rooted connections is our passion. Click on the mail icons below to follow us on social media.\",\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://www.linkedin.com/company/esi-africa/\",\"https://x.com/https://twitter.com/esiafrica\",\"https://www.youtube.com/user/ESIAfricaTV\"],\"url\":\"https://www.esi-africa.com/author/kim-admin/\"}]}\u003C/script\u003E\n\u003C!-- / Yoast SEO plugin. --\u003E",
+    "yoast_head": "\u003C!-- This site is optimized with the Yoast SEO plugin v27.2 - https://yoast.com/product/yoast-seo-wordpress/ --\u003E\n\u003Ctitle\u003EExpert Q&amp;A into mastering grid feeding system design\u003C/title\u003E\n\u003Cmeta name=\"description\" content=\"In this Q&amp;A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\" /\u003E\n\u003Cmeta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" /\u003E\n\u003Clink rel=\"canonical\" href=\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\" /\u003E\n\u003Cmeta property=\"og:locale\" content=\"en_US\" /\u003E\n\u003Cmeta property=\"og:type\" content=\"article\" /\u003E\n\u003Cmeta property=\"og:title\" content=\"Expert Q&amp;A into mastering grid feeding system design\" /\u003E\n\u003Cmeta property=\"og:description\" content=\"In this Q&amp;A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\" /\u003E\n\u003Cmeta property=\"og:url\" content=\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\" /\u003E\n\u003Cmeta property=\"og:site_name\" content=\"ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"article:publisher\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:author\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:published_time\" content=\"2026-03-30T07:23:56+00:00\" /\u003E\n\u003Cmeta property=\"article:modified_time\" content=\"2026-04-01T09:33:27+00:00\" /\u003E\n\u003Cmeta property=\"og:image\" content=\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\" /\u003E\n\t\u003Cmeta property=\"og:image:width\" content=\"1440\" /\u003E\n\t\u003Cmeta property=\"og:image:height\" content=\"1080\" /\u003E\n\t\u003Cmeta property=\"og:image:type\" content=\"image/jpeg\" /\u003E\n\u003Cmeta name=\"author\" content=\"ESI Africa\" /\u003E\n\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\" /\u003E\n\u003Cmeta name=\"twitter:creator\" content=\"@https://twitter.com/esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:site\" content=\"@esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:label1\" content=\"Written by\" /\u003E\n\t\u003Cmeta name=\"twitter:data1\" content=\"ESI Africa\" /\u003E\n\t\u003Cmeta name=\"twitter:label2\" content=\"Est. reading time\" /\u003E\n\t\u003Cmeta name=\"twitter:data2\" content=\"5 minutes\" /\u003E\n\u003Cscript type=\"application/ld+json\" class=\"yoast-schema-graph\"\u003E{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Article\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#article\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"},\"author\":{\"name\":\"ESI Africa\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\"},\"headline\":\"From complexity to clarity: Master grid feeding system design in minutes\",\"datePublished\":\"2026-03-30T07:23:56+00:00\",\"dateModified\":\"2026-04-01T09:33:27+00:00\",\"mainEntityOfPage\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"},\"wordCount\":908,\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"image\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"keywords\":[\"ABB\",\"Energy Storage\",\"grid resilience\",\"Smart grids\",\"solar power\",\"wind energy\"],\"articleSection\":[\"Africa\",\"Asset Maintenance\",\"Energy Storage\",\"Features/Analysis\",\"Renewable energy\",\"Smart Technologies\",\"Solar\",\"Solar and Storage\",\"Tech news\",\"Transmission and Distribution\",\"Wind\"],\"inLanguage\":\"en-ZA\"},{\"@type\":\"WebPage\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\",\"url\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\",\"name\":\"Expert Q&A into mastering grid feeding system design\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"image\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"datePublished\":\"2026-03-30T07:23:56+00:00\",\"dateModified\":\"2026-04-01T09:33:27+00:00\",\"description\":\"In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.\",\"breadcrumb\":{\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb\"},\"inLanguage\":\"en-ZA\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#primaryimage\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg\",\"width\":1440,\"height\":1080,\"caption\":\"grid feeding\"},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.esi-africa.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"From complexity to clarity: Master grid feeding system design in minutes\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://www.esi-africa.com/#website\",\"url\":\"https://www.esi-africa.com/\",\"name\":\"ESI-Africa.com\",\"description\":\"Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.\",\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.esi-africa.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-ZA\"},{\"@type\":\"Organization\",\"@id\":\"https://www.esi-africa.com/#organization\",\"name\":\"ESI Africa\",\"url\":\"https://www.esi-africa.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"width\":272,\"height\":221,\"caption\":\"ESI Africa\"},\"image\":{\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\"},\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://x.com/esiafrica\",\"https://www.linkedin.com/company/esi-africa/\",\"https://www.youtube.com/user/ESIAfricaTV\"]},{\"@type\":\"Person\",\"@id\":\"https://www.esi-africa.com/#/schema/person/cbf6ec5579d16583b88e1af4248cbbc1\",\"name\":\"ESI Africa\",\"image\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2025/10/ESI-300-155x155.png\",\"caption\":\"ESI Africa\"},\"description\":\"A daily multimedia gateway underpinned by our print journal, we spot trends, identify market shifts and contextualise energy and power matters through an Africa lens. At ESI Africa, content is our product, facilitating deep-rooted connections is our passion. Click on the mail icons below to follow us on social media.\",\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://www.linkedin.com/company/esi-africa/\",\"https://x.com/https://twitter.com/esiafrica\",\"https://www.youtube.com/user/ESIAfricaTV\"],\"url\":\"https://www.esi-africa.com/author/kim-admin/\"}]}\u003C/script\u003E\n\u003C!-- / Yoast SEO plugin. --\u003E",
     "yoast_head_json": {
       "title": "Expert Q&A into mastering grid feeding system design",
       "description": "In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.",
@@ -84,7 +430,7 @@
       "article_publisher": "https://www.facebook.com/ESIAfricaNews",
       "article_author": "https://www.facebook.com/ESIAfricaNews",
       "article_published_time": "2026-03-30T07:23:56+00:00",
-      "article_modified_time": "2026-03-30T07:23:58+00:00",
+      "article_modified_time": "2026-04-01T09:33:27+00:00",
       "og_image": [
         {
           "width": 1440,
@@ -116,11 +462,11 @@
             },
             "headline": "From complexity to clarity: Master grid feeding system design in minutes",
             "datePublished": "2026-03-30T07:23:56+00:00",
-            "dateModified": "2026-03-30T07:23:58+00:00",
+            "dateModified": "2026-04-01T09:33:27+00:00",
             "mainEntityOfPage": {
               "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/"
             },
-            "wordCount": 863,
+            "wordCount": 908,
             "publisher": {
               "@id": "https://www.esi-africa.com/#organization"
             },
@@ -167,7 +513,7 @@
             },
             "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2026/03/ipiccy_image.jpg",
             "datePublished": "2026-03-30T07:23:56+00:00",
-            "dateModified": "2026-03-30T07:23:58+00:00",
+            "dateModified": "2026-04-01T09:33:27+00:00",
             "description": "In this Q&A, experts from ABB share insights into grid-feeding system designs and a free-to-use tool, the Application Configurator.",
             "breadcrumb": {
               "@id": "https://www.esi-africa.com/features-analysis/master-grid-feeding-system-design-in-minutes/#breadcrumb"
@@ -325,14 +671,14 @@
       ],
       "version-history": [
         {
-          "count": 1,
+          "count": 2,
           "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213007/revisions"
         }
       ],
       "predecessor-version": [
         {
-          "id": 213016,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213007/revisions/213016"
+          "id": 213090,
+          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/213007/revisions/213090"
         }
       ],
       "wp:featuredmedia": [
@@ -3219,363 +3565,6 @@
           "taxonomy": "post_tag",
           "embeddable": true,
           "href": "https://www.esi-africa.com/wp-json/wp/v2/tags?post=203747"
-        }
-      ],
-      "curies": [
-        {
-          "name": "wp",
-          "href": "https://api.w.org/{rel}",
-          "templated": true
-        }
-      ]
-    }
-  },
-  {
-    "id": 138234,
-    "date": "2026-03-23T07:30:00",
-    "date_gmt": "2026-03-23T05:30:00",
-    "guid": {
-      "rendered": "https://www.esi-africa.com/?p=138234"
-    },
-    "modified": "2026-03-23T08:34:36",
-    "modified_gmt": "2026-03-23T06:34:36",
-    "slug": "managing-water-resource-gap-getting-flow-right",
-    "status": "publish",
-    "type": "post",
-    "link": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/",
-    "title": {
-      "rendered": "Managing the water resource gap and getting the flow just right"
-    },
-    "content": {
-      "rendered": "\n\u003Cp\u003EWould you like a glass of water? In response to this question, most people will \u003Cstrong\u003Eassume the water resource comes from a convenient tap or a bottle\u003C/strong\u003E. But this assumption is being challenged. \u003C/p\u003E\n\n\n\n\u003Cp\u003EOur global \u003Cstrong\u003Ewater resources are used by competing industries\u003C/strong\u003E—all wanting the one thing we can’t live without. Water is life; we need to drink it and use it for sanitation, agriculture, manufacturing (of everything, including those attractive clean energy solutions), mining and for electricity generation. \u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio\"\u003E\u003Cdiv class=\"wp-block-embed__wrapper\"\u003E\n\u003Ciframe title=\"Enlit Africa 2026 Speaker Interview | Zanele Bila Mupariwa\" width=\"500\" height=\"281\" src=\"https://www.youtube.com/embed/Wed4M5PrQ2k?start=40&#038;feature=oembed\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen\u003E\u003C/iframe\u003E\n\u003C/div\u003E\u003C/figure\u003E\n\n\n\n\u003Cp\u003EPerhaps a little-known fact is that a whopping \u003Cstrong\u003E90% of global power generation is water-intensive.\u003C/strong\u003E You can argue that this figure will decrease as solar and wind advance; however, the cradle-to-grave pathway of renewable energies is not water-free. \u003C/p\u003E\n\n\n\n\u003Cp\u003EThen there is a new \u003Cstrong\u003Ewater-hungry market emerging\u003C/strong\u003E – green hydrogen. \u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EIs hydrogen a threat?&nbsp;\u003C/h2\u003E\n\n\n\n\u003Cp\u003EAn \u003Ca href=\"https://www.sciencedirect.com/science/article/abs/pii/S2211339821000332\"\u003Eacademic pap\u003C/a\u003E\u003Ca href=\"https://www.sciencedirect.com/science/article/abs/pii/S2211339821000332\" target=\"_blank\" rel=\"noreferrer noopener\"\u003Eer published in 2021 \u003C/a\u003E\u003Cspan style=\"box-sizing: border-box; margin: 0px; padding: 0px;\"\u003E\u003Ca href=\"https://www.sciencedirect.com/science/article/abs/pii/S2211339821000332\" target=\"_blank\"\u003Eestimates the hydrogen demand\u003C/a\u003E for\u003C/span\u003E a distant renewable future at \u003Cstrong\u003E2.3 Gt per year\u003C/strong\u003E. Hydrogen produced by water electrolysis powered by renewable energy can reduce carbon emissions from the energy sector by up to 10.2 Gt annually relative to future emissions projections, compared with the International Panel on Climate Change’s worst-case RCP8.5 scenario.\u003C/p\u003E\n\n\n\n\u003Cp\u003EThis makes hydrogen a key technology in the race to decarbonise. \u003Cstrong\u003EBut let’s consider hydrogen and water\u003C/strong\u003E.  \u003C/p\u003E\n\n\n\n\u003Cp\u003EAn electrolyser with a 100MW capacity \u003Cstrong\u003Econsumes roughly 500 tons of water\u003C/strong\u003E and produces approximately 50 tons of hydrogen daily. If the system is water-cooled, the water requirement doubles. However, it is possible to significantly reduce water requirements for hydrogen production by using air cooling or chiller systems to meet most of the cooling demand. \u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EWhat is more important, water for consumption or water for energy? \u003C/h2\u003E\n\n\n\n\u003Cp\u003EBoth are equally important; therefore, getting the flow of resources just right is a focus for all stakeholders. This focus must include updating policies to \u003Cstrong\u003Esecure bulk water\u003C/strong\u003E, regulations to keep it \u003Cstrong\u003Esafe from contamination\u003C/strong\u003E, and managing resource \u003Cstrong\u003Edistribution for competing sectors\u003C/strong\u003E.     \u003C/p\u003E\n\n\n\n\u003Cp\u003EThis focus must consider the energy transition so that \u003Cstrong\u003Esevere repercussions on the overall water demand\u003C/strong\u003E do not materialise decades from now. What recommendations would you suggest for ensuring that already water-stressed areas are not further impacted? \u003C/p\u003E\n\n\n\n\u003Cp class=\"has-text-align-center\"\u003E\u003Cem\u003E\u003Cstrong\u003E\u003Cmark style=\"background-color:rgba(0, 0, 0, 0)\" class=\"has-inline-color has-vivid-cyan-blue-color\"\u003E\u003Cstrong\u003E\u003Ca href=\"https://share-eu1.hsforms.com/16FqcOXg0QsCqaN9qBsgtWwewv4c\"\u003EEnlit Africa returns to the CTICC from 19 to 21 May in 2026\u003C/a\u003E\u003C/strong\u003E\u003C/mark\u003E\u003C/strong\u003E\u003C/em\u003E\u003C/p\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EA focus on our water resource for one day&nbsp;\u003C/h2\u003E\n\n\n\n\u003Cp\u003EEven though observing World Water Day (on 22 March) is not themed around the above challenge but rather on water and gender: \u003Cem\u003EWhere Water Flows, Equality Grows, \u003C/em\u003Ewater allocation remains relevant. You can \u003Cstrong\u003Eadd the energy crisis to this theme\u003C/strong\u003E because, without some form of power, sourcing (such as groundwater pumping), purifying, and reticulating potable water are untenable. \u003C/p\u003E\n\n\n\n\u003Cp\u003EOn the other end of the spectrum, energy generation will always require water (remember, the \u003Cstrong\u003Ecradle-to-grave lifespan of all energy-related technologies needs water\u003C/strong\u003E). And the state of global water resources is highly fragile.  \u003C/p\u003E\n\n\n\n\u003Cp\u003EAn assessment of rivers, lakes, and aquifers in 97 countries in 2020 indicates that\u003Cstrong\u003E only 60% of water bodies have good water quality\u003C/strong\u003E. Today, this figure could be even lower, as water quality for at least three billion people still needs to be assessed due to a lack of monitoring. \u003C/p\u003E\n\n\n\n\u003Cp\u003ESadly, the UN reports that \u003Cstrong\u003Eover the past 300 years, over 85% of the planet’s wetlands\u003C/strong\u003E have been lost, mainly through drainage and land conversion, with many remaining wetland areas degraded. Since 1970, 81% of species dependent on inland wetlands have declined faster than those relying on other biomes, and an increasing number of these species are facing extinction. \u003C/p\u003E\n\n\n\n\u003Cp\u003EEven so, progress is underway. According to the \u003Cem\u003E\u003Ca href=\"https://unstats.un.org/sdgs/report/2022/\" target=\"_blank\" rel=\"noreferrer noopener\"\u003EUN Sustainable Development Goals 2022\u003C/a\u003E\u003C/em\u003E report,\u003Cstrong\u003E in 2020, 74% of the global population had access to safely managed drinking water services\u003C/strong\u003E. This figure is up by 4% from those recorded in 2015. With concerted efforts, this figure will continue to improve and ensure that the remaining people (mostly living on Level 1) have access to safe drinking water and essential water services.\u003C/p\u003E\n\n\n\n\u003Cfigure class=\"wp-block-image aligncenter size-full\"\u003E\u003Ca href=\"https://www.esi-africa.com/join-the-esi-africa-community/\"\u003E\u003Cimg decoding=\"async\" width=\"728\" height=\"90\" src=\"https://www.esi-africa.com/wp-content/uploads/2023/05/ESI-newsletter-subscribe.png\" alt=\"\" class=\"wp-image-142257\" srcset=\"https://www.esi-africa.com/wp-content/uploads/2023/05/ESI-newsletter-subscribe.png 728w, https://www.esi-africa.com/wp-content/uploads/2023/05/ESI-newsletter-subscribe-300x37.png 300w, https://www.esi-africa.com/wp-content/uploads/2023/05/ESI-newsletter-subscribe-200x25.png 200w, https://www.esi-africa.com/wp-content/uploads/2023/05/ESI-newsletter-subscribe-100x12.png 100w, https://www.esi-africa.com/wp-content/uploads/2023/05/ESI-newsletter-subscribe-696x86.png 696w\" sizes=\"(max-width: 728px) 100vw, 728px\" /\u003E\u003C/a\u003E\u003C/figure\u003E\n\n\n\n\u003Cdiv class=\"wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-a89b3969 wp-block-buttons-is-layout-flex\"\u003E\n\u003Cdiv class=\"wp-block-button is-style-outline is-style-outline--1\"\u003E\u003Ca class=\"wp-block-button__link has-light-background-color has-background has-border-color has-primary-border-color wp-element-button\" href=\"https://www.google.com/preferences/source?q=esi-africa.com\" style=\"border-width:5px\" target=\"_blank\" rel=\"noreferrer noopener nofollow\"\u003EAdd ESI Africa as a preferred source on Google to your favourites for energy content you can trust\u003C/a\u003E\u003C/div\u003E\n\u003C/div\u003E\n\n\n\n\u003Ch2 class=\"wp-block-heading\"\u003EFollow the water statistics&nbsp;\u003C/h2\u003E\n\n\n\n\u003Cp\u003E\u003Cspan style=\"box-sizing: border-box; margin: 0px; padding: 0px;\"\u003ERegarding water resources, the \u003Cem\u003EUN Sustainable Development Goals\u003C/em\u003E 2022 report further highlighted that between 2015 and 2020, the \u003C/span\u003E\u003Cstrong\u003E\u003Cspan style=\"box-sizing: border-box; margin: 0px; padding: 0px;\"\u003Eshare of \u003C/span\u003Ethe population with safely managed sanitation increased from 47% to 54%\u003C/strong\u003E. The number of people with access to handwashing facilities with soap and water in the home increased from 67% to 71%. \u003C/p\u003E\n\n\n\n\u003Cp\u003EBut again, the rate of progress on these basic services would need to quadruple to achieve universal coverage by 2030. \u003C/p\u003E\n\n\n\n\u003Cp\u003EAt current rates of progress, 1.6 billion people will lack safely managed drinking water, 2.8 billion will lack safely managed sanitation, and 1.9 billion will lack basic hand hygiene facilities in 2030. \u003C/p\u003E\n\n\n\n\u003Cp\u003ESouthern Asia and Central Asia registered high levels of water stress at over 75%, whereas Northern Africa registered \u003Cstrong\u003Ecritical water stress at over 100%\u003C/strong\u003E. Since 2015, water stress levels have increased significantly in Western Asia and Northern Africa. \u003C/p\u003E\n\n\n\n\u003Cp\u003EThough North African countries are already \u003Cstrong\u003Einvesting heavily in upcoming hydrogen projects\u003C/strong\u003E, the water resource gap in this region could become a serious threat without careful planning. This planning will address the need for energy resources versus water, and the effects on people due to a lack of either.\u003Cstrong\u003E \u003C/strong\u003E\u003C/p\u003E\n\n\n\n\u003Cdiv class=\"wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex\"\u003E\n\u003Cdiv class=\"wp-block-button aligncenter is-style-round td_btn_normal overflow-text-wrap is-style-outline is-style-outline--2\"\u003E\u003Ca class=\"wp-block-button__link has-light-background-color has-background wp-element-button\" href=\"mailto:nicolette@wearevuka.com\" target=\"_blank\" rel=\"noreferrer noopener\"\u003EBook an interview with \u003Cem\u003EESI Africa\u003C/em\u003E at our media partner events Enlit Africa, Windaba, AGES, C&amp;I Solar+Storage Summit, Electra Mining and more.\u003C/a\u003E\u003C/div\u003E\n\u003C/div\u003E\n",
-      "protected": false
-    },
-    "excerpt": {
-      "rendered": "\u003Cp\u003ECompeting industries all want the one thing we can’t live without and a new threat to water resources is approaching\u003C/p\u003E\n",
-      "protected": false
-    },
-    "author": 621,
-    "featured_media": 212787,
-    "comment_status": "closed",
-    "ping_status": "closed",
-    "sticky": false,
-    "template": "",
-    "format": "standard",
-    "meta": {
-      "_acf_changed": false,
-      "footnotes": ""
-    },
-    "categories": [764, 4530, 746, 847, 4523, 494, 490, 487, 771],
-    "tags": [2611, 1200, 1331, 969],
-    "class_list": [
-      "post-138234",
-      "post",
-      "type-post",
-      "status-publish",
-      "format-standard",
-      "has-post-thumbnail",
-      "hentry",
-      "category-africa",
-      "category-climate-change",
-      "category-features-analysis",
-      "category-future-energy",
-      "category-hydrogen",
-      "category-international",
-      "category-north-africa",
-      "category-renewable-energy",
-      "category-water",
-      "tag-eds-note",
-      "tag-hydrogen",
-      "tag-water-resources",
-      "tag-world-water-day"
-    ],
-    "acf": [],
-    "yoast_head": "\u003C!-- This site is optimized with the Yoast SEO plugin v27.2 - https://yoast.com/product/yoast-seo-wordpress/ --\u003E\n\u003Ctitle\u003EManaging the water resource gap and getting the flow just right\u003C/title\u003E\n\u003Cmeta name=\"description\" content=\"Our global water resource has competing industries—all wanting the one thing we can’t live without and a new threat to water approaching.\" /\u003E\n\u003Cmeta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" /\u003E\n\u003Clink rel=\"canonical\" href=\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\" /\u003E\n\u003Cmeta property=\"og:locale\" content=\"en_US\" /\u003E\n\u003Cmeta property=\"og:type\" content=\"article\" /\u003E\n\u003Cmeta property=\"og:title\" content=\"Managing the water resource gap and getting the flow just right\" /\u003E\n\u003Cmeta property=\"og:description\" content=\"Our global water resource has competing industries—all wanting the one thing we can’t live without and a new threat to water approaching.\" /\u003E\n\u003Cmeta property=\"og:url\" content=\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\" /\u003E\n\u003Cmeta property=\"og:site_name\" content=\"ESI-Africa.com\" /\u003E\n\u003Cmeta property=\"article:publisher\" content=\"https://www.facebook.com/ESIAfricaNews\" /\u003E\n\u003Cmeta property=\"article:published_time\" content=\"2026-03-23T05:30:00+00:00\" /\u003E\n\u003Cmeta property=\"article:modified_time\" content=\"2026-03-23T06:34:36+00:00\" /\u003E\n\u003Cmeta property=\"og:image\" content=\"https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg\" /\u003E\n\t\u003Cmeta property=\"og:image:width\" content=\"1440\" /\u003E\n\t\u003Cmeta property=\"og:image:height\" content=\"1080\" /\u003E\n\t\u003Cmeta property=\"og:image:type\" content=\"image/jpeg\" /\u003E\n\u003Cmeta name=\"author\" content=\"Nicolette Pombo-van Zyl\" /\u003E\n\u003Cmeta name=\"twitter:card\" content=\"summary_large_image\" /\u003E\n\u003Cmeta name=\"twitter:creator\" content=\"@https://twitter.com/nicolettepombo\" /\u003E\n\u003Cmeta name=\"twitter:site\" content=\"@esiafrica\" /\u003E\n\u003Cmeta name=\"twitter:label1\" content=\"Written by\" /\u003E\n\t\u003Cmeta name=\"twitter:data1\" content=\"Nicolette Pombo-van Zyl\" /\u003E\n\t\u003Cmeta name=\"twitter:label2\" content=\"Est. reading time\" /\u003E\n\t\u003Cmeta name=\"twitter:data2\" content=\"5 minutes\" /\u003E\n\u003Cscript type=\"application/ld+json\" class=\"yoast-schema-graph\"\u003E{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Article\",\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#article\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\"},\"author\":{\"name\":\"Nicolette Pombo-van Zyl\",\"@id\":\"https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb\"},\"headline\":\"Managing the water resource gap and getting the flow just right\",\"datePublished\":\"2026-03-23T05:30:00+00:00\",\"dateModified\":\"2026-03-23T06:34:36+00:00\",\"mainEntityOfPage\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\"},\"wordCount\":823,\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"image\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg\",\"keywords\":[\"Ed's Note\",\"Hydrogen\",\"water resources\",\"World Water Day\"],\"articleSection\":[\"Africa\",\"Climate Change\",\"Features/Analysis\",\"Future Energy\",\"Hydrogen\",\"International\",\"North Africa\",\"Renewable energy\",\"Water\"],\"inLanguage\":\"en-ZA\"},{\"@type\":\"WebPage\",\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\",\"url\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\",\"name\":\"Managing the water resource gap and getting the flow just right\",\"isPartOf\":{\"@id\":\"https://www.esi-africa.com/#website\"},\"primaryImageOfPage\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage\"},\"image\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage\"},\"thumbnailUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg\",\"datePublished\":\"2026-03-23T05:30:00+00:00\",\"dateModified\":\"2026-03-23T06:34:36+00:00\",\"description\":\"Our global water resource has competing industries—all wanting the one thing we can’t live without and a new threat to water approaching.\",\"breadcrumb\":{\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#breadcrumb\"},\"inLanguage\":\"en-ZA\",\"potentialAction\":[{\"@type\":\"ReadAction\",\"target\":[\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/\"]}]},{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg\",\"width\":1440,\"height\":1080,\"caption\":\"Image: Traditional fishing on the Zambezi River. Source: barbeye/123rf.com\"},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.esi-africa.com/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Managing the water resource gap and getting the flow just right\"}]},{\"@type\":\"WebSite\",\"@id\":\"https://www.esi-africa.com/#website\",\"url\":\"https://www.esi-africa.com/\",\"name\":\"ESI-Africa.com\",\"description\":\"Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.\",\"publisher\":{\"@id\":\"https://www.esi-africa.com/#organization\"},\"potentialAction\":[{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.esi-africa.com/?s={search_term_string}\"},\"query-input\":{\"@type\":\"PropertyValueSpecification\",\"valueRequired\":true,\"valueName\":\"search_term_string\"}}],\"inLanguage\":\"en-ZA\"},{\"@type\":\"Organization\",\"@id\":\"https://www.esi-africa.com/#organization\",\"name\":\"ESI Africa\",\"url\":\"https://www.esi-africa.com/\",\"logo\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png\",\"width\":272,\"height\":221,\"caption\":\"ESI Africa\"},\"image\":{\"@id\":\"https://www.esi-africa.com/#/schema/logo/image/\"},\"sameAs\":[\"https://www.facebook.com/ESIAfricaNews\",\"https://x.com/esiafrica\",\"https://www.linkedin.com/company/esi-africa/\",\"https://www.youtube.com/user/ESIAfricaTV\"]},{\"@type\":\"Person\",\"@id\":\"https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb\",\"name\":\"Nicolette Pombo-van Zyl\",\"image\":{\"@type\":\"ImageObject\",\"inLanguage\":\"en-ZA\",\"@id\":\"https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg\",\"url\":\"https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg\",\"contentUrl\":\"https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg\",\"caption\":\"Nicolette Pombo-van Zyl\"},\"description\":\"Nicolette is the Editor-in-Chief of ESI Africa, ESI-Africa.com and the annual African Power &amp; Energy Elites. She is passionate about placing African countries on the international stage and is driven by the motto, \\\"The only way to predict the future is to create it\\\". Join her in creating a sustainable future through articles and multimedia content.\",\"sameAs\":[\"https://www.linkedin.com/in/nicolette-pombo-van-zyl/\",\"https://x.com/https://twitter.com/nicolettepombo\"],\"url\":\"https://www.esi-africa.com/author/nicolette/\"}]}\u003C/script\u003E\n\u003C!-- / Yoast SEO plugin. --\u003E",
-    "yoast_head_json": {
-      "title": "Managing the water resource gap and getting the flow just right",
-      "description": "Our global water resource has competing industries—all wanting the one thing we can’t live without and a new threat to water approaching.",
-      "robots": {
-        "index": "index",
-        "follow": "follow",
-        "max-snippet": "max-snippet:-1",
-        "max-image-preview": "max-image-preview:large",
-        "max-video-preview": "max-video-preview:-1"
-      },
-      "canonical": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/",
-      "og_locale": "en_US",
-      "og_type": "article",
-      "og_title": "Managing the water resource gap and getting the flow just right",
-      "og_description": "Our global water resource has competing industries—all wanting the one thing we can’t live without and a new threat to water approaching.",
-      "og_url": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/",
-      "og_site_name": "ESI-Africa.com",
-      "article_publisher": "https://www.facebook.com/ESIAfricaNews",
-      "article_published_time": "2026-03-23T05:30:00+00:00",
-      "article_modified_time": "2026-03-23T06:34:36+00:00",
-      "og_image": [
-        {
-          "width": 1440,
-          "height": 1080,
-          "url": "https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg",
-          "type": "image/jpeg"
-        }
-      ],
-      "author": "Nicolette Pombo-van Zyl",
-      "twitter_card": "summary_large_image",
-      "twitter_creator": "@https://twitter.com/nicolettepombo",
-      "twitter_site": "@esiafrica",
-      "twitter_misc": {
-        "Written by": "Nicolette Pombo-van Zyl",
-        "Est. reading time": "5 minutes"
-      },
-      "schema": {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Article",
-            "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#article",
-            "isPartOf": {
-              "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/"
-            },
-            "author": {
-              "name": "Nicolette Pombo-van Zyl",
-              "@id": "https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb"
-            },
-            "headline": "Managing the water resource gap and getting the flow just right",
-            "datePublished": "2026-03-23T05:30:00+00:00",
-            "dateModified": "2026-03-23T06:34:36+00:00",
-            "mainEntityOfPage": {
-              "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/"
-            },
-            "wordCount": 823,
-            "publisher": {
-              "@id": "https://www.esi-africa.com/#organization"
-            },
-            "image": {
-              "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage"
-            },
-            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg",
-            "keywords": [
-              "Ed's Note",
-              "Hydrogen",
-              "water resources",
-              "World Water Day"
-            ],
-            "articleSection": [
-              "Africa",
-              "Climate Change",
-              "Features/Analysis",
-              "Future Energy",
-              "Hydrogen",
-              "International",
-              "North Africa",
-              "Renewable energy",
-              "Water"
-            ],
-            "inLanguage": "en-ZA"
-          },
-          {
-            "@type": "WebPage",
-            "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/",
-            "url": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/",
-            "name": "Managing the water resource gap and getting the flow just right",
-            "isPartOf": {
-              "@id": "https://www.esi-africa.com/#website"
-            },
-            "primaryImageOfPage": {
-              "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage"
-            },
-            "image": {
-              "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage"
-            },
-            "thumbnailUrl": "https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg",
-            "datePublished": "2026-03-23T05:30:00+00:00",
-            "dateModified": "2026-03-23T06:34:36+00:00",
-            "description": "Our global water resource has competing industries—all wanting the one thing we can’t live without and a new threat to water approaching.",
-            "breadcrumb": {
-              "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#breadcrumb"
-            },
-            "inLanguage": "en-ZA",
-            "potentialAction": [
-              {
-                "@type": "ReadAction",
-                "target": [
-                  "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/"
-                ]
-              }
-            ]
-          },
-          {
-            "@type": "ImageObject",
-            "inLanguage": "en-ZA",
-            "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#primaryimage",
-            "url": "https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg",
-            "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2023/03/ipiccy_image-1.jpg",
-            "width": 1440,
-            "height": 1080,
-            "caption": "Image: Traditional fishing on the Zambezi River. Source: barbeye/123rf.com"
-          },
-          {
-            "@type": "BreadcrumbList",
-            "@id": "https://www.esi-africa.com/industry-sectors/water/managing-water-resource-gap-getting-flow-right/#breadcrumb",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://www.esi-africa.com/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Managing the water resource gap and getting the flow just right"
-              }
-            ]
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://www.esi-africa.com/#website",
-            "url": "https://www.esi-africa.com/",
-            "name": "ESI-Africa.com",
-            "description": "Africa&#039;s leading portal for power &amp; utility executives. Generation, transmission, distribution.",
-            "publisher": {
-              "@id": "https://www.esi-africa.com/#organization"
-            },
-            "potentialAction": [
-              {
-                "@type": "SearchAction",
-                "target": {
-                  "@type": "EntryPoint",
-                  "urlTemplate": "https://www.esi-africa.com/?s={search_term_string}"
-                },
-                "query-input": {
-                  "@type": "PropertyValueSpecification",
-                  "valueRequired": true,
-                  "valueName": "search_term_string"
-                }
-              }
-            ],
-            "inLanguage": "en-ZA"
-          },
-          {
-            "@type": "Organization",
-            "@id": "https://www.esi-africa.com/#organization",
-            "name": "ESI Africa",
-            "url": "https://www.esi-africa.com/",
-            "logo": {
-              "@type": "ImageObject",
-              "inLanguage": "en-ZA",
-              "@id": "https://www.esi-africa.com/#/schema/logo/image/",
-              "url": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
-              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2023/05/esi-logo-desktop.png",
-              "width": 272,
-              "height": 221,
-              "caption": "ESI Africa"
-            },
-            "image": {
-              "@id": "https://www.esi-africa.com/#/schema/logo/image/"
-            },
-            "sameAs": [
-              "https://www.facebook.com/ESIAfricaNews",
-              "https://x.com/esiafrica",
-              "https://www.linkedin.com/company/esi-africa/",
-              "https://www.youtube.com/user/ESIAfricaTV"
-            ]
-          },
-          {
-            "@type": "Person",
-            "@id": "https://www.esi-africa.com/#/schema/person/f0a1154d3ea4a6950d0acf44834eb1cb",
-            "name": "Nicolette Pombo-van Zyl",
-            "image": {
-              "@type": "ImageObject",
-              "inLanguage": "en-ZA",
-              "@id": "https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg",
-              "url": "https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg",
-              "contentUrl": "https://www.esi-africa.com/wp-content/uploads/2021/03/Nicolette-Pombo-van-Zyl.-Profile-photo-300x300.jpg",
-              "caption": "Nicolette Pombo-van Zyl"
-            },
-            "description": "Nicolette is the Editor-in-Chief of ESI Africa, ESI-Africa.com and the annual African Power &amp; Energy Elites. She is passionate about placing African countries on the international stage and is driven by the motto, \"The only way to predict the future is to create it\". Join her in creating a sustainable future through articles and multimedia content.",
-            "sameAs": [
-              "https://www.linkedin.com/in/nicolette-pombo-van-zyl/",
-              "https://x.com/https://twitter.com/nicolettepombo"
-            ],
-            "url": "https://www.esi-africa.com/author/nicolette/"
-          }
-        ]
-      }
-    },
-    "distributor_meta": false,
-    "distributor_terms": false,
-    "distributor_media": false,
-    "distributor_original_site_name": "ESI-Africa.com",
-    "distributor_original_site_url": "https://www.esi-africa.com",
-    "push-errors": false,
-    "amp_enabled": true,
-    "_links": {
-      "self": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/138234",
-          "targetHints": {
-            "allow": [
-              "GET"
-            ]
-          }
-        }
-      ],
-      "collection": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts"
-        }
-      ],
-      "about": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/types/post"
-        }
-      ],
-      "author": [
-        {
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/users/621"
-        }
-      ],
-      "replies": [
-        {
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/comments?post=138234"
-        }
-      ],
-      "version-history": [
-        {
-          "count": 1,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/138234/revisions"
-        }
-      ],
-      "predecessor-version": [
-        {
-          "id": 212789,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/posts/138234/revisions/212789"
-        }
-      ],
-      "wp:featuredmedia": [
-        {
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/media/212787"
-        }
-      ],
-      "wp:attachment": [
-        {
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/media?parent=138234"
-        }
-      ],
-      "wp:term": [
-        {
-          "taxonomy": "category",
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/categories?post=138234"
-        },
-        {
-          "taxonomy": "post_tag",
-          "embeddable": true,
-          "href": "https://www.esi-africa.com/wp-json/wp/v2/tags?post=138234"
         }
       ],
       "curies": [
