@@ -18,12 +18,11 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
     :return: 新闻列表
     """
     name = source["name"]
-    per_page = 100  # 每页最多 100 条
+    per_page = 100
     page = 1
     new_data = []
     today_str = now_cst().strftime('%Y-%m-%d')
     
-    # 确保关键词列表为小写
     if keywords:
         keywords_lower = [kw.lower() for kw in keywords]
     else:
@@ -33,6 +32,8 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
 
     while True:
         url = f"{base_url}?page={page}&per_page={per_page}"
+        logger.info(f"  🔍 第 {page} 页：{url}")
+
         try:
             resp = requests.get(url, timeout=30, headers={
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -40,7 +41,7 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
             resp.raise_for_status()
             posts = resp.json()
             if not posts:
-                break  # 无数据，停止
+                break
 
             for post in posts:
                 link = post.get('link')
@@ -51,18 +52,15 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
                 if not title:
                     continue
 
-                # 关键词筛选
                 title_lower = title.lower()
                 if keywords_lower and not any(kw in title_lower for kw in keywords_lower):
-                    continue  # 不符合关键词，跳过
+                    continue
 
                 date_str = post.get('date')
                 try:
                     pub_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                    # 只比较日期部分，避免时区干扰
                     if pub_date.date() < seven_days_ago.date():
-                        # 遇到旧新闻，立即返回已收集的数据
-                        logger.info(f"  🛑 遇到旧新闻 {pub_date.date()}，停止抓取")
+                        logger.info(f"  🛑 触达时间边界 ({pub_date.date()})，停止。")
                         return new_data
                 except Exception:
                     continue
@@ -79,11 +77,8 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
                 ])
                 seen_urls.add(link)
 
-            logger.info(f"  📄 第 {page} 页：{len(posts)} 条")
-
-            # 如果本页返回的文章数少于 per_page，说明是最后一页
+            # 若本页文章数少于 per_page，说明是最后一页，停止翻页
             if len(posts) < per_page:
-                logger.info(f"  🏁 最后一页（只有 {len(posts)} 条），停止翻页")
                 break
 
             page += 1
@@ -91,5 +86,5 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
             logger.error(f"  ⚠️ 第 {page} 页抓取失败: {e}")
             break
 
-    logger.info(f"  ✅ {name} API 抓取：{len(new_data)} 条")
+    logger.info(f"  ✅ {name} 本次新增：{len(new_data)} 条")
     return new_data
