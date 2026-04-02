@@ -43,6 +43,7 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
             if not posts:
                 break
 
+            stop = False
             for post in posts:
                 link = post.get('link')
                 if link in seen_urls:
@@ -61,7 +62,8 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
                     pub_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
                     if pub_date.date() < seven_days_ago.date():
                         logger.info(f"  🛑 触达时间边界 ({pub_date.date()})，停止。")
-                        return new_data
+                        stop = True
+                        break
                 except Exception:
                     continue
 
@@ -77,7 +79,10 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
                 ])
                 seen_urls.add(link)
 
-            # 若本页文章数少于 per_page，说明是最后一页，停止翻页
+            if stop:
+                break
+
+            # 若本页文章数少于 per_page，说明是最后一页
             if len(posts) < per_page:
                 break
 
