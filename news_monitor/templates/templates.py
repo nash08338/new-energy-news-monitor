@@ -36,12 +36,6 @@ def _get_importance_emoji(text):
     
     return "📢"  # 默认
 
-
-
-
-
-
-
 # 基础样式（所有版本共享）
 BASE_STYLE = """
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -60,15 +54,11 @@ BASE_STYLE = """
   .news-list li { margin-bottom:8px; }
   .news-title { font-size:14px; font-weight:500; color:#1e293b; line-height:1.4; }
   .news-importance { font-size:12px; color:#ea580c; background:#f9fafb; border-radius:4px; border-left:3px solid #9ca3af; line-height:1.4; padding:4px 8px; margin-top:2px; }
-  .footer { display:flex; justify-content:space-between; align-items:center; color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; }
-  .footer-left { flex:1; white-space:normal; word-wrap:break-word; }
-  .footer-right { flex-shrink:0; font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }
+  .news-source { font-size:11px; color:#6b7280; margin-top:4px; border-top:1px dashed #e5e7eb; padding-top:2px; }
+  .source-warning { background-color:#fef3c7; color:#d97706; border-radius:4px; padding:0 4px; margin-left:6px; font-size:10px; }
+  .footer { display:flex; justify-content:flex-end; align-items:center; color:#94a3b8; background:#f8fafc; border-top:1px solid #f1f5f9; padding:14px 16px; }
+  .footer-right { font-family:'PingFang SC','Microsoft YaHei',Arial,sans-serif; }
 """
-  
-
-
-
-
 
 def _format_region_name(region):
     """格式化区域名称：将“中非及北非其他”显示为“中非”"""
@@ -82,13 +72,16 @@ def render_overview_html(data):
         news_html = ""
         for item in sec.get("news", []):
             emoji = _get_importance_emoji(item['importance'])
+            source_text = f"📰 来源：{item.get('source', 'Unknown')}"
+            if item.get('source_conflict'):
+                source_text += ' <span class="source-warning">⚠️ 标题匹配</span>'
             news_html += f"""
             <li>
                 <div class="news-title">{item['title']}</div>
                 <div class="news-importance">{emoji} {item['importance']}</div>
+                <div class="news-source">{source_text}</div>
             </li>
             """
-     
         sections_html += f"""
         <div class="section">
           <div class="region-header">
@@ -113,6 +106,7 @@ def render_overview_html(data):
     .news-list li { margin-bottom:12px; }
     .news-title { font-size:15px; }
     .news-importance { font-size:13px; padding:6px 10px; margin-top:4px; }
+    .news-source { font-size:11px; }
     .footer { padding:14px 16px; font-size:12px; }
     .footer-right { margin-left:10px; font-size:12px; }
     """
@@ -132,7 +126,6 @@ def render_overview_html(data):
   </div>
   <div class="body">{sections_html}</div>
   <div class="footer">
-    <span class="footer-left">Data Sources: {Config.FOOTER_SHORT}</span>
     <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
@@ -145,13 +138,16 @@ def render_overview_xhs_html(data):
         news_html = ""
         for item in sec.get("news", []):
             emoji = _get_importance_emoji(item['importance'])
+            source_text = f"📰 来源：{item.get('source', 'Unknown')}"
+            if item.get('source_conflict'):
+                source_text += ' <span class="source-warning">⚠️ 标题匹配</span>'
             news_html += f"""
             <li>
                 <div class="news-title">{item['title']}</div>
                 <div class="news-importance">{emoji} {item['importance']}</div>
+                <div class="news-source">{source_text}</div>
             </li>
             """
-     
         sections_html += f"""
         <div class="section">
           <div class="region-header">
@@ -176,6 +172,7 @@ def render_overview_xhs_html(data):
     .news-list li { margin-bottom:16px; }
     .news-title { font-size:20px; }
     .news-importance { font-size:17px; padding:8px 12px; margin-top:6px; border-left:4px solid #9ca3af; }
+    .news-source { font-size:13px; }
     .footer { padding:20px 24px; font-size:13px; }
     .footer-right { margin-left:15px; font-size:13px; }
     """
@@ -195,7 +192,6 @@ def render_overview_xhs_html(data):
   </div>
   <div class="body">{sections_html}</div>
   <div class="footer">
-    <span class="footer-left">Data Sources: {Config.FOOTER_SHORT}</span>
     <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
@@ -216,10 +212,14 @@ def render_region_html(sec, date_str, sources_used=""):
     news_html = ""
     for item in sec.get("news", []):
         emoji = _get_importance_emoji(item['importance'])
+        source_text = f"📰 来源：{item.get('source', 'Unknown')}"
+        if item.get('source_conflict'):
+            source_text += ' <span class="source-warning">⚠️ 标题匹配</span>'
         news_html += f"""
         <li>
             <div class="news-title">{item['title']}</div>
             <div class="news-importance">{emoji} {item['importance']}</div>
+            <div class="news-source">{source_text}</div>
         </li>
         """
     
@@ -237,6 +237,7 @@ def render_region_html(sec, date_str, sources_used=""):
     .news-list li {{ margin-bottom:14px; }}
     .news-title {{ font-size:14px; }}
     .news-importance {{ font-size:12px; padding:5px 8px; margin-top:3px; border-left:3px solid #9ca3af; }}
+    .news-source {{ font-size:10px; }}
     .footer {{ padding:12px 16px; font-size:11px; }}
     .footer-right {{ margin-left:10px; }}
     """
@@ -259,7 +260,6 @@ def render_region_html(sec, date_str, sources_used=""):
     <ul class="news-list">{news_html}</ul>
   </div>
   <div class="footer">
-    <span class="footer-left">Data Sources: {footer_src}</span>
     <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
@@ -280,10 +280,14 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
     news_html = ""
     for item in sec.get("news", []):
         emoji = _get_importance_emoji(item['importance'])
+        source_text = f"📰 来源：{item.get('source', 'Unknown')}"
+        if item.get('source_conflict'):
+            source_text += ' <span class="source-warning">⚠️ 标题匹配</span>'
         news_html += f"""
         <li>
             <div class="news-title">{item['title']}</div>
             <div class="news-importance">{emoji} {item['importance']}</div>
+            <div class="news-source">{source_text}</div>
         </li>
         """
     
@@ -301,6 +305,7 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
     .news-list li {{ margin-bottom:24px; }}
     .news-title {{ font-size:21px; }}
     .news-importance {{ font-size:18px; padding:10px 14px; margin-top:6px; border-left:5px solid #9ca3af; }}
+    .news-source {{ font-size:14px; }}
     .footer {{ padding:20px 24px; font-size:13px; }}
     .footer-right {{ margin-left:15px; }}
     """
@@ -323,7 +328,6 @@ def render_region_xhs_html(sec, date_str, sources_used=""):
     <ul class="news-list">{news_html}</ul>
   </div>
   <div class="footer">
-    <span class="footer-left">Data Sources: {footer_src}</span>
     <span class="footer-right">Created by {Config.CREATED_BY}</span>
   </div>
 </div></body></html>"""
