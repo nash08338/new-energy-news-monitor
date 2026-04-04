@@ -89,12 +89,17 @@ def main():
             ))
         # 处理 WordPress REST API 源
         elif "api" in source:
+            # 对于 ESI Africa API 源，不进行关键词筛选（因为已通过分类筛选）
+            if source["name"] == "ESI_Africa_API":
+                keywords = None
+            else:
+                keywords = getattr(Config, "SOLAR_STORAGE_KEYWORDS", None)
             all_new_data.extend(fetch_wp_api(
                 source,
                 source["api"],
                 seven_days_ago,
                 seen_urls,
-                keywords=getattr(Config, "SOLAR_STORAGE_KEYWORDS", None)
+                keywords=keywords
             ))
         # 其他 sitemap 源（如果有）仍可使用配置中的固定 URL
         elif "sitemap" in source:

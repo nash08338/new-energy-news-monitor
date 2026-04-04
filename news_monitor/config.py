@@ -41,6 +41,7 @@ class Config:
         {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                                   "paged": True},
         {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
         {"name": "BalkanGreenEnergyNews", "api": "https://balkangreenenergynews.com/wp-json/wp/v2/posts", "paged": True},
+        {"name": "ESI_Africa_API", "api": "https://www.esi-africa.com/wp-json/wp/v2/posts?categories=4725&per_page=100", "paged": True},
         {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
         {"name": "RenewablesNow", "sitemap": "placeholder", "paged": False},
         {"name": "EVInfrastructureNews_Archive", "type": "archive", "paged": False},
@@ -50,7 +51,6 @@ class Config:
         {"name": "GNews_WestAfrica",  "rss": "https://news.google.com/rss/search?q=west+africa+solar+energy+storage&hl=en-US&gl=US&ceid=US:en",   "paged": False, "stop_on_old": False},
         {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False, "stop_on_old": False},
         {"name": "GNews_StrategicEnergy", "rss": "https://news.google.com/rss/search?q=Strategic+Energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
-        {"name": "GNews_ESI_Africa", "rss": "https://news.google.com/rss/search?q=site:esi-africa.com+energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
     ]
     
     # ESI Africa 关键词
