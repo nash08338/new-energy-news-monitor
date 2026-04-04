@@ -31,7 +31,13 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
     logger.info(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
     while True:
-        url = f"{base_url}?page={page}&per_page={per_page}"
+
+        if '?' in base_url:
+            url = f"{base_url}&page={page}&per_page={per_page}"
+        else:
+            url = f"{base_url}?page={page}&per_page={per_page}"
+
+
         logger.info(f"  🔍 第 {page} 页：{url}")
 
         try:

@@ -43,6 +43,31 @@ else:
         timeout=Config.DEEPSEEK_TIMEOUT
     )
 
+def deduplicate_unused_news(news_list, threshold=0.8):
+    """对未使用新闻列表进行相似度去重，保留最新的一条"""
+    if not news_list:
+        return news_list
+    # 按发布日期降序排序（最新在前）
+    sorted_news = sorted(news_list, key=lambda x: x[3], reverse=True)
+    unique = []
+    for news in sorted_news:
+        title = news[2]
+        is_dup = False
+        for existing in unique:
+            # 计算 Jaccard 相似度
+            set1 = set(title.lower().split())
+            set2 = set(existing[2].lower().split())
+            if not set1 or not set2:
+                continue
+            sim = len(set1 & set2) / len(set1 | set2)
+            if sim >= threshold:
+                is_dup = True
+                break
+        if not is_dup:
+            unique.append(news)
+    # 恢复按日期降序（已有序）
+    return unique
+
 def main():
     """主程序入口"""
     seven_days_ago = now_cst() - timedelta(days=Config.DAYS_BACK)
@@ -150,6 +175,8 @@ def main():
 
     # 生成图片
     unused_news = load_unused_news(Config.MASTER_FILE, Config.USED_FILE, max_count=300)
+    # 对未使用新闻进行相似度去重，避免同一事件的不同报道被同时选中
+    unused_news = deduplicate_unused_news(unused_news, threshold=0.8)
     data, used_links = call_deepseek(
         unused_news,
         Config,
