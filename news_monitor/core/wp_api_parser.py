@@ -1,6 +1,7 @@
 # core/wp_api_parser.py
 import requests
 import logging
+import time
 from datetime import datetime
 from ..utils.time_utils import now_cst
 from ..utils.region_utils import get_region
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
     """
-    抓取 WordPress REST API 分页数据
+    抓取 WordPress REST API 分页数据（针对 Cloudflare 优化）
     :param source: 源配置字典（需包含 name, api_url）
     :param base_url: API 基础 URL
     :param seven_days_ago: 时间边界（带时区）
@@ -28,22 +29,63 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
     else:
         keywords_lower = []
 
+    # 针对 Cloudflare 优化的请求头（模拟真实浏览器）
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-US;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'max-age=0',
+        'Sec-Ch-Ua': '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+    }
+    
+    # 创建 Session 对象，可以复用连接并保持 Cookie
+    session = requests.Session()
+    # 设置 Session 级别的 headers
+    session.headers.update(headers)
+    
+    # 先访问首页获取 Cookie（模拟真实用户访问流程）
+    try:
+        home_url = base_url.split('?')[0].rsplit('/wp-json', 1)[0]  # 提取网站首页
+        if home_url:
+            logger.info(f"  🌐 预热访问首页获取 Cookie: {home_url}")
+            home_resp = session.get(home_url, timeout=30)
+            time.sleep(1)  # 等待一下，模拟真实用户
+    except Exception as e:
+        logger.debug(f"  预热访问失败（不影响主流程）: {e}")
+
     logger.info(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
     while True:
-
+        # 根据 base_url 是否已有查询参数决定连接符
         if '?' in base_url:
             url = f"{base_url}&page={page}&per_page={per_page}"
         else:
             url = f"{base_url}?page={page}&per_page={per_page}"
 
-
         logger.info(f"  🔍 第 {page} 页：{url}")
 
         try:
-            resp = requests.get(url, timeout=30, headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            })
+            # 使用 session 发起请求，自动携带 Cookie
+            resp = session.get(url, timeout=30)
+            
+            # 如果返回 403，可能是 Cloudflare 挑战页，尝试等待后重试
+            if resp.status_code == 403:
+                logger.warning(f"  ⚠️ 第 {page} 页返回 403，可能是 Cloudflare 防护，等待 5 秒后重试...")
+                time.sleep(5)
+                resp = session.get(url, timeout=30)
+                if resp.status_code == 403:
+                    logger.error(f"  ❌ 第 {page} 页仍然返回 403，跳过此页")
+                    break
+            
             resp.raise_for_status()
             posts = resp.json()
             if not posts:
@@ -93,6 +135,12 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
                 break
 
             page += 1
+            # 增加请求间隔，降低被 Cloudflare 拦截的概率
+            time.sleep(random.uniform(1.0, 2.0))
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"  ⚠️ 第 {page} 页请求失败: {e}")
+            break
         except Exception as e:
             logger.error(f"  ⚠️ 第 {page} 页抓取失败: {e}")
             break
