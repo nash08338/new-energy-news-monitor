@@ -35,11 +35,23 @@ def fetch_from_sitemap(url, seven_days_ago, seen_urls, source_name="RenewablesNo
     # 确保关键词列表是小写
     keywords_lower = [kw.lower() for kw in keywords] if keywords else []
 
+    # 增强的请求头，模拟真实浏览器
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+    }
+    
+    # 为特定域名添加 Referer（可选，提高成功率）
+    if 'renewablesnow.com' in url:
+        headers['Referer'] = 'https://renewablesnow.com/'
+
     try:
         # 下载 XML
-        resp = requests.get(url, timeout=30, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        })
+        resp = requests.get(url, timeout=30, headers=headers)
         resp.raise_for_status()
         
         # 解析 XML
@@ -114,6 +126,10 @@ def fetch_from_sitemap(url, seven_days_ago, seen_urls, source_name="RenewablesNo
             
         logger.info(f"  ✅ {source_name} sitemap 抓取：{len(new_data)} 条（已过滤关键词）")
         
+    except requests.exceptions.RequestException as e:
+        logger.error(f"  ⚠️ {source_name} sitemap 抓取失败（网络请求错误）: {e}")
+    except ET.ParseError as e:
+        logger.error(f"  ⚠️ {source_name} sitemap XML 解析失败: {e}")
     except Exception as e:
         logger.error(f"  ⚠️ {source_name} sitemap 抓取失败: {e}")
     
