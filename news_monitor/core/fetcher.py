@@ -28,16 +28,15 @@ def fetch_source(source, seven_days_ago, seen_urls):
         feed = None
         for attempt in range(3):
             try:
+                # 使用更真实的 User-Agent，模拟主流浏览器
                 feed = feedparser.parse(
                     paged_url,
-                    agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                          "AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+                    agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
                 )
                 if hasattr(feed, 'status') and feed.status in (301, 302) and feed.get("href"):
                     feed = feedparser.parse(
                         feed.href,
-                        agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                              "AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+                        agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
                     )
                 if feed.entries:
                     break
