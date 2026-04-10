@@ -2,6 +2,7 @@
 import requests
 import logging
 import time
+import random
 from datetime import datetime
 from ..utils.time_utils import now_cst
 from ..utils.region_utils import get_region
