@@ -110,17 +110,6 @@ def main():
                 seven_days_ago,
                 seen_urls
             ))
-        # 特殊处理 RenewablesNow 的 sitemap（动态生成当前月份）
-        elif source["name"] == "RenewablesNow" and "sitemap" in source:
-            current_month = now_cst().strftime('%Y-%m')
-            sitemap_url = f"https://renewablesnow.com/sitemap/news-{current_month}.xml"
-            all_new_data.extend(fetch_from_sitemap(
-                sitemap_url,
-                seven_days_ago,
-                seen_urls,
-                source["name"],
-                keywords=getattr(Config, "SOLAR_STORAGE_KEYWORDS", None)
-            ))
         # 处理 WordPress REST API 源
         elif "api" in source:
             # 对于 ESI Africa API 源，不进行关键词筛选（因为已通过分类筛选）
