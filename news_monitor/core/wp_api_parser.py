@@ -53,16 +53,6 @@ def fetch_wp_api(source, base_url, seven_days_ago, seen_urls, keywords=None):
     # 设置 Session 级别的 headers
     session.headers.update(headers)
     
-    # 先访问首页获取 Cookie（模拟真实用户访问流程）
-    try:
-        home_url = base_url.split('?')[0].rsplit('/wp-json', 1)[0]  # 提取网站首页
-        if home_url:
-            logger.info(f"  🌐 预热访问首页获取 Cookie: {home_url}")
-            home_resp = session.get(home_url, timeout=30)
-            time.sleep(1)  # 等待一下，模拟真实用户
-    except Exception as e:
-        logger.debug(f"  预热访问失败（不影响主流程）: {e}")
-
     logger.info(f"\n{'='*50}\n📡 来源：{name}\n{'='*50}")
 
     while True:
