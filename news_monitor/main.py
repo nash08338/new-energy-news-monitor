@@ -19,7 +19,8 @@ from .ai.deepseek import call_deepseek
 from .screenshot.generator import generate_images
 from .core.archive_parser import fetch_ev_archive      # 归档解析器
 from .core.esi_parser import parse_esi_africa_json
-from .core.wp_api_parser import fetch_wp_api           # 新增 WordPress REST API 解析器
+from .core.wp_api_parser import fetch_wp_api           # WordPress REST API 解析器
+from .core.archive_parser import fetch_ev_archive, fetch_ev_googlenews
 
 # 配置日志
 logging.basicConfig(
@@ -92,8 +93,16 @@ def main():
     # 抓取所有 RSS / sitemap / 归档 / API 源
     all_new_data = []
     for source in Config.SOURCES:
+        # 特殊处理 EVInfrastructureNews（googlenews.xml 是 Google News Sitemap 格式，feedparser 无法解析）
+        if source["name"] == "EVInfrastructureNews":
+            all_new_data.extend(fetch_ev_googlenews(
+                source["name"],
+                source["rss"],
+                seven_days_ago,
+                seen_urls
+            ))
         # 特殊处理 EVInfrastructureNews 归档源
-        if source["name"] == "EVInfrastructureNews_Archive":
+        elif source["name"] == "EVInfrastructureNews_Archive":
             base_url = "https://www.evinfrastructurenews.com/news/archive/{year}/{month}.xml"
             all_new_data.extend(fetch_ev_archive(
                 source["name"],

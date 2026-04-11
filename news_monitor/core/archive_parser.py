@@ -8,6 +8,90 @@ from ..utils.region_utils import get_region
 
 logger = logging.getLogger(__name__)
 
+
+def fetch_ev_googlenews(source_name, url, seven_days_ago, seen_urls):
+    """
+    抓取 EVInfrastructureNews 的 googlenews.xml（Google News Sitemap 格式）
+    返回格式与 fetch_source 一致。
+    """
+    new_data = []
+    today_str = now_cst().strftime('%Y-%m-%d')
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Connection': 'keep-alive',
+    }
+
+    try:
+        resp = requests.get(url, timeout=30, headers=headers)
+        resp.raise_for_status()
+        root = ET.fromstring(resp.content)
+
+        ns = {
+            'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+            'news': 'http://www.google.com/schemas/sitemap-news/0.9'
+        }
+
+        for url_elem in root.findall('ns:url', ns):
+            loc = url_elem.find('ns:loc', ns)
+            news = url_elem.find('news:news', ns)
+            if loc is None or news is None:
+                continue
+
+            link = loc.text
+            if link in seen_urls:
+                continue
+
+            title_elem = news.find('news:title', ns)
+            date_elem = news.find('news:publication_date', ns)
+
+            title_text = title_elem.text if title_elem is not None else ''
+            date_str = date_elem.text[:10] if date_elem is not None else ''
+
+            if not title_text or not date_str:
+                continue
+
+            try:
+                pub_date = datetime.strptime(date_str, '%Y-%m-%d')
+                if seven_days_ago.tzinfo is not None:
+                    try:
+                        import pytz
+                        tz = pytz.timezone("Asia/Shanghai")
+                        pub_date = tz.localize(pub_date)
+                    except ImportError:
+                        from zoneinfo import ZoneInfo
+                        pub_date = pub_date.replace(tzinfo=ZoneInfo("Asia/Shanghai"))
+            except Exception:
+                continue
+
+            if pub_date < seven_days_ago:
+                continue
+
+            region = get_region(title_text)
+
+            new_data.append([
+                source_name,
+                region,
+                title_text,
+                pub_date.strftime('%Y-%m-%d'),
+                link,
+                today_str,
+            ])
+            seen_urls.add(link)
+
+        logger.info(f"  ✅ {source_name} 抓取：{len(new_data)} 条")
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"  ⚠️ {source_name} 请求失败: {e}")
+    except ET.ParseError as e:
+        logger.error(f"  ⚠️ {source_name} XML 解析失败: {e}")
+    except Exception as e:
+        logger.error(f"  ⚠️ {source_name} 抓取失败: {e}")
+
+    return new_data
+
 def fetch_ev_archive(source_name, base_url, seven_days_ago, seen_urls):
     """
     抓取 EV Infrastructure News 的月度归档 XML。
