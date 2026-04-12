@@ -110,10 +110,11 @@ def main():
                 seven_days_ago,
                 seen_urls
             ))
+
         # 处理 WordPress REST API 源
         elif "api" in source:
-            # 对于 ESI Africa API 源，不进行关键词筛选（因为已通过分类筛选）
-            if source["name"] == "ESI_Africa_API":
+            # 对于 ESI Africa API 和 BalkanGreenEnergyNews，不进行关键词筛选
+            if source["name"] in ("ESI_Africa_API", "BalkanGreenEnergyNews"):
                 keywords = None
             else:
                 keywords = getattr(Config, "SOLAR_STORAGE_KEYWORDS", None)
