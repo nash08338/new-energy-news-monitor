@@ -41,7 +41,8 @@ class Config:
         {"name": "RenewEconomy",      "rss": "https://reneweconomy.com.au/feed/",                                   "paged": True},
         {"name": "EnergyNewsNetwork", "rss": "https://energy-news-network.com/feed/",                               "paged": True},
         {"name": "BalkanGreenEnergyNews", "api": "https://balkangreenenergynews.com/wp-json/wp/v2/posts", "paged": True},
-        {"name": "ESI_Africa_API", "api": "https://www.esi-africa.com/wp-json/wp/v2/posts?categories=4725", "paged": True},        {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
+        {"name": "GNews_ESIAfrica", "rss": "https://news.google.com/rss/search?q=site:esi-africa.com+solar+storage+energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
+        {"name": "MercomIndia",       "rss": "https://mercomindia.com/feed/",                                       "paged": False},
         {"name": "EVInfrastructureNews_Archive", "type": "archive", "paged": False},
         {"name": "EVInfrastructureNews", "rss": "https://www.evinfrastructurenews.com/googlenews.xml", "paged": False, "stop_on_old": False},
         # 以下 Google News 源均添加 stop_on_old=False
