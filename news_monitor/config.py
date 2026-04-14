@@ -50,6 +50,7 @@ class Config:
         {"name": "GNews_EastAfrica",  "rss": "https://news.google.com/rss/search?q=east+africa+kenya+solar+storage&hl=en-US&gl=US&ceid=US:en",    "paged": False, "stop_on_old": False},
         {"name": "GNews_StrategicEnergy", "rss": "https://news.google.com/rss/search?q=Strategic+Energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
         {"name": "GNews_RenewablesNow", "rss": "https://news.google.com/rss/search?q=site:renewablesnow.com+solar+storage+energy&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
+        {"name": "GNews_SolarQuarter", "rss": "https://news.google.com/rss/search?q=site:solarquarter.com+solar+storage+battery&hl=en-US&gl=US&ceid=US:en", "paged": False, "stop_on_old": False},
     ]
     
     # ESI Africa 关键词
