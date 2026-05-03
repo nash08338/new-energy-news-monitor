@@ -20,6 +20,7 @@ from .screenshot.generator import generate_images
 from .core.archive_parser import fetch_ev_archive, fetch_ev_googlenews  # 归档解析器
 from .core.esi_parser import parse_esi_africa_json
 from .core.wp_api_parser import fetch_wp_api           # WordPress REST API 解析器
+from .utils.dedup_utils import filter_duplicate_news, save_fingerprints
 
 # 配置日志
 logging.basicConfig(
@@ -156,6 +157,8 @@ def main():
     unused_news = load_unused_news(Config.MASTER_FILE, Config.USED_FILE, max_count=300)
     # 对未使用新闻进行相似度去重，避免同一事件的不同报道被同时选中
     unused_news = deduplicate_unused_news(unused_news, threshold=0.8)
+    # 跨运行指纹去重：过滤历史已选中的相似标题
+    unused_news = filter_duplicate_news(unused_news)
     data, used_links = call_deepseek(
         unused_news,
         Config,
@@ -164,7 +167,10 @@ def main():
         Config.CONFLICT_FILE
     )
 
+    # 保存本次选中新闻的指纹，供下次去重
     if data:
+        titles = [item.get("title", "") for item in data]
+        save_fingerprints(titles)
         generate_images(data, unused_news, used_links, Config)
 
     logger.info(f"\n✅ 全部完成！")
