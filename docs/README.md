@@ -1,21 +1,25 @@
-# 🌍 全球能源新闻监控系统
+# 全球能源新闻监控系统
 
-自动监控全球能源新闻，生成中文摘要报告。
+自动监控全球新能源（光伏、储能、充电桩）新闻，生成图片报告。
 
 ## 功能
 
-- ✅ 自动扫描多个能源新闻网站
-- ✅ AI 生成中文摘要
-- ✅ 提取新闻发布时间
-- ✅ 生成 Markdown 和 HTML 报告
-- ✅ 手动运行
+- 多源 RSS/API 抓取（SolarQuarter、Electrive、PVMagazine、EnergyStorageNews 等）
+- DeepSeek AI 分类整理，按区域生成摘要
+- Playwright 生成图片报告
+- GitHub Actions 手动触发（workflow_dispatch）
 
-## 部署
+## 报告输出
 
-1. 在 GitHub Secrets 中配置 API Key
-2. Actions 手动运行
+- 图片：`docs/images/overview_*.png`（总览图）
+- 压缩包：`docs/images/regions_*.zip`（区域图）
+- 新闻库：`docs/news_master.csv`
 
-## 报告查看
+## 本地运行
 
-- Markdown: `Energy_Report_YYYY-MM-DD.md`
-- HTML: `Energy_Report_YYYY-MM-DD.html`
+```bash
+pip install -r requirements.txt
+python -m news_monitor.main
+```
+
+部署：GitHub Secrets 配置 DEEPSEEK_API_KEY → Actions 手动触发 `RSS 新闻抓取`
