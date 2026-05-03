@@ -24,7 +24,6 @@ class Config:
     USED_FILE = os.path.join(ROOT_DIR, "docs", "used_news.csv")
     IMAGE_DIR = os.path.join(ROOT_DIR, "docs", "images")
     CONFLICT_FILE = os.path.join(ROOT_DIR, "docs", "region_conflicts.csv")
-    XHS_DIR = os.path.join(ROOT_DIR, "docs", "images", "xhs")
     ESI_JSON_FILE = os.path.join(ROOT_DIR, "docs", "esi_africa_raw.json")
     
     # CSV 头

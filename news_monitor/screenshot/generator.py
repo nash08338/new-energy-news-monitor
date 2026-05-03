@@ -53,47 +53,12 @@ def html_to_image(html_content, output_path):
     else:
         logger.info(f"  🖼️  已生成：{output_path}")
 
-def html_to_image_xhs(html_content, output_path):
-    """生成小红书版截图"""
-    if not PLAYWRIGHT_AVAILABLE:
-        logger.warning(f"  ⚠️ Playwright 不可用，无法生成截图：{output_path}")
-        return
-
-    result = {"error": None}
-
-    def run():
-        try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(
-                    args=["--no-sandbox", "--disable-dev-shm-usage"]
-                )
-                page = browser.new_page(
-                    viewport={"width": 1242, "height": 1660},
-                    device_scale_factor=2
-                )
-                page.set_content(html_content, wait_until="networkidle")
-                height = page.evaluate("document.querySelector('.card').scrollHeight + 96")
-                page.set_viewport_size({"width": 1242, "height": int(height)})
-                page.locator(".card").screenshot(path=output_path)
-                browser.close()
-        except Exception as e:
-            result["error"] = e
-
-    t = threading.Thread(target=run)
-    t.start()
-    t.join()
-    if result["error"]:
-        logger.error(f"  ⚠️ 截图失败 {output_path}：{result['error']}")
-    else:
-        logger.info(f"  📱 已生成（小红书）：{output_path}")
-
 def generate_images(data, unused_news, used_links, config):
     """生成所有图片"""
     import os
-    from ..templates import render_overview_html, render_overview_xhs_html, render_region_html, render_region_xhs_html
-    
+    from ..templates import render_overview_html, render_region_html
+
     os.makedirs(config.IMAGE_DIR, exist_ok=True)
-    os.makedirs(config.XHS_DIR, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d_%H%M")
 
     if not data:
@@ -110,30 +75,21 @@ def generate_images(data, unused_news, used_links, config):
     tasks = [
         (render_overview_html(data),
          os.path.join(config.IMAGE_DIR, f"overview_{date_str}.png"), False),
-        (render_overview_xhs_html(data),
-         os.path.join(config.XHS_DIR, f"overview_xhs_{date_str}.png"), True),
     ]
 
     region_images = []
-    xhs_region_images = []
 
     for sec in data["news_sections"]:
         slug = safe_slug(sec["region"])
         region_img = os.path.join(config.IMAGE_DIR, f"region_{slug}_{date_str}.png")
-        region_xhs = os.path.join(config.XHS_DIR, f"region_{slug}_xhs_{date_str}.png")
 
         tasks.append((render_region_html(sec, data["date"], all_sources_str), region_img, False))
-        tasks.append((render_region_xhs_html(sec, data["date"], all_sources_str), region_xhs, True))
 
         region_images.append(region_img)
-        xhs_region_images.append(region_xhs)
 
     def take_shot(task):
-        html_content, output_path, is_xhs = task
-        if is_xhs:
-            html_to_image_xhs(html_content, output_path)
-        else:
-            html_to_image(html_content, output_path)
+        html_content, output_path, _ = task
+        html_to_image(html_content, output_path)
 
     # 降低最大并发数到 2，减少内存压力
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
@@ -156,19 +112,10 @@ def generate_images(data, unused_news, used_links, config):
                 zf.write(img_path, os.path.basename(img_path))
     logger.info(f"  📦 普通版区域图已打包：{zip_region}（共 {len(region_images)} 张）")
 
-    zip_xhs = os.path.join(config.XHS_DIR, f"regions_xhs_{date_str}.zip")
-    with zipfile.ZipFile(zip_xhs, "w", zipfile.ZIP_DEFLATED) as zf:
-        for img_path in xhs_region_images:
-            if os.path.exists(img_path):
-                zf.write(img_path, os.path.basename(img_path))
-    logger.info(f"  📦 小红书版区域图已打包：{zip_xhs}（共 {len(xhs_region_images)} 张）")
-
-    for img_path in region_images + xhs_region_images:
+    for img_path in region_images:
         if os.path.exists(img_path):
             os.remove(img_path)
     logger.info("  🗑️  散装区域图已清理")
 
     logger.info(f"\n📁 普通版总图：{os.path.join(config.IMAGE_DIR, f'overview_{date_str}.png')}")
     logger.info(f"📦 普通版区域包：{zip_region}")
-    logger.info(f"📁 小红书版总图：{os.path.join(config.XHS_DIR, f'overview_xhs_{date_str}.png')}")
-    logger.info(f"📦 小红书版区域包：{zip_xhs}")
