@@ -17,10 +17,9 @@ from .core.sitemap_parser import fetch_from_sitemap   # sitemap 解析器
 from .core.csv_handler import split_by_date, merge_to_master
 from .ai.deepseek import call_deepseek
 from .screenshot.generator import generate_images
-from .core.archive_parser import fetch_ev_archive      # 归档解析器
+from .core.archive_parser import fetch_ev_archive, fetch_ev_googlenews  # 归档解析器
 from .core.esi_parser import parse_esi_africa_json
 from .core.wp_api_parser import fetch_wp_api           # WordPress REST API 解析器
-from .core.archive_parser import fetch_ev_archive, fetch_ev_googlenews
 
 # 配置日志
 logging.basicConfig(
@@ -141,26 +140,7 @@ def main():
     # ESI Africa JSON 解析（手动维护）
     all_new_data.extend(parse_esi_africa_json(Config.ESI_JSON_FILE, Config.ESI_KEYWORDS, seen_urls))
     
-    def deduplicate_global(news_list, threshold=0.8):
-        unique = []
-        for news in sorted(news_list, key=lambda x: x[3], reverse=True):  # 按日期倒序
-            title = news[2]
-            is_dup = False
-            for existing in unique:
-                # 简单的 Jaccard 相似度
-                set1 = set(title.lower().split())
-                set2 = set(existing[2].lower().split())
-                if not set1 or not set2:
-                    continue
-                sim = len(set1 & set2) / len(set1 | set2)
-                if sim >= threshold:
-                    is_dup = True
-                    break
-            if not is_dup:
-                unique.append(news)
-        return unique
-
-    all_new_data = deduplicate_global(all_new_data)
+    all_new_data = deduplicate_unused_news(all_new_data)
 
 
     # 处理 CSV 文件
