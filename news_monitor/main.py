@@ -158,7 +158,7 @@ def main():
     # 对未使用新闻进行相似度去重，避免同一事件的不同报道被同时选中
     unused_news = deduplicate_unused_news(unused_news, threshold=0.8)
     # 跨运行指纹去重：过滤历史已选中的相似标题
-    unused_news = filter_duplicate_news(unused_news)
+    unused_news, _ = filter_duplicate_news(unused_news)
     data, used_links = call_deepseek(
         unused_news,
         Config,
