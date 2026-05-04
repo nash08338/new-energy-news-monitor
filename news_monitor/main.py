@@ -169,7 +169,7 @@ def main():
 
     # 保存本次选中新闻的指纹，供下次去重
     if data:
-        titles = [item.get("title", "") for item in data]
+        titles = [item.get("title", "") for sec in data.get("news_sections", []) for item in sec.get("news", [])]
         save_fingerprints(titles)
         generate_images(data, unused_news, used_links, Config)
 
